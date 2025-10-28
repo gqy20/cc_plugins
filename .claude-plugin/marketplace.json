@@ -1,0 +1,106 @@
+{
+    "name": "cc_plugins",
+    "owner": {
+        "name": "qingyu_ge",
+        "email": "qingyu.ge@example.com",
+        "url": "https://github.com/gqy20"
+    },
+    "metadata": {
+        "description": "Specialized collection of development plugins designed for expert analysis and research workflows",
+        "version": "0.1.0",
+        "total_plugins": 1,
+        "total_agents": 1,
+        "total_skills": 6,
+        "last_updated": "2025-10-28",
+        "compatibility": {
+            "claude_code_version": ">=1.0.0",
+            "platforms": ["linux", "macos", "windows"]
+        },
+        "installation": {
+            "supported_formats": ["plugin", "bundle", "category"],
+            "token_optimization": true,
+            "progressive_disclosure": true
+        }
+    },
+    "plugins": [
+        {
+            "name": "evolutionary-biology-expert",
+            "source": "./plugins/evolutionary-biology-expert",
+            "description": "Comprehensive expert analysis system for evolutionary biology researchers. Reconstructs thought maps, analyzes academic networks, and evaluates research impact through advanced literature mining and network analysis techniques.",
+            "version": "0.1.0",
+            "author": {
+                "name": "qingyu_ge",
+                "url": "https://github.com/gqy20"
+            },
+            "homepage": "https://github.com/gqy20/cc_plugins",
+            "repository": "https://github.com/gqy20/cc_plugins",
+            "license": "MIT",
+            "keywords": [
+                "evolutionary-biology",
+                "expert-analysis",
+                "academic-network",
+                "literature-review",
+                "research-impact",
+                "knowledge-mapping"
+            ],
+            "category": "research",
+            "strict": false,
+            "dependencies": [
+                "article-mcp",
+                "mediawiki-mcp-server",
+                "sequentialthinking",
+                "playwright"
+            ],
+            "commands": [
+                "./commands/analyze-evolutionary-expert.md"
+            ],
+            "agents": [
+                "./agents/evolutionary-biology-analyst.md"
+            ],
+            "skills": [
+                "./skills/expert-network-mapping",
+                "./skills/academic-literature-analysis",
+                "./skills/search-term-optimization",
+                "./skills/google-scholar-analysis",
+                "./skills/temporal-dynamics-analysis",
+                "./skills/critical-thinking-analysis",
+                "./skills/context-aware-analysis"
+            ],
+            "features": [
+                "thought-map-reconstruction",
+                "network-centricity-analysis",
+                "collaboration-mapping",
+                "citation-network-analysis",
+                "research-impact-evaluation",
+                "multi-source-data-validation"
+            ],
+            "installation": {
+                "mcp_servers": [
+                    "claude mcp add article-mcp uvx article-mcp server",
+                    "claude mcp add mediawiki-mcp-server npx @professional-wiki/mediawiki-mcp-server@latest",
+                    "claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest",
+                    "claude mcp add playwright npx @playwright/mcp@latest --browser chrome --headless"
+                ],
+                "optional_env": ["EASYSCHOLAR_SECRET_KEY"]
+            },
+            "output": {
+                "formats": [
+                    "comprehensive-analysis-report",
+                    "network-visualization-data",
+                    "academic-metrics",
+                    "citation-reports"
+                ],
+                "sections": [
+                    "expert-identity-verification",
+                    "core-theoretical-framework",
+                    "research-timeline",
+                    "knowledge-network-analysis",
+                    "methodological-approaches",
+                    "criticism-and-boundaries",
+                    "real-world-applications",
+                    "complete-references"
+                ]
+            }
+        }
+    ]
+}
