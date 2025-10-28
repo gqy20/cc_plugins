@@ -45,12 +45,6 @@
             ],
             "category": "research",
             "strict": false,
-            "dependencies": [
-                "article-mcp",
-                "mediawiki-mcp-server",
-                "sequentialthinking",
-                "playwright"
-            ],
             "commands": [
                 "./commands/analyze-evolutionary-expert.md"
             ],
@@ -65,42 +59,7 @@
                 "./skills/temporal-dynamics-analysis",
                 "./skills/critical-thinking-analysis",
                 "./skills/context-aware-analysis"
-            ],
-            "features": [
-                "thought-map-reconstruction",
-                "network-centricity-analysis",
-                "collaboration-mapping",
-                "citation-network-analysis",
-                "research-impact-evaluation",
-                "multi-source-data-validation"
-            ],
-            "installation": {
-                "mcp_servers": [
-                    "claude mcp add article-mcp uvx article-mcp server",
-                    "claude mcp add mediawiki-mcp-server npx @professional-wiki/mediawiki-mcp-server@latest",
-                    "claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest",
-                    "claude mcp add playwright npx @playwright/mcp@latest --browser chrome --headless"
-                ],
-                "optional_env": ["EASYSCHOLAR_SECRET_KEY"]
-            },
-            "output": {
-                "formats": [
-                    "comprehensive-analysis-report",
-                    "network-visualization-data",
-                    "academic-metrics",
-                    "citation-reports"
-                ],
-                "sections": [
-                    "expert-identity-verification",
-                    "core-theoretical-framework",
-                    "research-timeline",
-                    "knowledge-network-analysis",
-                    "methodological-approaches",
-                    "criticism-and-boundaries",
-                    "real-world-applications",
-                    "complete-references"
-                ]
-            }
+            ]
         }
     ]
 }
