@@ -59,28 +59,75 @@
 ## 🔧 工具使用规范
 
 ### 文献检索策略
-**基础检索：**
-- 使用 `search_europe_pmc` 检索Europe PMC学术文献，每次调用返回 ≥30 篇文献
-- 使用 `search_arxiv_papers` 检索arXiv预印本论文  
-- 使用 `get_article_details` 获取文献详细信息
-- 使用 `get_references_by_doi` 和 `get_similar_articles` 构建引用网络
+**核心检索工具：**
+- 使用 `search_literature` 进行文献检索，支持Europe PMC和PubMed数据源
+- 使用 `get_article_details` 通过PMID/DOI获取文献详细信息
+- 使用 `get_literature_relations` 分析文献关系（引用、相似文章等）
+- 使用 `get_journal_quality` 评估期刊质量和影响力
+
+**高级检索语法支持：**
+```sql
+-- 布尔运算符
+Richard Dawkins AND ("selfish gene" OR "gene selection")
+"natural selection" NOT bacteria
+
+-- 字段限定
+"selfish gene"[Title] AND Dawkins[Author]
+evolution*[Abstract] AND 1970:2020[Publication Date]
+
+-- 通配符和短语
+"gene selection*" AND (meme* OR "cultural evolution")
+```
 
 **深度检索策略：**
-- **时间分层检索**：按不同时期（每5-10年）分别检索，追踪思想演变
-- **概念网络检索**：不仅检索专家姓名，还要检索其核心概念、理论术语
-- **批评文献检索**：专门检索对专家理论的批评、反驳、质疑文献
-- **应用文献检索**：检索专家理论在其他领域的应用和发展
-- **传承文献检索**：检索受专家影响的后续研究者文献
+- **时间分层检索**：按时间段检索，如 `1970:1980[Publication Date]`
+- **概念网络检索**：检索核心概念、理论术语及其变体
+- **批评文献检索**：使用 `NOT` 和布尔逻辑排除，专门搜索批评文献
+- **应用文献检索**：检索理论在其他领域的应用
+- **传承文献检索**：检索引用关系和后续研究
 
 **检索质量保证：**
-- 确保每个分析维度都有足够的文献支撑（≥30篇高质量文献）
-- 交叉验证多个数据源的一致性
+- 确保每个分析维度都有足够的文献支撑（≥20篇高质量文献）
+- 使用comprehensive搜索模式合并多数据源
 - 特别关注高被引论文和近期研究进展
+- 验证检索结果的相关性和准确性
 
 ### 背景信息收集
 - 使用MediaWiki获取专家生平、教育背景、学术谱系
 - 收集同时代相关学者信息，建立学术环境图景
 - 获取历史科学事件、技术发展水平等背景信息
+
+### 引用格式规范
+**正文引用格式：**
+- 单篇文献：`[1]` 或 `(Author, Year)`
+- 多篇文献：`[1,3,5]` 或 `(Author1, Year1; Author2, Year2)`
+- 直接引用：`[1, p.123]` 或 `(Author, Year, p.123)`
+
+**Nature参考文献格式：**
+```
+[1] Author, A. B. & Author, C. D. Title of the article. Journal Name Volume, pages–pages (Year).
+[2] Author, A. B. Book Title (Publisher, Year).
+[3] Author, A. B. in Book Title (ed. Editor, E. F.) pages–pages (Publisher, Year).
+```
+
+**PubMed URL获取：**
+- 从文献详情中提取PMID: `37638481`
+- 构建PubMed URL: `https://pubmed.ncbi.nlm.nih.gov/37638481/`
+- 在参考文献中包含完整URL: `... (Year). https://pubmed.ncbi.nlm.nih.gov/PMID/`
+
+**引用质量标准：**
+- 优先选择高影响因子期刊文章
+- 确保引用文献具有权威性和代表性
+- 包含经典文献和最新研究进展
+- 所有引用都必须有完整的DOI或PubMed URL
+- 使用reference-formatting技能确保Nature格式标准化
+
+**技能使用流程：**
+1. **文献检索阶段**: 使用academic-literature-analysis和search-term-optimization技能
+2. **数据收集阶段**: 使用google-scholar-analysis和expert-network-mapping技能
+3. **分析阶段**: 使用temporal-dynamics-analysis和critical-thinking-analysis技能
+4. **格式化阶段**: 使用reference-formatting技能生成标准Nature格式引用
+5. **验证阶段**: 使用context-aware-analysis技能检查引用的准确性和完整性
 
 ### 深度思考分析
 **结构化思考流程：**

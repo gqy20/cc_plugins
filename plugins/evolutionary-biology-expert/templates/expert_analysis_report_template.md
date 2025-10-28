@@ -261,6 +261,30 @@ flowchart TD
 
 ---
 
+## 📚 完整参考文献
+
+### 引用规范说明
+本报告采用Nature期刊参考文献格式，所有文献均包含PubMed链接以确保可验证性。
+
+### 参考文献
+
+{{REFERENCES}}
+
+#### 引用统计
+- **文献总数**: {{TOTAL_REFERENCES}} 篇
+- **期刊文章**: {{JOURNAL_ARTICLES}} 篇
+- **高被引论文**: {{HIGHLY_CITED}} 篇 (≥100次引用)
+- **最新研究**: {{RECENT_STUDIES}} 篇 (2020年后发表)
+
+#### Nature参考文献格式示例
+```
+[1] Dawkins, R. The Selfish Gene (Oxford University Press, 1976).
+[2] Hamilton, W.D. The genetical evolution of social behaviour. J. Theor. Biol. 7, 1–16 (1964). https://pubmed.ncbi.nlm.nih.gov/14115693/
+[3] Wilson, E.O. & Wilson, D.S. Rethinking the theoretical foundation of sociobiology. Q. Rev. Biol. 82, 327–348 (2007). https://pubmed.ncbi.nlm.nih.gov/18008823/
+```
+
+---
+
 ## 📊 报告质量检查清单
 
 - [ ] 数据来源权威可靠

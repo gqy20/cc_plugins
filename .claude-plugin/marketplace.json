@@ -10,7 +10,7 @@
         "version": "0.1.0",
         "total_plugins": 1,
         "total_agents": 1,
-        "total_skills": 6,
+        "total_skills": 7,
         "last_updated": "2025-10-28",
         "compatibility": {
             "claude_code_version": ">=1.0.0",
@@ -58,7 +58,8 @@
                 "./skills/google-scholar-analysis",
                 "./skills/temporal-dynamics-analysis",
                 "./skills/critical-thinking-analysis",
-                "./skills/context-aware-analysis"
+                "./skills/context-aware-analysis",
+                "./skills/reference-formatting"
             ]
         }
     ]
