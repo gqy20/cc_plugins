@@ -44,7 +44,7 @@
                 "knowledge-mapping"
             ],
             "category": "research",
-            "strict": false,
+            "strict": true,
             "commands": [
                 "./commands/analyze-evolutionary-expert.md"
             ],
