@@ -131,3 +131,55 @@ export EASYSCHOLAR_SECRET_KEY="your_secret_key"  # 提升期刊质量评估精�
 - **许可证**: MIT License
 
 该插件架构设计确保了专业级学术分析的深度和广度，同时保持了良好的可维护性和可扩展性。
+
+## GitHub Actions 测试
+
+项目包含完整的GitHub Actions测试系统，每次提交插件相关文件时自动运行。
+
+### 测试环境配置
+
+工作流使用名为`cc`的GitHub Environment来管理敏感信息。
+
+#### 配置步骤
+
+1. **创建Environment**
+   ```
+   Your Repository → Settings → Environments → New environment
+   ```
+   - **Name**: `cc`
+   - 描述可选，例如："Claude Code测试环境"
+
+2. **添加Environment Secrets**
+   在`cc`环境中添加以下secrets：
+
+   - **ANTHROPIC_API_KEY**（必需）
+     - Anthropic API密钥，用于Claude Code集成测试
+     - 格式：以`sk-ant-`开头的Anthropic API密钥
+
+   - **ANTHROPIC_BASE_URL**（可选）
+     - Anthropic API Base URL，用于自定义API端点
+     - 格式：有效的HTTP/HTTPS URL
+
+#### 测试触发条件
+
+- **自动触发**：当以下文件发生变更时
+  - `.claude-plugin/marketplace.json`
+  - `plugins/**` 目录下的任何文件
+  - `.github/workflows/plugin-test.yml`
+
+- **手动触发**：通过GitHub Actions界面手动运行
+
+#### 测试内容
+
+1. **Claude Code CLI安装和配置**
+2. **插件安装/卸载测试**
+3. **marketplace.json格式验证**
+4. **插件功能完整性检查**
+5. **安全扫描**
+
+### 本地测试
+
+运行本地测试脚本：
+```bash
+./scripts/test-plugin.sh
+```
