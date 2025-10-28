@@ -1,0 +1,90 @@
+{
+    "name": "evolutionary-biology-expert-plugin",
+    "version": "2.0.0",
+    "description": "深度进化生物学专家分析智能体插件，实现专家思想地图重建、六维度深度分析和批判性思维评估",
+    "author": "Evolutionary Biology Research Team",
+    "license": "MIT",
+    "keywords": [
+        "evolutionary-biology",
+        "academic-analysis",
+        "expert-mapping",
+        "literature-review",
+        "knowledge-network",
+        "temporal-analysis",
+        "critical-thinking",
+        "context-aware-analysis",
+        "deep-expert-analysis"
+    ],
+    "category": "research",
+    "claude_version": ">=1.0.0",
+    "components": {
+        "commands": ["./commands/analyze-evolutionary-expert.md"],
+        "agents": ["./agents/evolutionary-biology-analyst.md"],
+        "skills": [
+            "./skills/academic-literature-analysis/",
+            "./skills/temporal-dynamics-analysis/",
+            "./skills/critical-thinking-analysis/",
+            "./skills/context-aware-analysis/",
+            "./skills/expert-network-mapping/",
+            "./skills/search-term-optimization/",
+            "./skills/google-scholar-analysis/"
+        ]
+    },
+    "mcpServers": {
+        "article-mcp": {
+            "command": "uvx",
+            "args": ["article-mcp", "server"],
+            "env": {
+                "PYTHONUNBUFFERED": "1"
+            }
+        },
+        "sequentialthinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking@latest"
+            ]
+        },
+        "playwright": {
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest",
+                "--browser",
+                "chrome",
+                "--headless"
+            ],
+            "env": {
+                "PLAYWRIGHT_BROWSER": "chrome",
+                "PLAYWRIGHT_HEADLESS": "true"
+            }
+        }
+    },
+    "dependencies": [
+        "article-mcp",
+        "mediawiki-mcp-server",
+        "sequentialthinking"
+    ],
+    "homepage": "https://github.com/evolutionary-biology/expert-analysis-plugin",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/evolutionary-biology/expert-analysis-plugin.git"
+    },
+    "features": [
+        "Deep Expert Analysis",
+        "Six-Dimensional Analysis Framework",
+        "Temporal Dynamics Analysis",
+        "Context-Aware Analysis",
+        "Critical Thinking Analysis",
+        "Expert Mind Mapping",
+        "Literature Retrieval & Quality Assessment",
+        "Academic Network Topology Analysis",
+        "Citation Network Mapping",
+        "Theoretical Evolution Tracking",
+        "Sequential Thinking Engine",
+        "Multi-Source Data Validation",
+        "Historical Context Reconstruction",
+        "Academic Lineage Mapping",
+        "Bias & Boundary Identification",
+        "Visual Analysis Reports"
+    ]
+}

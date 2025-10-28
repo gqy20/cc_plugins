@@ -1,0 +1,36 @@
+{
+    "mcpServers": {
+        "article-mcp": {
+            "command": "uvx",
+            "args": ["article-mcp", "server"],
+            "env": {
+                "PYTHONUNBUFFERED": "1",
+                "EASYSCHOLAR_SECRET_KEY": "${EASYSCHOLAR_SECRET_KEY}"
+            }
+        },
+        "mediawiki-mcp-server": {
+            "command": "npx",
+            "args": ["@professional-wiki/mediawiki-mcp-server@latest"]
+        },
+        "sequentialthinking": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sequential-thinking@latest"
+            ]
+        },
+        "playwright": {
+            "command": "npx",
+            "args": [
+                "@playwright/mcp@latest",
+                "--browser",
+                "chrome",
+                "--headless"
+            ],
+            "env": {
+                "PLAYWRIGHT_BROWSER": "chrome",
+                "PLAYWRIGHT_HEADLESS": "true"
+            }
+        }
+    }
+}
