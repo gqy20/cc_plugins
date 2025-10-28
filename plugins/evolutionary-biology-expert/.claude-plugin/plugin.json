@@ -1,6 +1,6 @@
 {
     "name": "evolutionary-biology-expert-plugin",
-    "version": "2.0.0",
+    "version": "0.1.0",
     "description": "深度进化生物学专家分析智能体插件，实现专家思想地图重建、六维度深度分析和批判性思维评估",
     "author": "Evolutionary Biology Research Team",
     "license": "MIT",
