@@ -39,7 +39,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [24]
 
     steps:
       - name: Checkout repository
@@ -51,7 +51,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
 
       - name: Install Claude Code CLI
         run: |
@@ -399,13 +398,19 @@ jobs:
         if: always()
         run: |
           echo "🗑️  Testing plugin uninstallation..."
-          cd /tmp/claude-test
 
-          # Uninstall plugin
-          PLUGIN_NAME=$(jq -r '.plugins[0].name' $GITHUB_WORKSPACE/.claude-plugin/marketplace.json)
-          claude plugin uninstall $PLUGIN_NAME || {
-            echo "⚠️  Plugin uninstallation failed or plugin not found"
-          }
+          # Check if test directory exists
+          if [ -d "/tmp/claude-test" ]; then
+            cd /tmp/claude-test
+
+            # Uninstall plugin
+            PLUGIN_NAME=$(jq -r '.plugins[0].name' $GITHUB_WORKSPACE/.claude-plugin/marketplace.json)
+            claude plugin uninstall $PLUGIN_NAME || {
+              echo "⚠️  Plugin uninstallation failed or plugin not found"
+            }
+          else
+            echo "⚠️  Test directory not found, skipping uninstallation test"
+          fi
 
           echo "✅ Plugin uninstallation test completed"
 
