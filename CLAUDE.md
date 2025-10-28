@@ -97,7 +97,7 @@ export EASYSCHOLAR_SECRET_KEY="your_secret_key"  # 提升期刊质量评估精�
 - 技能更新需要同时更新对应的SKILL.md文件
 - agent文件中的工具使用规范需要保持同步
 - marketplace.json版本号和元数据需要及时更新
-- 提交信息遵循 `.gitmessage` 中的格式规范
+- 提交信息遵循 `.gitmessage` 中的Conventional Commits格式规范，确保提交信息的一致性和可追踪性
 
 ### 质量保证标准
 - 所有分析必须基于≥30篇高质量文献
