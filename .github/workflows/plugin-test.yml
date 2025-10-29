@@ -55,68 +55,68 @@ jobs:
 
       - name: Validate marketplace.json schema
         run: |
-          echo "🔍 Validating marketplace.json schema..."
+          echo "[CHECK] Validating marketplace.json schema..."
           if [ ! -f ".claude-plugin/marketplace.json" ]; then
-            echo "❌ marketplace.json not found"
+            echo "[ERROR] marketplace.json not found"
             exit 1
           fi
 
           # Basic JSON validation
           jq empty .claude-plugin/marketplace.json
           if [ $? -ne 0 ]; then
-            echo "❌ marketplace.json is not valid JSON"
+            echo "[ERROR] marketplace.json is not valid JSON"
             exit 1
           fi
 
-          echo "✅ marketplace.json schema is valid"
+          echo "[OK] marketplace.json schema is valid"
 
       - name: Setup Environment Variables
         run: |
-          echo "🔧 Setting up environment variables for Claude Code..."
+          echo "[SETUP] Setting up environment variables for Claude Code..."
 
-          # 检查必需的环境变量
+          # Check required environment variables
           if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
-            echo "❌ ANTHROPIC_API_KEY is not set in cc environment secrets"
-            echo "请在GitHub仓库的 Settings > Environments > cc 中添加 ANTHROPIC_API_KEY secret"
+            echo "[ERROR] ANTHROPIC_API_KEY is not set in cc environment secrets"
+            echo "Please add ANTHROPIC_API_KEY secret in GitHub Settings > Environments > cc"
             exit 1
           fi
 
-          # 设置环境变量供Claude Code使用
+          # Set environment variables for Claude Code
           echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> $GITHUB_ENV
           if [ -n "${{ secrets.ANTHROPIC_BASE_URL }}" ]; then
             echo "ANTHROPIC_BASE_URL=${{ secrets.ANTHROPIC_BASE_URL }}" >> $GITHUB_ENV
-            echo "🔗 使用cc环境的自定义API Base URL: ${{ secrets.ANTHROPIC_BASE_URL }}"
+            echo "[LINK] Using custom API Base URL from cc environment: ${{ secrets.ANTHROPIC_BASE_URL }}"
           else
             echo "ANTHROPIC_BASE_URL=https://api.anthropic.com" >> $GITHUB_ENV
-            echo "🔗 使用默认API Base URL"
+            echo "[LINK] Using default API Base URL"
           fi
 
-          echo "✅ 环境变量设置完成"
-          echo "🔑 API Key: ${{ secrets.ANTHROPIC_API_KEY:0:10 }}..."
+          echo "OK Environment variables setup completed"
+          echo "API Key: ${{ secrets.ANTHROPIC_API_KEY:0:10 }}..."
 
       - name: Test Plugin Installation
         id: plugin-install
         run: |
-          echo "🚀 Testing plugin installation..."
+          echo "[START] Testing plugin installation..."
 
           # Create a test directory
           mkdir -p /tmp/claude-test
           cd /tmp/claude-test
 
           # Initialize Claude Code
-          echo "📝 Initializing Claude Code test environment..."
+          echo "[INFO] Initializing Claude Code test environment..."
 
           # Install plugin from our repository
-          echo "📦 Installing plugin from $GITHUB_WORKSPACE..."
+          echo "[INSTALL] Installing plugin from $GITHUB_WORKSPACE..."
           claude plugin install $GITHUB_WORKSPACE || {
-            echo "❌ Plugin installation failed"
+            echo "[ERROR] Plugin installation failed"
             exit 1
           }
 
-          echo "✅ Plugin installation successful"
+          echo "[OK] Plugin installation successful"
 
           # List installed plugins
-          echo "📋 Installed plugins:"
+          echo "[LIST] Installed plugins:"
           claude plugin list
 
           # Save plugin list for verification
@@ -128,7 +128,7 @@ jobs:
       - name: Test Plugin Functionality
         if: steps.plugin-install.outputs.PLUGIN_INSTALL_SUCCESS == 'true'
         run: |
-          echo "🧪 Testing plugin functionality..."
+          echo "[TEST] Testing plugin functionality..."
 
           cd /tmp/claude-test
 
@@ -137,17 +137,17 @@ jobs:
 
           # Test if plugins are properly loaded
           if [ -f "/tmp/installed-plugins.txt" ]; then
-            echo "✅ Plugin list saved successfully"
-            echo "📄 Plugin list content:"
+            echo "[OK] Plugin list saved successfully"
+            echo "[FILE] Plugin list content:"
             cat /tmp/installed-plugins.txt
           else
-            echo "❌ Plugin list not found"
+            echo "[ERROR] Plugin list not found"
             exit 1
           fi
 
       - name: Test Plugin Validation
         run: |
-          echo "🔍 Testing plugin validation..."
+          echo "[CHECK] Testing plugin validation..."
 
           cd $GITHUB_WORKSPACE
 
@@ -156,17 +156,17 @@ jobs:
             echo "Running local test script..."
             chmod +x scripts/test-plugin.sh
             ./scripts/test-plugin.sh || {
-              echo "❌ Test script failed"
+              echo "[ERROR] Test script failed"
               exit 1
             }
-            echo "✅ Test script passed"
+            echo "[OK] Test script passed"
           else
-            echo "⚠️ Test script not found, skipping"
+            echo "[WARN] Test script not found, skipping"
           fi
 
       - name: Test Evolutionary Biology Expert Plugin
         run: |
-          echo "🧬 Testing evolutionary biology expert plugin..."
+          echo "[BIO] Testing evolutionary biology expert plugin..."
 
           cd /tmp/claude-test
 
@@ -175,32 +175,32 @@ jobs:
 
           # Check if plugin files exist in the workspace
           if [ -d "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert" ]; then
-            echo "✅ Plugin directory exists"
+            echo "[OK] Plugin directory exists"
 
             # Check for required files
             if [ -f "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/agents/evolutionary-biology-analyst.md" ]; then
-              echo "✅ Agent file exists"
+              echo "[OK] Agent file exists"
             else
-              echo "❌ Agent file missing"
+              echo "[ERROR] Agent file missing"
             fi
 
             if [ -f "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/templates/expert_analysis_report_template.md" ]; then
-              echo "✅ Template file exists"
+              echo "[OK] Template file exists"
             else
-              echo "❌ Template file missing"
+              echo "[ERROR] Template file missing"
             fi
 
             # Count skills
             skill_count=$(find "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/skills" -name "SKILL.md" | wc -l)
-            echo "📚 Found $skill_count skills"
+            echo "[DOCS] Found $skill_count skills"
           else
-            echo "❌ Plugin directory not found"
+            echo "[ERROR] Plugin directory not found"
             exit 1
           fi
 
       - name: Configure Claude Code
         run: |
-          echo "⚙️ Configuring Claude Code..."
+          echo "[CONFIG] Configuring Claude Code..."
 
           mkdir -p ~/.claude
           cat > ~/.claude/config.json << EOF
@@ -237,43 +237,43 @@ jobs:
           }
           EOF
 
-          echo "✅ Claude Code配置完成"
+          echo "[OK] Claude Code configuration completed"
 
       - name: Run Basic Plugin Tests
         run: |
-          echo "🧪 Running basic plugin tests..."
+          echo "[TEST] Running basic plugin tests..."
 
           cd /tmp/claude-test
 
           # Test basic claude command
           if claude --version > /dev/null 2>&1; then
-            echo "✅ Claude Code CLI is working"
+            echo "[OK] Claude Code CLI is working"
           else
-            echo "❌ Claude Code CLI is not working"
+            echo "[ERROR] Claude Code CLI is not working"
             exit 1
           fi
 
           # Test plugin list
-          echo "📋 Checking installed plugins:"
+          echo "[LIST] Checking installed plugins:"
           claude plugin list || echo "No plugins found"
 
-          echo "✅ Basic plugin tests completed"
+          echo "[OK] Basic plugin tests completed"
 
       - name: Test Plugin Uninstallation
         if: always()
         run: |
-          echo "🗑️ Testing plugin uninstallation..."
+          echo "[DELETE] Testing plugin uninstallation..."
 
           cd /tmp/claude-test
 
           # Uninstall plugins
-          claude plugin uninstall all || echo "⚠️ Some plugins might not have uninstalled properly"
+          claude plugin uninstall all || echo "[WARN] Some plugins might not have uninstalled properly"
 
           # Verify plugins are uninstalled
-          echo "📋 Remaining plugins after uninstallation:"
+          echo "[LIST] Remaining plugins after uninstallation:"
           claude plugin list || echo "No plugins installed"
 
-          echo "✅ Plugin uninstallation test completed"
+          echo "[OK] Plugin uninstallation test completed"
 
   security-scan:
     name: Security Scan
@@ -288,18 +288,18 @@ jobs:
 
       - name: Run security scan
         run: |
-          echo "🔒 Running security scan..."
+          echo "[SECURE] Running security scan..."
 
           # Check for sensitive files
           if find . -name "*.key" -o -name "*.pem" -o -name "*.p12" -o -name "id_rsa*" 2>/dev/null | grep -q .; then
-            echo "❌ Sensitive files found"
+            echo "[ERROR] Sensitive files found"
             exit 1
           fi
 
           # Check for hardcoded secrets
           if grep -r "sk-ant-" . --exclude-dir=.git 2>/dev/null | grep -q .; then
-            echo "❌ Potential API keys found"
+            echo "[ERROR] Potential API keys found"
             exit 1
           fi
 
-          echo "✅ Security scan passed"
+          echo "[OK] Security scan passed"
