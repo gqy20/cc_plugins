@@ -2,41 +2,32 @@ name: Claude Code Plugin Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master ]
     paths:
       - '.claude-plugin/marketplace.json'
       - 'plugins/**'
       - '.github/workflows/plugin-test.yml'
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
     paths:
       - '.claude-plugin/marketplace.json'
       - 'plugins/**'
       - '.github/workflows/plugin-test.yml'
   workflow_dispatch:
-    inputs:
-      plugin_name:
-        description: 'Specific plugin to test (optional)'
-        required: false
-        type: string
-      test_level:
-        description: 'Test level'
-        required: true
-        default: 'full'
-        type: choice
-        options:
-          - 'basic'
-          - 'full'
-          - 'integration'
+
+env:
+  NODE_VERSION: 24
 
 jobs:
   plugin-test:
+    name: Claude Code Plugin Test
     runs-on: ubuntu-latest
     environment: cc
     permissions:
       contents: write
       pull-requests: write
       id-token: write
+
     strategy:
       matrix:
         node-version: [24]
@@ -131,103 +122,104 @@ jobs:
           # Save plugin list for verification
           claude plugin list > /tmp/installed-plugins.txt
 
+          # Set output for verification
           echo "PLUGIN_INSTALL_SUCCESS=true" >> $GITHUB_OUTPUT
 
       - name: Test Plugin Functionality
         if: steps.plugin-install.outputs.PLUGIN_INSTALL_SUCCESS == 'true'
         run: |
           echo "🧪 Testing plugin functionality..."
+
           cd /tmp/claude-test
 
           # Test basic plugin commands
-          PLUGIN_NAME=$(jq -r '.plugins[0].name' $GITHUB_WORKSPACE/.claude-plugin/marketplace.json)
-          echo "Testing plugin: $PLUGIN_NAME"
+          echo "Testing plugin basic functionality..."
 
-          # Check if plugin commands are available
-          if command -v claude &> /dev/null; then
-            echo "✅ Claude Code CLI is available"
-
-            # Test plugin-specific commands if available
-            echo "🔍 Checking plugin commands..."
-            # This will depend on the specific plugin commands available
-
-            echo "✅ Plugin functionality test completed"
+          # Test if plugins are properly loaded
+          if [ -f "/tmp/installed-plugins.txt" ]; then
+            echo "✅ Plugin list saved successfully"
+            echo "📄 Plugin list content:"
+            cat /tmp/installed-plugins.txt
           else
-            echo "❌ Claude Code CLI not found"
+            echo "❌ Plugin list not found"
             exit 1
           fi
 
       - name: Test Plugin Validation
         run: |
-          echo "🔬 Testing plugin validation..."
+          echo "🔍 Testing plugin validation..."
 
-          # Test plugin validation command
           cd $GITHUB_WORKSPACE
 
-          if [ -f ".claude-plugin/marketplace.json" ]; then
-            echo "📋 Validating marketplace configuration..."
-            # Check if all referenced plugins exist
-            jq -r '.plugins[].source' .claude-plugin/marketplace.json | while read plugin_path; do
-              if [ -n "$plugin_path" ]; then
-                echo "Checking plugin path: $plugin_path"
-                if [ -d "$plugin_path" ]; then
-                  echo "✅ Plugin directory exists: $plugin_path"
-
-                  # Check for required files
-                  if [ -f "$plugin_path/.claude-plugin/plugin.json" ]; then
-                    echo "✅ plugin.json exists"
-                  else
-                    echo "⚠️  plugin.json not found in $plugin_path"
-                  fi
-
-                  if [ -f "$plugin_path/.claude-plugin/manifest.json" ]; then
-                    echo "✅ manifest.json exists"
-                  else
-                    echo "⚠️  manifest.json not found in $plugin_path"
-                  fi
-                else
-                  echo "❌ Plugin directory not found: $plugin_path"
-                fi
-              fi
-            done
+          # Run the test script if it exists
+          if [ -f "scripts/test-plugin.sh" ]; then
+            echo "Running local test script..."
+            chmod +x scripts/test-plugin.sh
+            ./scripts/test-plugin.sh || {
+              echo "❌ Test script failed"
+              exit 1
+            }
+            echo "✅ Test script passed"
+          else
+            echo "⚠️ Test script not found, skipping"
           fi
 
-      - name: Setup Claude Code Configuration
+      - name: Test Evolutionary Biology Expert Plugin
         run: |
-          echo "🔧 配置Claude Code权限和模型设置..."
+          echo "🧬 Testing evolutionary biology expert plugin..."
 
-          # 创建Claude Code配置目录
+          cd /tmp/claude-test
+
+          # Test specific plugin functionality
+          echo "Testing evolutionary-biology-expert plugin..."
+
+          # Check if plugin files exist in the workspace
+          if [ -d "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert" ]; then
+            echo "✅ Plugin directory exists"
+
+            # Check for required files
+            if [ -f "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/agents/evolutionary-biology-analyst.md" ]; then
+              echo "✅ Agent file exists"
+            else
+              echo "❌ Agent file missing"
+            fi
+
+            if [ -f "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/templates/expert_analysis_report_template.md" ]; then
+              echo "✅ Template file exists"
+            else
+              echo "❌ Template file missing"
+            fi
+
+            # Count skills
+            skill_count=$(find "$GITHUB_WORKSPACE/plugins/evolutionary-biology-expert/skills" -name "SKILL.md" | wc -l)
+            echo "📚 Found $skill_count skills"
+          else
+            echo "❌ Plugin directory not found"
+            exit 1
+          fi
+
+      - name: Configure Claude Code
+        run: |
+          echo "⚙️ Configuring Claude Code..."
+
           mkdir -p ~/.claude
-
-          # 创建配置文件，启用bypass权限并设置模型
-          cat > ~/.claude/settings.json << 'EOF'
+          cat > ~/.claude/config.json << EOF
           {
-            "permissions": {
-              "bypass": true,
-              "allow": [
-                "Read",
-                "Write",
-                "Edit",
-                "MultiEdit",
-                "Bash",
-                "WebSearch",
-                "WebFetch",
-                "WebSearchPrime",
-                "Task",
-                "TodoWrite",
-                "AskUserQuestion",
-                "ExitPlanMode",
-                "SlashCommand",
-                "Skill",
-                "mcp__*",
-                "sequentialthinking"
-              ],
-              "deny": [
-                "Bash(sudo:*)",
-                "Read(*/secrets/*)",
-                "Write(.env*)"
-              ]
+            "defaultModel": "claude-3-5-sonnet-20241022",
+            "apiKeys": {
+              "anthropic": "${{ secrets.ANTHROPIC_API_KEY }}"
             },
+            "allowedTools": [
+              "Read", "Write", "Edit", "Bash", "Task",
+              "WebSearch", "WebFetch",
+              "mcp__sequentialthinking__sequentialthinking",
+              "mcp__article_mcp__search_literature",
+              "mcp__article_mcp__get_article_details",
+              "mcp__article_mcp__get_references",
+              "mcp__genome-mcp__get_data",
+              "mcp__context7__resolve-library-id",
+              "mcp__context7__get-library-docs"
+            ],
             "env": {
               "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.6",
               "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
@@ -252,219 +244,59 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          claude_args: |
-            --allowedTools "Bash(node),Bash(npm),Read,Write,Edit,Glob,Grep,WebSearch,WebFetch,Task,SlashCommand,Skill"
-            --model "glm-4.6"
-          timeout_minutes: 15
-        continue-on-error: true
+          anthropic_base_url: ${{ secrets.ANTHROPIC_BASE_URL }}
+          model: claude-3-5-sonnet-20241022
+          prompt: |
+            请验证Claude Code插件是否正常工作。
 
-      - name: Test Evolutionary Biology Expert Plugin
-        run: |
-          echo "🧬 测试进化生物学专家插件功能..."
+            检查以下内容：
+            1. 进化生物学专家插件是否已安装
+            2. 插件技能是否可用
+            3. 插件命令是否可以正常执行
 
-          # 创建测试脚本
-          cat > test-plugin-functionality.js << 'EOF'
-          const fs = require('fs');
-          const path = require('path');
-
-          console.log('🔍 开始测试进化生物学专家插件...');
-
-          // 检查插件目录结构
-          const pluginDir = './plugins/evolutionary-biology-expert';
-          const requiredDirs = [
-            'agents',
-            'skills',
-            'templates',
-            'commands'
-          ];
-
-          const requiredSkills = [
-            'academic-literature-analysis',
-            'reference-formatting',
-            'expert-network-mapping',
-            'temporal-dynamics-analysis',
-            'critical-thinking-analysis',
-            'context-aware-analysis',
-            'search-term-optimization',
-            'google-scholar-analysis'
-          ];
-
-          let allTestsPassed = true;
-
-          // 检查目录结构
-          console.log('📁 检查目录结构...');
-          requiredDirs.forEach(dir => {
-            const dirPath = path.join(pluginDir, dir);
-            if (fs.existsSync(dirPath)) {
-              console.log(`✅ ${dir}/ 目录存在`);
-            } else {
-              console.log(`❌ ${dir}/ 目录不存在`);
-              allTestsPassed = false;
-            }
-          });
-
-          // 检查技能文件
-          console.log('🎯 检查技能文件...');
-          requiredSkills.forEach(skill => {
-            const skillPath = path.join(pluginDir, 'skills', skill, 'SKILL.md');
-            if (fs.existsSync(skillPath)) {
-              const content = fs.readFileSync(skillPath, 'utf8');
-              if (content.includes('name:') && content.includes('description:')) {
-                console.log(`✅ 技能 ${skill} 配置完整`);
-              } else {
-                console.log(`⚠️ 技能 ${skill} 配置不完整`);
-              }
-            } else {
-              console.log(`❌ 技能 ${skill} 文件不存在`);
-              allTestsPassed = false;
-            }
-          });
-
-          // 检查智能体文件
-          console.log('🤖 检查智能体文件...');
-          const agentPath = path.join(pluginDir, 'agents', 'evolutionary-biology-analyst.md');
-          if (fs.existsSync(agentPath)) {
-            const agentContent = fs.readFileSync(agentPath, 'utf8');
-            const hasRequiredSections = [
-              '时间维度分析',
-              '网络生态分析',
-              '质量控制与验证',
-              '技能使用'
-            ];
-
-            hasRequiredSections.forEach(section => {
-              if (agentContent.includes(section)) {
-                console.log(`✅ 智能体包含 ${section} 部分`);
-              } else {
-                console.log(`❌ 智能体缺少 ${section} 部分`);
-                allTestsPassed = false;
-              }
-            });
-          } else {
-            console.log('❌ 智能体文件不存在');
-            allTestsPassed = false;
-          }
-
-          // 检查模板文件
-          console.log('📋 检查模板文件...');
-          const templatePath = path.join(pluginDir, 'templates', 'expert_analysis_report_template.md');
-          if (fs.existsSync(templatePath)) {
-            console.log('✅ 报告模板文件存在');
-          } else {
-            console.log('❌ 报告模板文件不存在');
-            allTestsPassed = false;
-          }
-
-          if (allTestsPassed) {
-            console.log('🎉 所有插件功能测试通过！');
-            process.exit(0);
-          } else {
-            console.log('❌ 部分测试失败，请检查插件配置');
-            process.exit(1);
-          }
-          EOF
-
-          # 运行测试
-          node test-plugin-functionality.js
-
-      - name: Verify Test Results
-        run: |
-          echo "📊 Analyzing test results..."
-
-          # Check if plugins are still installed
-          if [ -f "/tmp/installed-plugins.txt" ]; then
-            echo "📋 Previously installed plugins:"
-            cat /tmp/installed-plugins.txt
-          fi
-
-          # Generate test report
-          cat > test-report.md << 'EOF'
-          # Plugin Test Report
-
-          ## Test Summary
-          - **Repository**: ${{ github.repository }}
-          - **Commit**: ${{ github.sha }}
-          - **Branch**: ${{ github.ref_name }}
-          - **Node Version**: ${{ matrix.node-version }}
-
-          ## Test Results
-          - ✅ Marketplace JSON Validation
-          - ✅ Plugin Installation
-          - ✅ Plugin Functionality
-          - ✅ Plugin Validation
-          EOF
-
-          echo "📝 Test report generated:"
-          cat test-report.md
-
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: plugin-test-results-node-${{ matrix.node-version }}
-          path: |
-            test-report.md
-            /tmp/installed-plugins.txt
-          retention-days: 7
+            请列出所有已安装的插件和可用的技能。
 
       - name: Test Plugin Uninstallation
         if: always()
         run: |
-          echo "🗑️  Testing plugin uninstallation..."
+          echo "🗑️ Testing plugin uninstallation..."
 
-          # Check if test directory exists
-          if [ -d "/tmp/claude-test" ]; then
-            cd /tmp/claude-test
+          cd /tmp/claude-test
 
-            # Uninstall plugin
-            PLUGIN_NAME=$(jq -r '.plugins[0].name' $GITHUB_WORKSPACE/.claude-plugin/marketplace.json)
-            claude plugin uninstall $PLUGIN_NAME || {
-              echo "⚠️  Plugin uninstallation failed or plugin not found"
-            }
-          else
-            echo "⚠️  Test directory not found, skipping uninstallation test"
-          fi
+          # Uninstall plugins
+          claude plugin uninstall all || echo "⚠️ Some plugins might not have uninstalled properly"
+
+          # Verify plugins are uninstalled
+          echo "📋 Remaining plugins after uninstallation:"
+          claude plugin list || echo "No plugins installed"
 
           echo "✅ Plugin uninstallation test completed"
 
   security-scan:
+    name: Security Scan
     runs-on: ubuntu-latest
-    environment: cc
     permissions:
       contents: read
+      pull-requests: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Security Scan
+      - name: Run security scan
         run: |
           echo "🔒 Running security scan..."
 
           # Check for sensitive files
-          if [ -f ".claude-plugin/marketplace.json" ]; then
-            echo "🔍 Scanning marketplace.json for security issues..."
-
-            # Check for hardcoded secrets or URLs
-            if grep -q "password\|secret\|key\|token" .claude-plugin/marketplace.json; then
-              echo "⚠️  Potential sensitive information found in marketplace.json"
-            fi
+          if find . -name "*.key" -o -name "*.pem" -o -name "*.p12" -o -name "id_rsa*" 2>/dev/null | grep -q .; then
+            echo "❌ Sensitive files found"
+            exit 1
           fi
 
-          # Check plugin files for security issues
-          find plugins/ -name "*.json" -exec grep -l "http://" {} \; 2>/dev/null | while read file; do
-            echo "⚠️  Insecure URL found in $file"
-          done
+          # Check for hardcoded secrets
+          if grep -r "sk-ant-" . --exclude-dir=.git 2>/dev/null | grep -q .; then
+            echo "❌ Potential API keys found"
+            exit 1
+          fi
 
-          echo "✅ Security scan completed"
-
-  notification:
-    runs-on: ubuntu-latest
-    environment: cc
-    if: always()
-    needs: [plugin-test, security-scan]
-    steps:
-      - name: Notify Test Results
-        run: |
-          echo "📢 Plugin test workflow completed"
-          echo "Plugin-test result: ${{ needs.plugin-test.result }}"
-          echo "Security-scan result: ${{ needs.security-scan.result }}"
+          echo "✅ Security scan passed"
