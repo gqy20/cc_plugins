@@ -79,6 +79,30 @@ jobs:
 
           echo "✅ marketplace.json schema is valid"
 
+      - name: Setup Environment Variables
+        run: |
+          echo "🔧 Setting up environment variables for Claude Code..."
+
+          # 检查必需的环境变量
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "❌ ANTHROPIC_API_KEY is not set in cc environment secrets"
+            echo "请在GitHub仓库的 Settings > Environments > cc 中添加 ANTHROPIC_API_KEY secret"
+            exit 1
+          fi
+
+          # 设置环境变量供Claude Code使用
+          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> $GITHUB_ENV
+          if [ -n "${{ secrets.ANTHROPIC_BASE_URL }}" ]; then
+            echo "ANTHROPIC_BASE_URL=${{ secrets.ANTHROPIC_BASE_URL }}" >> $GITHUB_ENV
+            echo "🔗 使用cc环境的自定义API Base URL: ${{ secrets.ANTHROPIC_BASE_URL }}"
+          else
+            echo "ANTHROPIC_BASE_URL=https://api.anthropic.com" >> $GITHUB_ENV
+            echo "🔗 使用默认API Base URL"
+          fi
+
+          echo "✅ 环境变量设置完成"
+          echo "🔑 API Key: ${{ secrets.ANTHROPIC_API_KEY:0:10 }}..."
+
       - name: Test Plugin Installation
         id: plugin-install
         run: |
@@ -220,16 +244,6 @@ jobs:
             "alwaysThinkingEnabled": false
           }
           EOF
-
-          # 设置环境变量供Claude Code使用
-          echo "ANTHROPIC_API_KEY=${{ secrets.ANTHROPIC_API_KEY }}" >> $GITHUB_ENV
-          if [ -n "${{ secrets.ANTHROPIC_BASE_URL }}" ]; then
-            echo "ANTHROPIC_BASE_URL=${{ secrets.ANTHROPIC_BASE_URL }}" >> $GITHUB_ENV
-            echo "🔗 使用cc环境的自定义API Base URL: ${{ secrets.ANTHROPIC_BASE_URL }}"
-          else
-            echo "ANTHROPIC_BASE_URL=https://api.anthropic.com" >> $GITHUB_ENV
-            echo "🔗 使用默认API Base URL"
-          fi
 
           echo "✅ Claude Code配置完成"
 
