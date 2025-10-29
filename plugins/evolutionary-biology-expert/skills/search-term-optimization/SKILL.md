@@ -1,7 +1,7 @@
 ---
 name: 检索词优化技能
 description: 专门用于优化进化生物学专家分析的学术文献检索词的技能。当需要提高文献检索的覆盖度和精确度、处理专家姓名变体、动态扩展关键词、评估检索质量时使用。通过多层次检索策略、智能关键词扩展、质量控制反馈等机制，确保文献检索既全面又精确。适用于学术文献检索、专家分析、文献综述等需要高质量检索结果的场景。
-allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_europe_pmc, mcp__article_mcp__search_arxiv_papers, mcp__bl_aritcle_mcp__search_europe_pmc, mcp__bl_aritcle_mcp__search_arxiv_papers
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature
 ---
 
 # 检索词优化技能

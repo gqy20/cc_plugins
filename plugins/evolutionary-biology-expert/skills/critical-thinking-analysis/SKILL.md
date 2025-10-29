@@ -1,7 +1,7 @@
 ---
 name: 批判性思维分析技能
 description: 专门用于深度批判性分析的专家评估技能。通过系统性的质疑、检验和评估，识别专家理论的优势、局限、偏见和适用边界。使用sequentialthinking进行结构化批判推理，确保分析的深度、客观性和全面性。
-allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_europe_pmc, mcp__article_mcp__search_arxiv_papers, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references_by_doi, mcp__article_mcp__get_similar_articles, mcp__bl_aritcle_mcp__search_europe_pmc, mcp__bl_aritcle_mcp__search_arxiv_papers, mcp__bl_aritcle_mcp__get_article_details, mcp__bl_aritcle_mcp__get_references_by_doi, mcp__bl_aritcle_mcp__get_similar_articles, mcp__sequentialthinking__sequentialthinking
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references, mcp__sequentialthinking__sequentialthinking
 ---
 
 # 🔍 批判性思维分析技能

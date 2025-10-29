@@ -1,7 +1,7 @@
 ---
 name: Context感知分析技能
 description: 专门用于深度背景感知的专家分析技能。通过重建专家工作的历史、学术、社会、文化背景，理解其思想产生的环境和条件。使用sequentialthinking进行背景深度分析，揭示专家思想的时空嵌入性和历史必然性。
-allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_europe_pmc, mcp__article_mcp__search_arxiv_papers, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references_by_doi, mcp__article_mcp__get_similar_articles, mcp__bl_aritcle_mcp__search_europe_pmc, mcp__bl_aritcle_mcp__search_arxiv_papers, mcp__bl_aritcle_mcp__get_article_details, mcp__bl_aritcle_mcp__get_references_by_doi, mcp__bl_aritcle_mcp__get_similar_articles, mcp__sequentialthinking__sequentialthinking
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references, mcp__sequentialthinking__sequentialthinking
 ---
 
 # 🌍 Context感知分析技能

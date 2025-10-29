@@ -1,7 +1,7 @@
 ---
 name: 专家网络映射技能
 description: 专门用于构建和分析进化生物学专家的知识网络与学术影响力图谱的技能。当需要分析学术关系网络、合作者图谱、理论传播路径、影响力网络、知识生态位时使用。基于文献数据和引用关系构建可视化的学术关系图，识别核心合作者和学术传承关系。适用于学术影响力评估、合作网络分析、知识图谱构建等场景。
-allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__get_references_by_doi, mcp__article_mcp__get_similar_articles, mcp__article_mcp__get_citing_articles, mcp__bl_aritcle_mcp__get_references_by_doi, mcp__bl_aritcle_mcp__get_similar_articles, mcp__bl_aritcle_mcp__get_citing_articles
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__get_references, mcp__article_mcp__get_article_details, mcp__article_mcp__search_literature
 ---
 
 # 专家网络映射技能

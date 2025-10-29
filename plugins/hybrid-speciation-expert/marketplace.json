@@ -1,0 +1,63 @@
+{
+  "name": "hybrid-speciation-expert",
+  "version": "0.1.0",
+  "description": "杂交物种形成专家 - 专注物种起源、基因渗入、生殖机制分析的专家级咨询系统",
+  "author": "Claude Code Research Plugins",
+  "license": "MIT",
+  "homepage": "https://github.com/anthropics/claude-code-plugins",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthropics/claude-code-plugins.git"
+  },
+  "keywords": [
+    "hybrid-speciation",
+    "expert-system",
+    "evolutionary-biology",
+    "genomics",
+    "introgression",
+    "species-formation"
+  ],
+  "category": "expert-advisor",
+  "tags": ["expert", "evolution", "genomics", "speciation"],
+  "supports": ["claude-code >= 1.0.0"],
+  "total_skills": 3,
+  "skills": [
+    "hybrid-origin-analysis",
+    "gene-flow-mapping",
+    "speciation-mechanism-advising"
+  ],
+  "commands": [
+    "ask-hybrid-expert",
+    "analyze-hybrid-origin",
+    "design-speciation-research"
+  ],
+  "mcp_dependencies": [
+    "genome-mcp",
+    "article-mcp",
+    "sequentialthinking"
+  ],
+  "environment_variables": [],
+  "expert_domains": [
+    "Hybrid speciation mechanisms",
+    "Genomic introgression analysis",
+    "Reproductive isolation evolution",
+    "Species formation theory"
+  ],
+  "core_experts": [
+    "James Mallet",
+    "Loren Rieseberg",
+    "刘建全",
+    "王则夫",
+    "于黎",
+    "黄三文"
+  ],
+  "expertise_level": "domain-expert",
+  "interaction_style": "consultation-advising",
+  "response_format": "expert-analysis",
+  "quality_standards": {
+    "genomic_evidence_required": true,
+    "phylogenetic_verification": true,
+    "theoretical_rigor": "peer-reviewed",
+    "uncertainty_handling": "transparent"
+  }
+}

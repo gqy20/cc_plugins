@@ -6,12 +6,12 @@
         "url": "https://github.com/gqy20"
     },
     "metadata": {
-        "description": "Specialized collection of development plugins designed for expert analysis and research workflows",
+        "description": "Specialized collection of expert advisor plugins for evolutionary biology, crop breeding, and ecology research. Provides domain-expert level consultation and analysis capabilities.",
         "version": "0.1.0",
-        "total_plugins": 1,
-        "total_agents": 1,
-        "total_skills": 7,
-        "last_updated": "2025-10-28",
+        "total_plugins": 4,
+        "total_agents": 4,
+        "total_skills": 9,
+        "last_updated": "2025-10-29",
         "compatibility": {
             "claude_code_version": ">=1.0.0",
             "platforms": ["linux", "macos", "windows"]
@@ -60,6 +60,114 @@
                 "./skills/critical-thinking-analysis",
                 "./skills/context-aware-analysis",
                 "./skills/reference-formatting"
+            ]
+        },
+        {
+            "name": "hybrid-speciation-expert",
+            "source": "./plugins/hybrid-speciation-expert",
+            "description": "Expert consultant specializing in hybrid speciation mechanisms, genomic introgression analysis, and reproductive isolation evolution. Provides professional guidance on species formation theory and research design.",
+            "version": "0.1.0",
+            "author": {
+                "name": "qingyu_ge",
+                "url": "https://github.com/gqy20"
+            },
+            "homepage": "https://github.com/gqy20/cc_plugins",
+            "repository": "https://github.com/gqy20/cc_plugins",
+            "license": "MIT",
+            "keywords": [
+                "hybrid-speciation",
+                "expert-system",
+                "evolutionary-biology",
+                "genomics",
+                "introgression",
+                "species-formation"
+            ],
+            "category": "expert-advisor",
+            "strict": true,
+            "commands": [
+                "./commands/ask-hybrid-expert.md",
+                "./commands/analyze-hybrid-origin.md",
+                "./commands/design-speciation-research.md"
+            ],
+            "agents": [
+                "./agents/hybrid-speciation-analyst.md"
+            ],
+            "skills": [
+                "./skills/hybrid-origin-analysis",
+                "./skills/gene-flow-mapping",
+                "./skills/speciation-mechanism-advising"
+            ]
+        },
+        {
+            "name": "crop-breeding-expert",
+            "source": "./plugins/crop-breeding-expert",
+            "description": "Expert consultant specializing in crop variety improvement, molecular breeding techniques, and hybrid breeding strategies. Provides practical guidance on breeding program design and variety development.",
+            "version": "0.1.0",
+            "author": {
+                "name": "qingyu_ge",
+                "url": "https://github.com/gqy20"
+            },
+            "homepage": "https://github.com/gqy20/cc_plugins",
+            "repository": "https://github.com/gqy20/cc_plugins",
+            "license": "MIT",
+            "keywords": [
+                "crop-breeding",
+                "expert-system",
+                "molecular-breeding",
+                "genomic-selection",
+                "hybrid-breeding",
+                "variety-improvement"
+            ],
+            "category": "expert-advisor",
+            "strict": true,
+            "commands": [
+                "./commands/ask-breeding-expert.md",
+                "./commands/design-breeding-program.md",
+                "./commands/evaluate-variety-potential.md"
+            ],
+            "agents": [
+                "./agents/crop-breeding-genomics-analyst.md"
+            ],
+            "skills": [
+                "./skills/breeding-program-design",
+                "./skills/variety-improvement-strategy",
+                "./skills/molecular-breeding-consultation"
+            ]
+        },
+        {
+            "name": "evolutionary-ecology-expert",
+            "source": "./plugins/evolutionary-ecology-expert",
+            "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions. Provides professional insights into evolutionary dynamics and experimental design.",
+            "version": "0.1.0",
+            "author": {
+                "name": "qingyu_ge",
+                "url": "https://github.com/gqy20"
+            },
+            "homepage": "https://github.com/gqy20/cc_plugins",
+            "repository": "https://github.com/gqy20/cc_plugins",
+            "license": "MIT",
+            "keywords": [
+                "evolutionary-ecology",
+                "expert-system",
+                "natural-selection",
+                "adaptation",
+                "ecological-interactions",
+                "evolutionary-dynamics"
+            ],
+            "category": "expert-advisor",
+            "strict": true,
+            "commands": [
+                "./commands/ask-evolutionary-ecologist.md",
+                "./commands/analyze-adaptation-pattern.md",
+                "./commands/design-ecological-experiment.md"
+            ],
+            "agents": [
+                "./agents/evolutionary-ecology-analyst.md"
+            ],
+            "skills": [
+                "./skills/natural-selection-analysis",
+                "./skills/adaptation-mechanism-study",
+                "./skills/ecological-interaction-research"
             ]
         }
     ]

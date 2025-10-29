@@ -1,7 +1,7 @@
 ---
 name: 时间动态分析技能
 description: 专门用于分析专家思想发展时间轨迹的高级分析技能。通过时间序列分析理解专家理论的演化过程、关键转折点、生涯阶段划分和影响力扩散模式。使用sequentialthinking进行深度时间推理，重建专家思想的历史发展脉络。
-allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_europe_pmc, mcp__article_mcp__search_arxiv_papers, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references_by_doi, mcp__article_mcp__get_similar_articles, mcp__bl_aritcle_mcp__search_europe_pmc, mcp__bl_aritcle_mcp__search_arxiv_papers, mcp__bl_aritcle_mcp__get_article_details, mcp__bl_aritcle_mcp__get_references_by_doi, mcp__bl_aritcle_mcp__get_similar_articles, mcp__sequentialthinking__sequentialthinking
+allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references, mcp__sequentialthinking__sequentialthinking
 ---
 
 # ⏰ 时间动态分析技能
