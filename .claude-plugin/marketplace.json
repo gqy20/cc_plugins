@@ -48,9 +48,6 @@
             "agents": [
                 "./agents/evolutionary-biology-analyst.md"
             ],
-            "templates": [
-                "./templates/expert_analysis_report_template.md"
-            ],
             "skills": [
                 "./skills/search-term-optimization",
                 "./skills/academic-literature-analysis",
@@ -80,11 +77,6 @@
             ],
             "category": "expert-advisor",
             "strict": true,
-            "commands": [
-                "./commands/ask-hybrid-expert.md",
-                "./commands/analyze-hybrid-origin.md",
-                "./commands/design-speciation-research.md"
-            ],
             "agents": [
                 "./agents/hybrid-speciation-analyst.md"
             ],
@@ -116,11 +108,6 @@
             ],
             "category": "expert-advisor",
             "strict": true,
-            "commands": [
-                "./commands/ask-breeding-expert.md",
-                "./commands/design-breeding-program.md",
-                "./commands/evaluate-variety-potential.md"
-            ],
             "agents": [
                 "./agents/crop-breeding-genomics-analyst.md"
             ],
@@ -152,11 +139,6 @@
             ],
             "category": "expert-advisor",
             "strict": true,
-            "commands": [
-                "./commands/ask-evolutionary-ecologist.md",
-                "./commands/analyze-adaptation-pattern.md",
-                "./commands/design-ecological-experiment.md"
-            ],
             "agents": [
                 "./agents/evolutionary-ecology-analyst.md"
             ],
