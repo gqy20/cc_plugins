@@ -1,138 +1,27 @@
 {
-  "$schema": "../../plugin-schema-template.json",
-  "name": "evolutionary-biology-expert",
-  "version": "0.1.1",
-  "description": "Enhanced expert analysis system for evolutionary biology researchers. Features optimized intelligent agent with semantic variable template, modular design, and quantitative quality control for comprehensive thought map reconstruction and academic network analysis.",
-  "type": "expert-advisor",
-  "category": "research",
-
-  "author": {
-    "name": "qingyu_ge",
-    "email": "qingyu.ge@example.com",
-    "url": "https://github.com/gqy20"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gqy20/cc_plugins"
-  },
-
-  "license": "MIT",
-  "homepage": "https://github.com/gqy20/cc_plugins/tree/main/plugins/evolutionary-biology-expert",
-
-  "keywords": [
-    "evolutionary-biology",
-    "expert-analysis",
-    "academic-network",
-    "literature-review",
-    "research-impact",
-    "knowledge-mapping",
-    "thought-map-reconstruction"
-  ],
-
-  "compatibility": {
-    "claude_code_version": ">=2.0.0",
-    "platforms": ["linux", "macos", "windows"],
-    "mcp_servers": [
-      {
-        "name": "article-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "多源学术文献检索工具",
-        "installation": "claude mcp add article-mcp uvx article-mcp server"
-      },
-      {
-        "name": "sequentialthinking",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "结构化思考分析工具",
-        "installation": "claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest"
-      },
-      {
-        "name": "mediawiki-mcp-server",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "维基百科信息获取工具",
-        "installation": "claude mcp add mediawiki-mcp-server npx @professional-wiki/mediawiki-mcp-server@latest"
-      },
-      {
-        "name": "playwright",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "网页分析和数据抓取工具",
-        "installation": "claude mcp add playwright npx @playwright/mcp@latest --browser chrome --headless"
-      }
-    ]
-  },
-
-  "environment": {
-    "variables": [
-      {
-        "name": "EASYSCHOLAR_SECRET_KEY",
-        "description": "期刊质量评估API密钥，提升分析精度",
-        "required": false,
-        "default": null,
-        "usage": "export EASYSCHOLAR_SECRET_KEY=your_api_key_here"
-      }
-    ]
-  },
-
-  "entry_points": {
-    "agents": [
-      "./agents/evolutionary-biology-analyst.md"
+    "name": "evolutionary-biology-expert",
+    "version": "0.1.1",
+    "description": "Expert analysis system for evolutionary biology researchers with thought map reconstruction and academic network analysis capabilities.",
+    "author": "qingyu_ge",
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "category": "research",
+    "keywords": [
+        "evolutionary-biology",
+        "expert-analysis",
+        "academic-network",
+        "literature-review",
+        "research-impact"
     ],
-    "skills": [
-      "./skills/academic-literature-analysis/SKILL.md",
-      "./skills/search-term-optimization/SKILL.md",
-      "./skills/six-dimensions-analysis/SKILL.md",
-      "./skills/data-integration-formatting/SKILL.md"
-    ]
-  },
-
-  "dependencies": {
-    "plugins": [],
-    "system": ["curl", "git", "find", "grep"]
-  },
-
-  "configuration": {
-    "strict_mode": true,
-    "progressive_disclosure": true,
-    "token_optimization": true,
-    "analysis_depth": "comprehensive",
-    "quality_control": "quantitative"
-  },
-
-  "quality_metrics": {
-    "minimum_literature_count": 30,
-    "core_journal_percentage": 0.4,
-    "relevance_threshold": 0.6,
-    "critical_thinking_required": true,
-    "multi_perspective_analysis": true
-  },
-
-  "analysis_framework": {
-    "dimensions": [
-      "时间动态分析",
-      "背景感知分析",
-      "专家网络分析",
-      "批判性思维分析",
-      "方法论分析",
-      "影响力分析"
-    ],
-    "thinking_stages": 6,
-    "verification_required": true
-  },
-
-  "metadata": {
-    "total_skills": 4,
-    "total_agents": 1,
-    "last_updated": "2025-10-30",
-    "documentation": "./README.md",
-    "templates": "./templates/",
-    "standards": null,
-    "changelog": {
-      "0.1.1": "优化六维度分析框架，增强质量控制机制",
-      "0.1.0": "初始版本，包含基础专家分析功能"
+    "entry_points": {
+        "agents": ["./agents/evolutionary-biology-analyst.md"],
+        "skills": [
+            "./skills/academic-literature-analysis.md",
+            "./skills/search-term-optimization.md",
+            "./skills/six-dimensions-analysis.md",
+            "./skills/data-integration-formatting.md"
+        ],
+        "commands": ["./commands/evo-analyze.md"]
     }
-  }
 }

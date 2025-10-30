@@ -1,97 +1,26 @@
 {
-  "$schema": "../../plugin-schema-template.json",
-  "name": "hybrid-speciation-expert",
-  "version": "0.1.0",
-  "description": "Expert consultant specializing in hybrid speciation mechanisms, genomic introgression analysis, and reproductive isolation evolution. Provides professional guidance on species formation theory and research design.",
-  "type": "expert-advisor",
-  "category": "evolutionary-biology",
-
-  "author": {
-    "name": "qingyu_ge",
-    "email": "qingyu.ge@example.com",
-    "url": "https://github.com/gqy20"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gqy20/cc_plugins"
-  },
-
-  "license": "MIT",
-  "homepage": "https://github.com/gqy20/cc_plugins/tree/main/plugins/hybrid-speciation-expert",
-
-  "keywords": [
-    "hybrid-speciation",
-    "expert-system",
-    "evolutionary-biology",
-    "genomics",
-    "introgression",
-    "species-formation",
-    "reproductive-isolation"
-  ],
-
-  "compatibility": {
-    "claude_code_version": ">=2.0.0",
-    "platforms": ["linux", "macos", "windows"],
-    "mcp_servers": [
-      {
-        "name": "article-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "学术文献检索工具",
-        "installation": "claude mcp add article-mcp uvx article-mcp server"
-      },
-      {
-        "name": "genome-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "基因组数据分析工具",
-        "installation": "claude mcp add genome-mcp npx genome-mcp-server"
-      }
-    ]
-  },
-
-  "environment": {
-    "variables": []
-  },
-
-  "entry_points": {
-    "agents": [
-      "./agents/hybrid-speciation-analyst.md"
+    "name": "hybrid-speciation-expert",
+    "version": "0.1.0",
+    "description": "Expert consultant specializing in hybrid speciation mechanisms, genomic introgression analysis, and reproductive isolation evolution.",
+    "author": "qingyu_ge",
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "category": "expert-advisor",
+    "keywords": [
+        "hybrid-speciation",
+        "expert-system",
+        "evolutionary-biology",
+        "genomics",
+        "introgression"
     ],
-    "skills": [
-      "./skills/hybrid-origin-analysis/SKILL.md",
-      "./skills/gene-flow-mapping/SKILL.md",
-      "./skills/speciation-mechanism-advising/SKILL.md"
-    ]
-  },
-
-  "dependencies": {
-    "plugins": [],
-    "system": ["curl", "git"]
-  },
-
-  "configuration": {
-    "strict_mode": true,
-    "progressive_disclosure": true,
-    "token_optimization": true
-  },
-
-  "quality_metrics": {
-    "minimum_literature_count": 20,
-    "core_journal_percentage": 0.3,
-    "relevance_threshold": 0.5
-  },
-
-  "metadata": {
-    "total_skills": 3,
-    "total_agents": 1,
-    "last_updated": "2025-10-30",
-    "documentation": "./README.md",
-    "templates": "./templates/",
-    "standards": "./standards/",
-    "changelog": {
-      "0.1.0": "初始版本，包含杂交物种形成专家分析功能"
+    "entry_points": {
+        "agents": ["./agents/hybrid-speciation-analyst.md"],
+        "skills": [
+            "./skills/hybrid-origin-analysis.md",
+            "./skills/gene-flow-mapping.md",
+            "./skills/speciation-mechanism-advising.md"
+        ],
+        "commands": ["./commands/hybrid-analyze.md"]
     }
-  }
 }

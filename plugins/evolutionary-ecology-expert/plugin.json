@@ -1,98 +1,26 @@
 {
-  "$schema": "../../plugin-schema-template.json",
-  "name": "evolutionary-ecology-expert",
-  "version": "0.1.1",
-  "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions. Provides professional insights into evolutionary dynamics and experimental design.",
-  "type": "expert-advisor",
-  "category": "ecology",
-
-  "author": {
-    "name": "qingyu_ge",
-    "email": "qingyu.ge@example.com",
-    "url": "https://github.com/gqy20"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gqy20/cc_plugins"
-  },
-
-  "license": "MIT",
-  "homepage": "https://github.com/gqy20/cc_plugins/tree/main/plugins/evolutionary-ecology-expert",
-
-  "keywords": [
-    "evolutionary-ecology",
-    "expert-system",
-    "natural-selection",
-    "adaptation",
-    "ecological-interactions",
-    "evolutionary-dynamics",
-    "experimental-design"
-  ],
-
-  "compatibility": {
-    "claude_code_version": ">=2.0.0",
-    "platforms": ["linux", "macos", "windows"],
-    "mcp_servers": [
-      {
-        "name": "article-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "生态学文献检索工具",
-        "installation": "claude mcp add article-mcp uvx article-mcp server"
-      },
-      {
-        "name": "sequentialthinking",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "结构化生态分析思考工具",
-        "installation": "claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest"
-      }
-    ]
-  },
-
-  "environment": {
-    "variables": []
-  },
-
-  "entry_points": {
-    "agents": [
-      "./agents/evolutionary-ecology-analyst.md"
+    "name": "evolutionary-ecology-expert",
+    "version": "0.1.1",
+    "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions.",
+    "author": "qingyu_ge",
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "category": "expert-advisor",
+    "keywords": [
+        "evolutionary-ecology",
+        "expert-system",
+        "natural-selection",
+        "adaptation",
+        "ecological-interactions"
     ],
-    "skills": [
-      "./skills/natural-selection-analysis/SKILL.md",
-      "./skills/adaptation-mechanism-study/SKILL.md",
-      "./skills/ecological-interaction-research/SKILL.md"
-    ]
-  },
-
-  "dependencies": {
-    "plugins": [],
-    "system": ["curl", "git"]
-  },
-
-  "configuration": {
-    "strict_mode": true,
-    "progressive_disclosure": true,
-    "token_optimization": true
-  },
-
-  "quality_metrics": {
-    "minimum_literature_count": 20,
-    "core_journal_percentage": 0.3,
-    "relevance_threshold": 0.5
-  },
-
-  "metadata": {
-    "total_skills": 3,
-    "total_agents": 1,
-    "last_updated": "2025-10-30",
-    "documentation": "./README.md",
-    "templates": "./templates/",
-    "standards": "./standards/",
-    "changelog": {
-      "0.1.1": "优化生态实验设计功能",
-      "0.1.0": "初始版本，包含进化生态学专家分析功能"
+    "entry_points": {
+        "agents": ["./agents/evolutionary-ecology-analyst.md"],
+        "skills": [
+            "./skills/natural-selection-analysis.md",
+            "./skills/adaptation-mechanism-study.md",
+            "./skills/ecological-interaction-research.md"
+        ],
+        "commands": ["./commands/eco-analyze.md"]
     }
-  }
 }

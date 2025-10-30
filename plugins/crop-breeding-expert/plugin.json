@@ -1,97 +1,26 @@
 {
-  "$schema": "../../plugin-schema-template.json",
-  "name": "crop-breeding-expert",
-  "version": "0.1.0",
-  "description": "Expert consultant specializing in crop variety improvement, molecular breeding techniques, and hybrid breeding strategies. Provides practical guidance on breeding program design and variety development.",
-  "type": "expert-advisor",
-  "category": "agricultural-science",
-
-  "author": {
-    "name": "qingyu_ge",
-    "email": "qingyu.ge@example.com",
-    "url": "https://github.com/gqy20"
-  },
-
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gqy20/cc_plugins"
-  },
-
-  "license": "MIT",
-  "homepage": "https://github.com/gqy20/cc_plugins/tree/main/plugins/crop-breeding-expert",
-
-  "keywords": [
-    "crop-breeding",
-    "expert-system",
-    "molecular-breeding",
-    "genomic-selection",
-    "hybrid-breeding",
-    "variety-improvement",
-    "agricultural-research"
-  ],
-
-  "compatibility": {
-    "claude_code_version": ">=2.0.0",
-    "platforms": ["linux", "macos", "windows"],
-    "mcp_servers": [
-      {
-        "name": "article-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "农业科学文献检索工具",
-        "installation": "claude mcp add article-mcp uvx article-mcp server"
-      },
-      {
-        "name": "genome-mcp",
-        "version": ">=1.0.0",
-        "required": true,
-        "description": "作物基因组数据分析工具",
-        "installation": "claude mcp add genome-mcp npx genome-mcp-server"
-      }
-    ]
-  },
-
-  "environment": {
-    "variables": []
-  },
-
-  "entry_points": {
-    "agents": [
-      "./agents/crop-breeding-genomics-analyst.md"
+    "name": "crop-breeding-expert",
+    "version": "0.1.0",
+    "description": "Expert consultant specializing in crop variety improvement, molecular breeding techniques, and hybrid breeding strategies.",
+    "author": "qingyu_ge",
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "category": "expert-advisor",
+    "keywords": [
+        "crop-breeding",
+        "expert-system",
+        "molecular-breeding",
+        "genomic-selection",
+        "hybrid-breeding"
     ],
-    "skills": [
-      "./skills/breeding-program-design/SKILL.md",
-      "./skills/variety-improvement-strategy/SKILL.md",
-      "./skills/molecular-breeding-consultation/SKILL.md"
-    ]
-  },
-
-  "dependencies": {
-    "plugins": [],
-    "system": ["curl", "git"]
-  },
-
-  "configuration": {
-    "strict_mode": true,
-    "progressive_disclosure": true,
-    "token_optimization": true
-  },
-
-  "quality_metrics": {
-    "minimum_literature_count": 15,
-    "core_journal_percentage": 0.3,
-    "relevance_threshold": 0.5
-  },
-
-  "metadata": {
-    "total_skills": 3,
-    "total_agents": 1,
-    "last_updated": "2025-10-30",
-    "documentation": "./README.md",
-    "templates": "./templates/",
-    "standards": "./standards/",
-    "changelog": {
-      "0.1.0": "初始版本，包含作物育种专家咨询功能"
+    "entry_points": {
+        "agents": ["./agents/crop-breeding-genomics-analyst.md"],
+        "skills": [
+            "./skills/breeding-program-design.md",
+            "./skills/variety-improvement-strategy.md",
+            "./skills/molecular-breeding-consultation.md"
+        ],
+        "commands": ["./commands/breed-consult.md"]
     }
-  }
 }
