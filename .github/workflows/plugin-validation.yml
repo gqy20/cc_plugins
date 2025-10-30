@@ -1,0 +1,30 @@
+name: Plugin Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '.claude-plugin/**'
+      - 'plugins/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '.claude-plugin/**'
+      - 'plugins/**'
+
+jobs:
+  validate:
+    name: Validate Plugin Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install Claude Code CLI
+      run: |
+        curl -fsSL https://claude.ai/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Validate marketplace.json
+      run: claude plugin validate .claude-plugin/marketplace.json
