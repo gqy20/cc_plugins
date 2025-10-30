@@ -7,13 +7,13 @@
     },
     "metadata": {
         "description": "Specialized collection of expert advisor plugins for evolutionary biology, crop breeding, and ecology research. Provides domain-expert level consultation and analysis capabilities.",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "total_plugins": 4,
         "total_agents": 4,
-        "total_skills": 9,
-        "last_updated": "2025-10-29",
+        "total_skills": 13,
+        "last_updated": "2025-10-30",
         "compatibility": {
-            "claude_code_version": ">=1.0.0",
+            "claude_code_version": ">=2.0.0",
             "platforms": ["linux", "macos", "windows"]
         },
         "installation": {
@@ -26,8 +26,8 @@
         {
             "name": "evolutionary-biology-expert",
             "source": "./plugins/evolutionary-biology-expert",
-            "description": "Comprehensive expert analysis system for evolutionary biology researchers. Reconstructs thought maps, analyzes academic networks, and evaluates research impact through advanced literature mining and network analysis techniques.",
-            "version": "0.1.0",
+            "description": "Enhanced expert analysis system for evolutionary biology researchers. Features optimized intelligent agent with semantic variable template, modular design, and quantitative quality control for comprehensive thought map reconstruction and academic network analysis.",
+            "version": "0.1.1",
             "author": {
                 "name": "qingyu_ge",
                 "url": "https://github.com/gqy20"
@@ -45,21 +45,17 @@
             ],
             "category": "research",
             "strict": true,
-            "commands": [
-                "./commands/analyze-evolutionary-expert.md"
-            ],
             "agents": [
                 "./agents/evolutionary-biology-analyst.md"
             ],
+            "templates": [
+                "./templates/expert_analysis_report_template.md"
+            ],
             "skills": [
-                "./skills/expert-network-mapping",
-                "./skills/academic-literature-analysis",
                 "./skills/search-term-optimization",
-                "./skills/google-scholar-analysis",
-                "./skills/temporal-dynamics-analysis",
-                "./skills/critical-thinking-analysis",
-                "./skills/context-aware-analysis",
-                "./skills/reference-formatting"
+                "./skills/academic-literature-analysis",
+                "./skills/six-dimensions-analysis",
+                "./skills/data-integration-formatting"
             ]
         },
         {
@@ -138,7 +134,7 @@
             "name": "evolutionary-ecology-expert",
             "source": "./plugins/evolutionary-ecology-expert",
             "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions. Provides professional insights into evolutionary dynamics and experimental design.",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "author": {
                 "name": "qingyu_ge",
                 "url": "https://github.com/gqy20"
