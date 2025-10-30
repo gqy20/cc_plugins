@@ -23,8 +23,8 @@ jobs:
 
     - name: Install Claude Code CLI
       run: |
-        curl -fsSL https://claude.ai/install.sh | sh
-        echo "$HOME/.local/bin" >> $GITHUB_PATH
+        npm install -g @anthropic-ai/claude-code
+        echo "$(npm config get prefix)/bin" >> $GITHUB_PATH
 
     - name: Validate marketplace.json
       run: claude plugin validate .claude-plugin/marketplace.json
