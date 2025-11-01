@@ -3,6 +3,10 @@
     "name": "cc_plugins",
     "version": "0.1.1",
     "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, and crop breeding",
+    "metadata": {
+        "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, and crop breeding",
+        "summary": "Professional expert advisor plugins for evolutionary biology research and analysis"
+    },
     "owner": {
         "name": "gqy20",
         "email": "qingyuge@foxmail.com"
