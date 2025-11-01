@@ -1,5 +1,12 @@
 {
+    "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
     "name": "cc_plugins",
+    "version": "0.1.1",
+    "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, and crop breeding",
+    "owner": {
+        "name": "gqy20",
+        "email": "qingyuge@foxmail.com"
+    },
     "plugins": [
         {
             "name": "evolutionary-biology-expert",
