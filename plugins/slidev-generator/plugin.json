@@ -1,0 +1,24 @@
+{
+    "name": "slidev-generator",
+    "version": "0.1.0",
+    "description": "Convert Markdown files to Slidev presentations and export to PDF/HTML",
+    "author": "qingyu_ge",
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "category": "utility",
+    "keywords": [
+        "slidev",
+        "presentation",
+        "markdown",
+        "pdf",
+        "slides"
+    ],
+    "entry_points": {
+        "agents": ["./agents/slidev-converter.md"],
+        "skills": [
+            "./skills/md-to-slides.md"
+        ],
+        "commands": ["./commands/md-to-slidev.md"]
+    }
+}

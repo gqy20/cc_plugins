@@ -35,6 +35,12 @@
             "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions.",
             "source": "./plugins/evolutionary-ecology-expert",
             "category": "expert-advisor"
+        },
+        {
+            "name": "slidev-generator",
+            "description": "Convert Markdown files to Slidev presentations and export to PDF/HTML with intelligent theme selection.",
+            "source": "./plugins/slidev-generator",
+            "category": "utility"
         }
     ]
 }
