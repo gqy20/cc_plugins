@@ -140,8 +140,8 @@ jobs:
                     if jq empty "$plugin_json"; then
                       echo "✅ plugin.json is valid JSON"
 
-                      # 检查必需字段
-                      required_fields=("name" "version" "description" "category" "author")
+                      # 检查必需字段（与 .pre-commit-config.yaml 保持一致）
+                      required_fields=("name" "version" "description" "author")
 
                       all_valid=true
                       for field in "${required_fields[@]}"; do
@@ -152,6 +152,32 @@ jobs:
                           all_valid=false
                         fi
                       done
+
+                      # 检查 author 字段类型和内容
+                      author_type=$(jq -r ".author | type" "$plugin_json" 2>/dev/null || echo "null")
+                      if [ "$author_type" != "object" ]; then
+                        echo "❌ author must be an object type {\"name\": \"...\", \"email\": \"...\"}"
+                        all_valid=false
+                      else
+                        author_name=$(jq -r ".author.name" "$plugin_json" 2>/dev/null || echo "")
+                        if [ "$author_name" = "" ] || [ "$author_name" = "null" ]; then
+                          echo "❌ author.name cannot be empty"
+                          all_valid=false
+                        else
+                          echo "✅ author.name is valid"
+                        fi
+                      fi
+
+                      # 检查不应有的字段（与 .pre-commit-config.yaml 保持一致）
+                      if jq -e ".category" "$plugin_json" >/dev/null 2>&1; then
+                        echo "❌ Should not have category field"
+                        all_valid=false
+                      fi
+
+                      if jq -e ".entry_points" "$plugin_json" >/dev/null 2>&1; then
+                        echo "❌ Should not have entry_points field, use agents/skills/commands directly"
+                        all_valid=false
+                      fi
 
                       # 检查版本格式
                       version=$(jq -r '.version' "$plugin_json")
