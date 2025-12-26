@@ -1,12 +1,14 @@
 {
     "name": "crop-breeding-expert",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Expert consultant specializing in crop variety improvement, molecular breeding techniques, and hybrid breeding strategies.",
-    "author": "qingyu_ge",
+    "author": {
+        "name": "qingyu_ge",
+        "email": "qingyuge@foxmail.com"
+    },
     "license": "MIT",
     "homepage": "https://github.com/gqy20/cc_plugins",
     "repository": "https://github.com/gqy20/cc_plugins",
-    "category": "expert-advisor",
     "keywords": [
         "crop-breeding",
         "expert-system",
@@ -14,13 +16,11 @@
         "genomic-selection",
         "hybrid-breeding"
     ],
-    "entry_points": {
-        "agents": ["./agents/crop-breeding-genomics-analyst.md"],
-        "skills": [
-            "./skills/breeding-program-design.md",
-            "./skills/variety-improvement-strategy.md",
-            "./skills/molecular-breeding-consultation.md"
-        ],
-        "commands": ["./commands/breed-consult.md"]
-    }
+    "agents": ["./agents/crop-breeding-genomics-analyst.md"],
+    "skills": [
+        "./skills/breeding-program-design.md",
+        "./skills/variety-improvement-strategy.md",
+        "./skills/molecular-breeding-consultation.md"
+    ],
+    "commands": ["./commands/breed-consult.md"]
 }

@@ -1,12 +1,14 @@
 {
     "name": "evolutionary-biology-expert",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Expert analysis system for evolutionary biology researchers with thought map reconstruction and academic network analysis capabilities.",
-    "author": "qingyu_ge",
+    "author": {
+        "name": "qingyu_ge",
+        "email": "qingyuge@foxmail.com"
+    },
     "license": "MIT",
     "homepage": "https://github.com/gqy20/cc_plugins",
     "repository": "https://github.com/gqy20/cc_plugins",
-    "category": "research",
     "keywords": [
         "evolutionary-biology",
         "expert-analysis",
@@ -14,14 +16,12 @@
         "literature-review",
         "research-impact"
     ],
-    "entry_points": {
-        "agents": ["./agents/evolutionary-biology-analyst.md"],
-        "skills": [
-            "./skills/academic-literature-analysis.md",
-            "./skills/search-term-optimization.md",
-            "./skills/six-dimensions-analysis.md",
-            "./skills/data-integration-formatting.md"
-        ],
-        "commands": ["./commands/evo-analyze.md"]
-    }
+    "agents": ["./agents/evolutionary-biology-analyst.md"],
+    "skills": [
+        "./skills/academic-literature-analysis.md",
+        "./skills/search-term-optimization.md",
+        "./skills/six-dimensions-analysis.md",
+        "./skills/data-integration-formatting.md"
+    ],
+    "commands": ["./commands/evo-analyze.md"]
 }

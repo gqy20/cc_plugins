@@ -1,12 +1,14 @@
 {
     "name": "evolutionary-ecology-expert",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions.",
-    "author": "qingyu_ge",
+    "author": {
+        "name": "qingyu_ge",
+        "email": "qingyuge@foxmail.com"
+    },
     "license": "MIT",
     "homepage": "https://github.com/gqy20/cc_plugins",
     "repository": "https://github.com/gqy20/cc_plugins",
-    "category": "expert-advisor",
     "keywords": [
         "evolutionary-ecology",
         "expert-system",
@@ -14,13 +16,11 @@
         "adaptation",
         "ecological-interactions"
     ],
-    "entry_points": {
-        "agents": ["./agents/evolutionary-ecology-analyst.md"],
-        "skills": [
-            "./skills/natural-selection-analysis.md",
-            "./skills/adaptation-mechanism-study.md",
-            "./skills/ecological-interaction-research.md"
-        ],
-        "commands": ["./commands/eco-analyze.md"]
-    }
+    "agents": ["./agents/evolutionary-ecology-analyst.md"],
+    "skills": [
+        "./skills/natural-selection-analysis.md",
+        "./skills/adaptation-mechanism-study.md",
+        "./skills/ecological-interaction-research.md"
+    ],
+    "commands": ["./commands/eco-analyze.md"]
 }
