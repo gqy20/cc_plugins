@@ -1,11 +1,11 @@
 {
     "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
     "name": "cc_plugins",
-    "version": "0.1.3",
-    "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, and crop breeding",
+    "version": "0.1.4",
+    "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools",
     "metadata": {
-        "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, and crop breeding",
-        "summary": "Professional expert advisor plugins for evolutionary biology research and analysis"
+        "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools",
+        "summary": "Professional expert advisor plugins for evolutionary biology research and analysis with visualization capabilities"
     },
     "owner": {
         "name": "gqy20",
@@ -40,6 +40,12 @@
             "name": "slidev-generator",
             "description": "Convert Markdown files to Slidev presentations and export to PDF/HTML with intelligent theme selection.",
             "source": "./plugins/slidev-generator",
+            "category": "utility"
+        },
+        {
+            "name": "infographic-viz",
+            "description": "Create beautiful infographics using AntV Infographic framework with support for timelines, charts, comparisons, and hierarchical visualizations.",
+            "source": "./plugins/infographic-viz",
             "category": "utility"
         }
     ]

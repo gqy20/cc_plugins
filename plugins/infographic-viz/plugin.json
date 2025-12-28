@@ -1,0 +1,23 @@
+{
+    "name": "infographic-viz",
+    "version": "0.1.0",
+    "description": "Create beautiful infographics using AntV Infographic framework",
+    "author": {
+        "name": "qingyu_ge",
+        "email": "qingyuge@foxmail.com"
+    },
+    "license": "MIT",
+    "homepage": "https://github.com/gqy20/cc_plugins",
+    "repository": "https://github.com/gqy20/cc_plugins",
+    "keywords": [
+        "infographic",
+        "visualization",
+        "antv",
+        "diagram",
+        "chart"
+    ],
+    "skills": [
+        "./skills/infographic-creation.md"
+    ],
+    "commands": ["./commands/infographic.md"]
+}
