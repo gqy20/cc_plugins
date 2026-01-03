@@ -121,6 +121,8 @@ dependencies:
 | **消息链** | `a.b.c.d.e` | Hide Delegate |
 | **中间人** | 类的大部分方法委托给其他类 | Remove Middle Man |
 | **异曲同工** | 相似函数参数顺序不同 | Uniformize Parameter |
+| **冗余兼容代码** | 为不再支持的版本保留的代码 | Delete Dead Code |
+| **死代码** | 永远不会执行的代码/未使用的导入 | Remove Dead Code |
 
 ---
 
@@ -159,6 +161,8 @@ refactor: 继续重构
 | **Replace Nested Conditional with Guard Clauses** | 卫语句替换嵌套 |
 | **Introduce Factory** | 引入工厂 |
 | **Form Template Method** | 形成模板方法 |
+| **Remove Dead Code** | 删除死代码/未使用代码 |
+| **Delete Compatibility Code** | 删除不再需要的兼容代码 |
 
 ---
 
