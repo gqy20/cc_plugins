@@ -26,6 +26,7 @@ python3 .github/scripts/validate_content.py <plugin>  # 内容质量检查
   - 验证插件结构（plugin.json, README.md, agents/, skills/）
   - 检查文件引用、配置格式、MCP依赖
   - 使用矩阵策略并行验证所有插件
+  - 集成验证阶段确保所有插件整体一致性
 
 ## Git 提交规范
 
@@ -66,8 +67,10 @@ plugins/<plugin-name>/
 
 ### 配置层次
 1. **marketplace.json** - 定义所有插件集合，包含 owner、metadata、plugins 数组
+   - 字段 `category`: 在这里定义 (research, expert-advisor, utility)
+   - 字段 `source`: 插件目录相对路径
 2. **plugin.json** - 单个插件配置，使用扁平结构：
-   - 必需字段: name, version, description, author
+   - 必需字段: name, version, description, author (对象格式)
    - 入口点: agents (数组), skills (数组), commands (数组)
    - 禁止字段: category, entry_points (这些在 marketplace.json 中)
 
@@ -111,8 +114,10 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 | 命令 | 用途 |
 |------|------|
 | `/tdd` | 测试驱动开发流程，增量测试策略 |
+| `/bdd` | 行为驱动开发流程，可执行文档 |
 | `/gh` | GitHub CLI 专家助手，场景化指导 |
 | `/sdr` | 规格驱动开发流程，Git 工作流管理 |
+| `/docs` | 活文档维护，文档健康检查 |
 | `/linus` | 实用主义代码审查与重构 |
 | `/elegant` | 优雅编码与重构规范 |
 | `/squash` | Commit 历史整理与合并 |
@@ -122,6 +127,8 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 - `/tdd` → `/squash`：TDD 产生小 commit → 功能完成后合并
 - `/elegant` + `/tdd`：优雅编码 + 测试驱动
 - `/sdr` → `/gh`：规格驱动 → GitHub 操作
+- `/bdd` + `/tdd`：BDD (验收) + TDD (单元)，双层测试
+- `/docs` + 任何命令：代码变更后更新文档
 
 ## 版本控制
 
@@ -232,3 +239,24 @@ git commit -m "feat: 完整功能描述"
 ## /lint - 代码质量检查
 
 **工具集**：shellcheck, yamllint, ruff, eslint
+
+## /docs - 活文档维护
+
+**核心**：代码即真相，文档跟随代码
+
+- **健康检查**: 检测文档新鲜度、完整性
+- **智能更新**: 根据代码变更自动更新相关文档
+- **质量评分**: 覆盖度、新鲜度、完整性评分
+- **代码阅读深度**: 函数签名、Docstring、测试代码、ADR
+
+**用法**: `/docs` (健康) | `/docs init` | `/docs update` | `/docs score`
+
+## /bdd - 行为驱动开发
+
+**核心**：业务语言描述测试，连接需求与代码
+
+- **Gherkin 语法**: Feature/Scenario/Given/When/Then
+- **可执行文档**: 业务、开发、测试共识
+- **双层测试**: BDD (behave, 验收) + TDD (pytest, 单元)
+
+**用法**: `/bdd` (引导) | `/bdd feature` | `/bdd step` | `/bdd run`
