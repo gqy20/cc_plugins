@@ -114,7 +114,8 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 | `/gh` | GitHub CLI 专家助手，场景化指导 |
 | `/sdr` | 规格驱动开发流程，包含 Git 工作流管理 |
 | `/linus` | 实用主义代码审查与重构 |
-| `/elegant` | 优雅编码与 Git 协作工作流（TDD + 重构 + PR 管理） |
+| `/elegant` | 优雅编码与重构规范 |
+| `/squash` | Commit 历史整理与合并（TDD 小 commit 整理） |
 | `/lint` | 代码质量检查工具集 (shellcheck, yamllint, ruff, eslint) |
 
 ## 版本控制
