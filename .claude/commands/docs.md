@@ -21,12 +21,10 @@ dependencies:
 ## 用法
 
 ```bash
-/docs                       # 默认：显示健康状态
-/docs @docs/architecture.md # 更新指定文档（等同于 update）
-/docs init                  # 初始化文档骨架
-/docs update                # 更新所有过时文档
-/docs update --preview      # 预览变更
-/docs score                 # 质量评分
+/docs                 # 健康检查（默认）
+/docs file            # 更新指定文件
+/docs init            # 初始化文档骨架
+/docs score           # 质量评分
 ```
 
 ---
@@ -45,7 +43,7 @@ dependencies:
 | docs/components.md | ⚠️ 过时 | 今天 | 09:15 | 发现 3 个新模块 |
 | docs/changelog.md | ⚠️ 过时 | 15天前 | - | 有 5 个新 commit |
 
-建议操作：/docs update
+建议操作：/docs docs/architecture.md
 ```
 
 **说明**：
@@ -79,13 +77,13 @@ docs/
     └── data-models.md
 
 ✅ 初始化完成！现在可以运行：
-   /docs        # 查看健康状态
-   /docs update # 更新过时文档
+   /docs                           # 查看健康状态
+   /docs docs/architecture.md       # 更新指定文档
 ```
 
 ---
 
-## update 模式：更新文档
+## 更新模式：更新文档
 
 ### 智能更新
 
@@ -100,14 +98,16 @@ docs/
 | 修改 package.json | README.md | 项目元数据 |
 
 ```bash
-/docs update              # 更新所有过时文档
-/docs update --auto       # 根据最近代码变更智能选择
+/docs                        # 更新所有过时文档（智能选择）
+/docs docs/architecture.md   # 更新指定文档
+/docs --auto                 # 根据最近代码变更智能选择
 ```
 
 ### 预览变更
 
 ```bash
-/docs update --preview
+/docs --preview
+/docs docs/architecture.md --preview
 ```
 
 显示变更预览：
@@ -156,7 +156,7 @@ docs/
 3. docs/api/invalid.md 链接失效
 
 建议操作：
-1. /docs update docs/architecture.md
+1. /docs docs/architecture.md
 2. /docs add-component src/new_module.py
 ```
 
@@ -257,19 +257,20 @@ mtime=$(git log -1 --format="%ct" -- path/to/file); date -d "@$mtime" "+%H:%M"
 
 ```bash
 # 新功能开发
-/sdr          # 创建规格
-/tdd          # 测试驱动开发
-/docs update  # 更新文档
+/sdr               # 创建规格
+/tdd               # 测试驱动开发
+/docs              # 更新文档
 
 # 代码重构
-/linus        # 审查代码
-/elegant      # 重构方案
-/docs update --preview  # 预览文档更新
+/linus             # 审查代码
+/elegant           # 重构方案
+/docs --preview    # 预览文档更新
 
 # 项目初始化
-/init         # 创建 CLAUDE.md
-/docs init    # 初始化文档体系
-/docs score   # 查看健康状态
+/init              # 创建 CLAUDE.md
+/docs init         # 初始化文档体系
+/docs README.md    # 更新 README
+/docs score        # 查看健康状态
 ```
 
 ---
