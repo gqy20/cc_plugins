@@ -1,7 +1,7 @@
 ---
 name: docs
 description: 活文档维护
-version: 0.0.3
+version: 0.0.4
 tags:
   - documentation
   - maintenance
@@ -14,43 +14,146 @@ dependencies:
 
 > **代码即真相，文档跟随代码**
 
-自动分析项目代码，更新 `docs/` 核心文档和 `README.md`
+智能分析项目代码，维护 `docs/` 核心文档和 `README.md`
 
 ---
 
 ## 用法
 
 ```bash
-/docs                        # 更新所有核心文档
-/docs @docs/architecture.md  # 只更新架构文档
-/docs @README.md             # 只更新 README
-/docs @reference/            # 更新所有参考文档
+docs                        # 默认：显示健康状态
+/docs init                 # 初始化文档骨架
+/docs update               # 更新过时文档
+/docs update @docs/architecture.md  # 更新指定文档
+/docs update --preview     # 预览变更
+/docs score                # 质量评分
 ```
 
 ---
 
-## 工作流程
+## 默认模式：健康检查
+
+执行 `/docs` 显示文档健康状态：
 
 ```
-1. 扫描阶段
-   ├── 目录结构
-   ├── 导入关系
-   └── 模块边界
+📊 文档健康状态
 
-2. 分析阶段
-   ├── 新增文件/模块
-   ├── 修改的导出
-   └── 删除的内容
+| 文档 | 状态 | 最后更新 | 相关代码变更 |
+|------|------|----------|-------------|
+| README.md | ✅ 新鲜 | 2天前 | 无 |
+| docs/architecture.md | ⚠️ 过时 | 30天前 | src/auth.py 新增 OAuth |
+| docs/components.md | ❌ 缺失 | - | 发现 3 个新模块 |
+| docs/changelog.md | ⚠️ 过时 | 15天前 | 有 5 个新 commit |
 
-3. 更新阶段
-   ├── README.md
-   ├── docs/changelog.md
-   ├── docs/architecture.md
-   ├── docs/components.md
-   ├── docs/development.md
-   ├── docs/testing.md
-   ├── docs/contributing.md
-   └── docs/reference/（按需）
+建议操作：/docs update
+```
+
+---
+
+## init 模式：初始化文档骨架
+
+当项目缺少 `docs/` 目录时：
+
+```bash
+/docs init
+```
+
+自动创建完整的文档骨架：
+
+```
+📁 创建文档结构
+
+docs/
+├── architecture.md     # 架构设计（从代码分析生成）
+├── components.md       # 组件清单（扫描模块生成）
+├── development.md      # 开发指南（从配置文件提取）
+├── testing.md          # 测试策略（从测试代码推断）
+├── contributing.md     # 贡献指南（使用模板）
+└── reference/          # 参考文档（自动生成）
+    ├── api/
+    ├── configuration.md
+    └── data-models.md
+
+✅ 初始化完成！现在可以运行：
+   /docs        # 查看健康状态
+   /docs update # 更新过时文档
+```
+
+---
+
+## update 模式：更新文档
+
+### 智能更新
+
+根据代码变更自动选择更新目标：
+
+| 代码变更 | 自动更新 | 理由 |
+|----------|----------|------|
+| 新增模块 | components.md | 模块清单 |
+| 修改导入关系 | architecture.md | 依赖关系 |
+| 修改配置文件 | development.md | 环境配置 |
+| 新增测试 | testing.md | 测试覆盖 |
+| 修改 package.json | README.md | 项目元数据 |
+
+```bash
+/docs update              # 更新所有过时文档
+/docs update --auto       # 根据最近代码变更智能选择
+```
+
+### 预览变更
+
+```bash
+/docs update --preview
+```
+
+显示变更预览：
+
+```diff
+# docs/architecture.md
+
+## 模块关系
+
+### src/auth.py
+- **依赖**: `db`, `crypto`
++ **依赖**: `db`, `crypto`, `httpx`
+
++ ### src/oauth_providers.py
++ - **职责**: OAuth 提供商集成
++ - **导出**: `get_provider()`, `exchange_code()`
+```
+
+确认后写入文件。
+
+---
+
+## score 模式：质量评分
+
+```bash
+/docs score
+```
+
+输出：
+
+```
+📊 文档质量评分
+
+| 维度 | 得分 | 目标 | 状态 |
+|------|------|------|------|
+| 覆盖度 | 75% | ≥80% | ⚠️ |
+| 新鲜度 | 60% | ≥70% | ❌ |
+| 完整性 | 85% | ≥80% | ✅ |
+| 链接有效 | 98% | 100% | ⚠️ |
+
+总体评分: C+ (79.5/100)
+
+主要问题：
+1. docs/architecture.md 已过时（30天未更新）
+2. src/new_module.py 无文档
+3. docs/api/invalid.md 链接失效
+
+建议操作：
+1. /docs update docs/architecture.md
+2. /docs add-component src/new_module.py
 ```
 
 ---
@@ -77,232 +180,31 @@ dependencies:
 | `docs/reference/configuration.md` | 配置文件 | 配置项说明 |
 | `docs/reference/data-models.md` | 类型定义 | 数据结构 |
 
-**特点**：可自动生成、可过时、可按需
-
 ---
 
-## 分析策略
+## 工作流程
 
-| 层级 | 方法 | 输出 | 更新目标 |
-|------|------|------|----------|
-| **文件** | glob 扫描 | 目录树 | README.md, components.md |
-| **导入** | AST 分析 | 依赖图 | architecture.md |
-| **配置** | 解析 toml/json | 配置项 | configuration.md |
-| **类型** | 类型注解提取 | 数据结构 | data-models.md |
-
----
-
-## 文档模板
-
-### README.md
-
-```markdown
-# 项目名称
-
-## 概述
-[项目描述]
-
-## 安装
-```bash
-uv install
 ```
+1. 扫描阶段
+   ├── 目录结构
+   ├── 导入关系
+   └── 模块边界
 
-## 快速开始
-```bash
-python -m app.main
+2. 检查阶段
+   ├── 过时检测（mtime 对比）
+   ├── 链接检查
+   └── 覆盖度计算
+
+3. 分析阶段
+   ├── 新增文件/模块
+   ├── 修改的导出
+   └── 删除的内容
+
+4. 更新阶段（需确认）
+   ├── 显示预览
+   ├── 用户确认
+   └── 写入文件
 ```
-
-## 文档
-- 架构: docs/architecture.md
-- 组件: docs/components.md
-- 开发: docs/development.md
-- 贡献: docs/contributing.md
-```
-
-### docs/architecture.md
-
-```markdown
-# 架构设计
-
-## 系统分层
-[分层图]
-
-## 模块关系
-[依赖图]
-
-## 核心概念
-[关键设计]
-```
-
-### docs/components.md
-
-```markdown
-# 组件清单
-
-## 目录结构
-```
-project/
-├── src/
-│   ├── auth.py
-│   └── db.py
-└── tests/
-```
-
-## 核心模块
-
-### src/auth.py
-- **职责**: 用户认证、权限验证
-- **导出**: `authenticate()`, `verify_token()`
-- **依赖**: `db`, `crypto`
-
-### src/db.py
-- **职责**: 数据库连接、查询封装
-- **导出**: `query()`, `execute()`
-- **依赖**: `psycopg2`
-```
-
-### docs/development.md
-
-```markdown
-# 开发指南
-
-## 环境准备
-```bash
-uv sync
-pre-commit install
-```
-
-## 开发工作流
-1. 功能规格: `/sdr`
-2. 测试驱动: `/tdd`
-3. 代码检查: `/lint`
-4. 提交: 按 Conventional Commits
-
-## 工具链
-- 包管理: uv
-- 测试: pytest
-- 代码检查: ruff, mypy
-```
-
-### docs/testing.md
-
-```markdown
-# 测试策略
-
-## 测试金字塔
-- 单元测试: 70% (pytest)
-- 集成测试: 20% (pytest)
-- E2E 测试: 10% (behave)
-
-## 覆盖率要求
-- 核心逻辑: ≥80%
-- 整体: ≥70%
-
-## 运行测试
-```bash
-pytest                 # 单元测试
-behave                 # E2E 测试
-pytest --cov          # 覆盖率
-```
-```
-
-### docs/contributing.md
-
-```markdown
-# 贡献指南
-
-## 报告问题
-使用 GitHub Issues
-
-## 提交代码
-1. Fork 项目
-2. 创建功能分支
-3. 编写测试
-4. 提交 PR
-
-## 代码规范
-- 遵循 PEP 8
-- 测试覆盖率 ≥70%
-- 通过 ruff 和 mypy 检查
-```
-
-### docs/changelog.md
-
-```markdown
-# Changelog
-
-Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
-## [Unreleased]
-
-### Added
-- 新功能
-
-### Changed
-- 变更
-
-### Fixed
-- 修复
-
-## [0.1.0] - 2025-01-03
-
-### Added
-- 初始化项目
-```
-
----
-
-## Git 提交规范
-
-| 场景 | 前缀 | 示例 |
-|------|------|------|
-| 更新核心文档 | `docs:` | `docs: 更新架构文档` |
-| 新增参考文档 | `docs:` | `docs: 添加 API 参考` |
-| 修正过时内容 | `docs:` | `docs: 修正组件清单` |
-
-**注意**：文档变更使用 `docs:` 前缀
-
----
-
-## 维护频率
-
-| 文档 | 频率 | 理由 |
-|------|------|------|
-| `README.md` | 架构变更时 | 项目门面 |
-| `docs/changelog.md` | 每次发布 | 版本历史 |
-| `docs/architecture.md` | 模块关系变更 | 核心理解 |
-| `docs/components.md` | 新增/删除组件 | 导航索引 |
-| `docs/development.md` | 工具链变更 | 开发环境 |
-| `docs/testing.md` | 测试策略变更 | 质量标准 |
-| `docs/contributing.md` | 流程变更 | 贡献门槛 |
-| `docs/reference/` | 代码变更时 | 自动生成 |
-
----
-
-## 文档健康检查
-
-### 内置检查
-
-**过时检测**：对比文档与源代码的修改时间
-- 源代码修改时间 > 文档修改时间 → 标记为需更新
-- 关联规则：`docs/architecture.md` ↔ `src/`, `docs/api/*.md` ↔ 对应模块
-
-**链接检查**：验证 markdown 链接有效性
-- 内部链接：检查文件是否存在
-- 外部链接：检查 HTTP 200
-
-**覆盖度计算**：统计有文档的模块比例
-- 扫描 `src/` 获取所有模块
-- 扫描 `docs/components.md` 统计已文档化模块
-- 覆盖率 = 已文档化 / 总模块
-
-### 阈值
-
-| 指标 | 目标 | 失败标准 |
-|------|------|----------|
-| 覆盖度 | ≥80% | <60% |
-| 新鲜度 | ≥70% | <50% |
-| 链接 | 100% | <95% |
 
 ---
 
@@ -315,24 +217,6 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 | **测试代码** | 边界条件、预期行为 | ⭐⭐⭐⭐ |
 | **ADR（/sdr）** | 设计决策原因 | ⭐⭐⭐⭐⭐ |
 
----
-
-### 提取逻辑
-
-**Docstring**：解析函数/类的文档字符串
-- 提取 Args/Returns/Raises/Note
-- 生成 API 参数说明
-
-**测试代码**：扫描 `tests/` 目录
-- 提取测试函数名 → 用例场景
-- 提取 assert 语句 → 预期行为
-
-**ADR 集成**：读取 `specs/*/adr/*.md`
-- 关联决策到架构文档
-- 补充"为什么"部分
-
----
-
 ### 局限性
 
 - ❌ 无法理解复杂业务逻辑
@@ -340,6 +224,37 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - ❌ 依赖代码质量
 
 **原则**：生成骨架，依赖开发者填充细节
+
+---
+
+## Git 提交规范
+
+| 场景 | 前缀 | 示例 |
+|------|------|------|
+| 更新核心文档 | `docs:` | `docs: 更新架构文档` |
+| 新增参考文档 | `docs:` | `docs: 添加 API 参考` |
+| 修正过时内容 | `docs:` | `docs: 修正组件清单` |
+
+---
+
+## 与其他命令协同
+
+```bash
+# 新功能开发
+/sdr          # 创建规格
+/tdd          # 测试驱动开发
+/docs update  # 更新文档
+
+# 代码重构
+/linus        # 审查代码
+/elegant      # 重构方案
+/docs update --preview  # 预览文档更新
+
+# 项目初始化
+/init         # 创建 CLAUDE.md
+/docs init    # 初始化文档体系
+/docs score   # 查看健康状态
+```
 
 ---
 
