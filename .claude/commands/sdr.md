@@ -1,7 +1,7 @@
 ---
 name: sdr
 description: 规格驱动开发（SDD）流程助手，包含 Git 工作流管理
-version: 0.0.1
+version: 0.0.2
 tags:
   - workflow
   - planning
@@ -62,6 +62,76 @@ dependencies:
 | 实现功能 | `feat:` | `feat: 实现图片上传接口` |
 | 修复问题 | `fix:` | `fix: 修复上传失败bug` |
 | 重构代码 | `refactor:` | `refactor: 优化上传逻辑` |
+
+---
+
+## Git 文件管理策略
+
+### 测试文件管理
+
+| 目录/文件 | Git 管理 | 说明 |
+|-----------|----------|------|
+| **TDD** |||
+| `tests/` | ✅ 提交 | 单元/集成测试 |
+| `conftest.py` | ✅ 提交 | pytest 配置 |
+| `.pytest_cache/` | ❌ 忽略 | pytest 缓存 |
+| **BDD** |||
+| `features/*.feature` | ✅ 提交 | 可执行文档 |
+| `features/steps/*.py` | ✅ 提交 | 步骤定义 |
+| `features/environment.py` | ✅ 提交 | 环境配置 |
+| `.behave/` | ❌ 忽略 | behave 缓存 |
+| `reports/` | ❌ 忽略 | 测试报告 |
+| `features/screenshots/` | ❌ 忽略 | 失败截图 |
+| **通用** |||
+| `.coverage` | ❌ 忽略 | 覆盖率数据 |
+| `htmlcov/` | ❌ 忽略 | 覆盖率报告 |
+| `.env` | ❌ 忽略 | 环境变量（密钥） |
+
+### .gitignore 模板
+
+```gitignore
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.so
+
+# 测试覆盖率
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+
+# TDD (pytest)
+.pytest_cache/
+.cache/
+
+# BDD (behave)
+.behave/
+reports/
+features/screenshots/
+*.log
+
+# 环境变量
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+```
+
+### 规格文档管理
+
+| 目录 | Git 管理 | 说明 |
+|------|----------|------|
+| `specs/` | ✅ 提交 | 完整规格历史 |
+| `specs/*/spec.md` | ✅ 提交 | 功能规格 |
+| `specs/*/plan.md` | ✅ 提交 | 技术计划 |
+| `specs/*/tasks.md` | ✅ 提交 | 任务列表 |
+
+**原则**：`specs/` 是项目的活文档，保留所有历史版本。
 
 ---
 

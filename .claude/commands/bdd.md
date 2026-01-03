@@ -1,7 +1,7 @@
 ---
 name: bdd
 description: 行为驱动开发（BDD）流程助手
-version: 0.0.1
+version: 0.0.2
 tags:
   - bdd
   - testing
@@ -117,7 +117,6 @@ project/
 
 ```python
 from behave import given, when, then
-from pytest import raises
 
 @given('用户在登录页面')
 def step_login_page(context):
@@ -171,14 +170,12 @@ def step_products(context):
 ```python
 from behave.api.fixture import use_fixture_by_tag
 
-# 标签钩子
 def before_feature(context, feature):
     context.fixtures = []
 
 def after_feature(context, feature):
     cleanup_fixtures(context.fixtures)
 
-# 标签 fixtures
 @use_fixture_by_tag
 def browser_fixture(context, browser):
     context.browser = Browser(browser)
@@ -210,9 +207,7 @@ behave --tags=browser        # 只运行 UI 测试
 | 运行全部 | `behave` |
 | 特定文件 | `behave features/login.feature` |
 | 特定场景 | `behave --name="错误密码"` |
-| 格式化输出 | `behave --format=pretty` |
-| 生成报告 | `behave --format=json --outfile=report.json` |
-| 并行执行 | `behave -n 4` |
+| 跳过标签 | `behave --tags=~slow` |
 
 ---
 
@@ -230,9 +225,8 @@ behave --tags=browser        # 只运行 UI 测试
 4. BDD + TDD 都通过 → 完成
 ```
 
-### 7.2 示例
+### 7.2 调用关系
 
-**Feature** (login.feature):
 ```gherkin
 Scenario: 用户使用有效凭证登录
   Given 用户 "alice" 存在
@@ -240,17 +234,16 @@ Scenario: 用户使用有效凭证登录
   Then 登录成功并跳转到首页
 ```
 
-**步骤定义** (login_steps.py):
 ```python
+# 步骤定义调用应用代码
 @when('输入用户名 "{username}" 和密码 "{password}"')
 def step_login(context, username, password):
-    # 调用应用代码
     result = authenticate(username, password)
     context.auth_result = result
 ```
 
-**单元测试** (test_auth.py):
 ```python
+# 单元测试覆盖应用代码
 def test_authenticate_success():
     result = authenticate("alice", "correct")
     assert result.success == True
@@ -268,59 +261,12 @@ def test_authenticate_success():
 
 ---
 
-## 9. 常见模式
+## 9. Python 工具
 
-### 9.1 异常处理
-
-```gherkin
-Scenario: 登录失败
-  When 用户登录
-  Then 抛出 AuthenticationError
+```bash
+uv add behave      # 标准 BDD 框架
+uv add pytest-bdd  # pytest 集成
 ```
-
-```python
-@then('抛出 {error_name}')
-def step_check_exception(context, error_name):
-    with raises(getattr(exceptions, error_name)):
-        context.execute()
-```
-
-### 9.2 异步步骤
-
-```python
-from异步 import async_run
-
-@when('异步处理订单')
-def step_async(context):
-    context.result = async_run(process_order())
-```
-
-### 9.3 Mock 外部依赖
-
-```python
-from unittest.mock import patch
-
-@given('支付服务可用')
-def step_payment_ready(context):
-    context.payment_mock = patch('services.Payment')
-    context.payment_mock.start()
-
-def after_scenario(context):
-    if hasattr(context, 'payment_mock'):
-        context.payment_mock.stop()
-```
-
----
-
-## 10. 最佳实践
-
-| 原则 | 说明 |
-|------|------|
-| **业务语言** | Scenario 应该业务人员能读懂 |
-| **单一职责** | 一个 Scenario 一个行为 |
-| **避免实现细节** | 不描述"点击按钮"而描述"提交订单" |
-| **可执行文档** | Feature 即活文档 |
-| **与 TDD 配合** | BDD 做验收，TDD 做单元 |
 
 ---
 
