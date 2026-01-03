@@ -1,7 +1,7 @@
 ---
 name: docs
 description: 活文档维护
-version: 0.0.1
+version: 0.0.2
 tags:
   - documentation
   - maintenance
@@ -276,6 +276,33 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 | `docs/testing.md` | 测试策略变更 | 质量标准 |
 | `docs/contributing.md` | 流程变更 | 贡献门槛 |
 | `docs/reference/` | 代码变更时 | 自动生成 |
+
+---
+
+## 文档健康检查
+
+### 内置检查
+
+**过时检测**：对比文档与源代码的修改时间
+- 源代码修改时间 > 文档修改时间 → 标记为需更新
+- 关联规则：`docs/architecture.md` ↔ `src/`, `docs/api/*.md` ↔ 对应模块
+
+**链接检查**：验证 markdown 链接有效性
+- 内部链接：检查文件是否存在
+- 外部链接：检查 HTTP 200
+
+**覆盖度计算**：统计有文档的模块比例
+- 扫描 `src/` 获取所有模块
+- 扫描 `docs/components.md` 统计已文档化模块
+- 覆盖率 = 已文档化 / 总模块
+
+### 阈值
+
+| 指标 | 目标 | 失败标准 |
+|------|------|----------|
+| 覆盖度 | ≥80% | <60% |
+| 新鲜度 | ≥70% | <50% |
+| 链接 | 100% | <95% |
 
 ---
 
