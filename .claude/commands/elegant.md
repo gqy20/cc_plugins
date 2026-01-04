@@ -1,7 +1,7 @@
 ---
 name: elegant
 description: 优雅编码与重构规范
-version: 0.0.3
+version: 0.0.5
 tags:
   - elegance
   - refactoring
@@ -50,7 +50,7 @@ dependencies:
 
 | 指标 | 阈值 | 测量方式 |
 |------|------|----------|
-| **McCabe 圈复杂度** | ≤ 10 | `uv run radon cc . -a` |
+| **McCabe 圈复杂度** | ≤ 10 | 见 §7 |
 | **函数长度** | ≤ 20 行 | 不含空行/注释 |
 | **嵌套深度** | ≤ 3 层 | if/for/while 嵌套 |
 | **参数数量** | ≤ 5 个 | 函数/方法参数 |
@@ -76,9 +76,7 @@ dependencies:
 
 | 原则 | 要求 |
 |------|------|
-| **单一职责 (SRP)** | 一个类/函数只有一个改变的理由 |
-| **开闭原则 (OCP)** | 对扩展开放，对修改关闭 |
-| **依赖倒置 (DIP)** | 依赖抽象而非具体实现 |
+| **SOLID** | 单一职责、开闭、里氏替换、接口隔离、依赖倒置（详见 §1） |
 | **组合优于继承** | 优先使用组合 |
 | **显式优于隐式** | 避免魔法，直接表达意图 |
 | **不可变数据** | 优先使用不可变结构 |
@@ -124,6 +122,18 @@ dependencies:
 | **冗余兼容代码** | 为不再支持的版本保留的代码 | Delete Dead Code |
 | **死代码** | 永远不会执行的代码/未使用的导入 | Remove Dead Code |
 
+### 2.6 检测方法
+
+| 目标 | Grep 模式 | 检测内容 |
+|------|-----------|----------|
+| 废弃标记 | `@deprecated\|DEPRECATED` | 明确标记的废弃代码 |
+| 兼容命名 | `compat\|legacy\|backwards` | 兼容性相关变量/函数 |
+| 版本检查 | `version.*<\|sys.version_info` | 版本条件分支 |
+| 兼容导入 | `try:.*import.*except` | try-except 导入兼容 |
+| 平台判断 | `platform.*==\|sys.platform` | 平台兼容逻辑 |
+
+**快速扫描**：`grep -rn "@deprecated\|DEPRECATED\|compat\|legacy\|version.*<\|try:.*import.*except" src/`
+
 ---
 
 ## 3. 重构安全策略
@@ -161,8 +171,7 @@ refactor: 继续重构
 | **Replace Nested Conditional with Guard Clauses** | 卫语句替换嵌套 |
 | **Introduce Factory** | 引入工厂 |
 | **Form Template Method** | 形成模板方法 |
-| **Remove Dead Code** | 删除死代码/未使用代码 |
-| **Delete Compatibility Code** | 删除不再需要的兼容代码 |
+| **Remove Dead/Compatibility Code** | 删除死代码/兼容代码 |
 
 ---
 
@@ -255,91 +264,37 @@ refactor: 继续重构
 ```python
 # Before: 60 行，复杂度 15
 def process_order(order_id):
-    order = db.query(Order, order_id)
-    if not order:
-        return {"error": "Order not found"}
-
-    # 验证库存（15 行嵌套）
+    # 验证库存（4 层嵌套）
     for item in order.items:
-        product = db.query(Product, item.product_id)
-        if not product:
-            return {"error": f"Product {item.product_id} not found"}
         if product.stock < item.quantity:
             if product.backorder_allowed:
                 item.backorder = True
-                item.backorder_date = calculate_date()
             else:
-                return {"error": f"Product {product.id} out of stock"}
-
-    # 计算折扣（10 行嵌套条件）
-    discount = 0
+                return error
+    # 计算折扣（3 层嵌套）
     if order.user:
         if order.user.is_vip:
             if order.user.level >= 3:
                 discount = 0.3
-            else:
-                discount = 0.2
-        elif order.coupon:
-            if order.coupon.is_valid():
-                discount = order.coupon.discount_rate
+    # ... 共 60 行
 
-    order.discount = discount
-    order.total = order.subtotal * (1 - discount)
-    order.status = "processing"
-    db.save(order)
-
-    if order.user and order.user.email_notification:
-        send_email(order.user.email, "Order confirmed")
-
-    return {"success": True, "order": order}
-
-
-# After: 18 行，复杂度 3
+# After: 3 个函数，各 10-18 行，复杂度 3
 def validate_item_stock(item: OrderItem) -> tuple[bool, str | None]:
-    product = db.query(Product, item.product_id)
-    if not product:
-        return False, f"Product {item.product_id} not found"
-    if product.stock < item.quantity:
-        if product.backorder_allowed:
-            item.backorder = True
-            item.backorder_date = calculate_date()
-            return True, None
-        return False, f"Product {product.id} out of stock"
-    return True, None
-
+    """提取库存验证逻辑，返回 (是否有效, 错误信息)"""
+    ...
 
 def calculate_order_discount(order: Order) -> float:
-    user_discount = 0
-    if order.user and order.user.is_vip:
-        user_discount = 0.3 if order.user.level >= 3 else 0.2
-
-    coupon_discount = 0
-    if order.coupon and order.coupon.is_valid():
-        coupon_discount = order.coupon.discount_rate
-
-    return max(user_discount, coupon_discount)
-
+    """提取折扣计算逻辑，返回最大折扣率"""
+    ...
 
 def process_order(order_id: int) -> dict:
-    order = db.query(Order, order_id)
-    if not order:
-        return {"error": "Order not found"}
-
+    """主函数：调用上述函数，18 行，复杂度 3"""
     for item in order.items:
         is_valid, error = validate_item_stock(item)
         if not is_valid:
             return {"error": error}
-
     discount = calculate_order_discount(order)
-    order.discount = discount
-    order.total = order.subtotal * (1 - discount)
-    order.status = "processing"
-    db.save(order)
-
-    if order.user and order.user.email_notification:
-        send_email(order.user.email, "Order confirmed")
-
-    return {"success": True, "order": order}
+    # ... 保存订单、发送通知
 ```
 
 **效果**：
