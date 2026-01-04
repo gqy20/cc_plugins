@@ -1,7 +1,7 @@
 ---
 name: squash
 description: Commit 历史整理与合并
-version: 0.0.1
+version: 0.0.2
 tags:
   - git
   - rebase
@@ -22,11 +22,13 @@ dependencies:
 ## 快捷命令
 
 ```bash
-/squash              # 交互式引导
+/squash              # 交互式引导（自动安全检查）
 /squash feature       # 合并单个功能的所有 commit
 /squash interactive   # 交互式 rebase
 /squash abort         # 中止 rebase
 ```
+
+**⚠️ 安全警告**：Squash 仅适用于**本地未推送的 commit**。如果 commit 已推送，会重写远程历史，这是危险操作。
 
 ---
 
@@ -71,6 +73,51 @@ refactor: 优化逻辑
 
 ## 2. 安全检查
 
+### 2.0 强制安全检查
+
+执行 squash 前，**必须**通过以下检查：
+
+#### 检查脚本
+
+```bash
+# 检查 1：不在保护分支
+PROTECTED_BRANCHES="main master develop"
+CURRENT_BRANCH=$(git branch --show-current)
+if [[ " $PROTECTED_BRANCHES " =~ " $CURRENT_BRANCH " ]]; then
+  echo "❌ 错误：不能在保护分支（$CURRENT_BRANCH）上执行 squash"
+  exit 1
+fi
+
+# 检查 2：commit 仅在本地
+UNPUSHED=$(git log --oneline @{u}.. 2>/dev/null)
+if [ -z "$UNPUSHED" ]; then
+  echo "❌ 错误：所有 commit 已推送到远程"
+  echo "   Squash 会重写远程历史，这是危险操作"
+  exit 1
+fi
+
+# 检查 3：工作区干净
+if [ -n "$(git status --porcelain)" ]; then
+  echo "⚠️  警告：工作区有未提交的更改"
+  read -p "继续？[y/N] "
+  [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
+fi
+
+echo "✅ 安全检查通过"
+```
+
+#### 快速检查
+
+| 检查 | 命令 | 安全 | 危险 |
+|------|------|------|------|
+| 保护分支 | `git branch --show-current` | feature/* | main/master |
+| 未推送 | `git log @{u}..` | 有输出 | 无输出 |
+| 远程分支 | `git branch -r \| grep $(git branch --show-current)` | 无输出 | 有输出 |
+
+**Golden Rule**：只整理**本地未推送**的 commit。
+
+---
+
 ### 2.1 合并前检查
 
 ```bash
@@ -90,9 +137,15 @@ git branch -r
 
 | 信号 | 风险等级 | 处理 |
 |------|----------|------|
-| 已推送到个人远程分支 | 🟡 中 | 可合并，需 force push |
-| 已推送到共享分支 | 🔴 高 | 不要重写历史 |
-| 他人基于此分支工作 | 🔴 高 | 不要重写历史 |
+| 已推送到个人远程分支 | 🟡 中 | 可合并，需 force push（与团队确认） |
+| 已推送到共享分支 | 🔴 高 | **禁止重写历史** |
+| 他人基于此分支工作 | 🔴 高 | **禁止重写历史** |
+| 当前是 main/master | 🔴 高 | **禁止任何 rebase** |
+
+**如果已推送**：
+1. 不要 squash，直接推送小 commit
+2. 或创建新分支重新开发
+3. 如必须 squash，先与团队确认
 
 ---
 
@@ -323,6 +376,20 @@ git gc --aggressive --prune=now
 | **推送前整理** | 合并为有意义的 commit |
 | **保护共享分支** | 不要重写已推送的共享历史 |
 | **团队约定** | 与团队约定 commit 整理策略 |
+
+### 安全判断（一键检查）
+
+```bash
+# 如果这条命令有输出，就是安全的
+git log --oneline @{u}..
+```
+
+| 检查 | 安全 | 危险 |
+|------|------|------|
+| `git log @{u}..` | 有输出 | 无输出 |
+| `git branch --show-current` | feature/* | main/master |
+
+**如果已推送**：不要 squash，直接推送或创建新分支。
 
 ---
 
