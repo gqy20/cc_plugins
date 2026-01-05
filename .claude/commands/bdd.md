@@ -23,7 +23,7 @@ dependencies:
 
 ```bash
 /bdd                 # 交互式引导
-/bdd feature         # 创建 Feature 文件
+/bdd feature         # 创建 Feature 文件（自动更新 README.md）
 /bdd step            # 实现步骤定义
 /bdd run             # 运行 BDD 测试
 ```
@@ -101,6 +101,7 @@ Scenario Outline: 多用户登录
 ```
 project/
 ├── features/
+│   ├── README.md              # Feature 索引（自动维护）
 │   ├── login.feature          # Gherkin 场景
 │   └── user_profile.feature
 ├── features/steps/
@@ -108,6 +109,39 @@ project/
 │   └── profile_steps.py
 └── features/environment.py    # 环境配置
 ```
+
+### 3.1 features/README.md 自动维护
+
+执行 `/bdd feature` 时自动更新 `features/README.md`，包含：
+
+**内容结构**：
+- **概览统计**：Feature 数量、Scenario 数量
+- **模块分组**：按功能分类的 Feature 列表
+- **快速导航**：到每个 .feature 文件的链接
+- **运行说明**：常用命令
+
+**示例内容**：
+```markdown
+# BDD Features
+
+## 概览
+- Feature 数: 3
+- Scenario 数: 12
+- 最后更新: 2024-01-05
+
+## 用户认证
+| Feature | 文件 | 场景数 |
+|---------|------|--------|
+| 登录功能 | login.feature | 3 |
+| 注册流程 | signup.feature | 4 |
+
+## 运行
+\`\`\`bash
+behave features/login.feature
+\`\`\`
+```
+
+**无需手动维护**，每次创建 Feature 时自动更新。
 
 ---
 
