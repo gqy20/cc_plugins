@@ -9,5 +9,9 @@ ref.md
 *.bak
 tmp/
 
+# Claude Code local settings (personal overrides)
+.claude/settings.local.json
+.claude/settings.*.json
+
 # Example files
 example

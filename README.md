@@ -163,6 +163,18 @@ plugins/<plugin-name>/
 - **文件结构** - 标准化的目录结构和命名规范
 - **质量控制** - 自动化验证和 CI/CD 检查
 - **文档标准** - 完整的 README 和技能文档
+- **错误追踪** - 自动错误记录系统（Error Playbook）
+
+### 自动错误记录
+
+项目配置了 Error Playbook Hook，自动捕获并记录开发过程中的错误：
+
+- **自动检测** - pytest/git/网络/配置等多种错误类型
+- **智能分类** - 自动推断 domain（tool/network/config）和 severity（blocker/major/minor）
+- **知识积累** - 错误记录到 `docs/error-playbook/`，形成可复用的问题解决库
+- **查询复用** - 使用 `/err find <关键词>` 快速查找历史错误解决方案
+
+配置文件：`.claude/settings.json` + `.claude/hooks/err-catcher.py`
 
 详细配置说明请参考 [CLAUDE.md](./CLAUDE.md)
 
