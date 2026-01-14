@@ -8,6 +8,12 @@ Claude Code 研究插件集合，包含两类插件：
 1. **研究专家插件** (4个) - 进化生物学、杂交物种形成、作物育种、进化生态学领域的专家分析系统
 2. **实用工具插件** (2个) - Slidev 演示文稿生成、AntV 信息图表可视化
 
+**项目特色**：
+- 严格的配置标准和自动化验证
+- Error Playbook Hook 自动错误记录系统
+- 完整的开发工作流命令集（11 个命令）
+- 研究插件依赖统一的 MCP 服务（article-mcp + sequentialthinking）
+
 ## 验证与测试
 
 ### 本地验证命令
@@ -88,6 +94,31 @@ plugins/<plugin-name>/
 5. 使用 `data-integration-formatting` 技能整合数据
 6. 通过 sequentialthinking MCP 进行结构化推理
 
+## Error Playbook Hook 系统
+
+项目配置了自动错误记录系统（`.claude/settings.json` + `.claude/hooks/err-catcher.py`）：
+
+### 工作原理
+- **自动检测**：PostToolUse Hook 捕获 Bash 命令输出
+- **智能分类**：根据错误模式推断 domain（tool/network/config）和 severity（blocker/major/minor）
+- **知识积累**：错误记录到 `docs/error-playbook/`，形成可复用的问题解决库
+
+### 错误模式
+| 模式 | Domain | Severity | ID |
+|------|--------|----------|-----|
+| `FAILED`, `AssertionError` | tool | major | TEST-FAIL |
+| `ImportError`, `ModuleNotFoundError` | tool | blocker | IMPORT |
+| `Connection refused`, `ECONNREFUSED` | network | blocker | NET-REFUSED |
+| `timeout`, `ETIMEDOUT` | network | major | TIMEOUT |
+| `Permission denied` | config | blocker | PERMISSION |
+| `merge.*conflict` | config | major | GIT-MERGE |
+
+### 修改路径
+Hook 脚本中的 `cwd` 需要指向当前项目路径：
+```python
+cwd="/home/qy113/workspace/project/2601/cc_plugins"  # 修改此路径
+```
+
 ## MCP 依赖
 
 ### 核心依赖（研究插件必需）
@@ -122,12 +153,16 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 | `/elegant` | 优雅编码与重构规范 |
 | `/squash` | Commit 历史整理与合并 |
 | `/lint` | 代码质量检查工具集 |
+| `/worktree` | Git Worktree 工作流 - PR Review、并行开发 |
+| `/cleanup` | Python 代码冗余检测清单 |
 
 **命令协同**：
 - `/tdd` → `/squash`：TDD 产生小 commit → 功能完成后合并
 - `/elegant` + `/tdd`：优雅编码 + 测试驱动
 - `/sdr` → `/gh`：规格驱动 → GitHub 操作
 - `/bdd` + `/tdd`：BDD (验收) + TDD (单元)，双层测试
+- `/worktree` + `/gh`：多 worktree 并行 PR review + gh 操作
+- `/cleanup` + `/elegant`：冗余检测 + 优雅重构
 - `/docs` + 任何命令：代码变更后更新文档
 
 ## 版本控制
@@ -260,3 +295,65 @@ git commit -m "feat: 完整功能描述"
 - **双层测试**: BDD (behave, 验收) + TDD (pytest, 单元)
 
 **用法**: `/bdd` (引导) | `/bdd feature` | `/bdd step` | `/bdd run`
+
+## /worktree - Git Worktree 工作流
+
+**核心**：并行开发、PR Review、完整开发生命周期
+
+- **场景 1：PR Review** - 为每个 PR 创建独立 worktree，避免频繁切换分支
+- **场景 2：并行开发** - 同时在多个功能分支工作，互不干扰
+- **场景 3：热修复** - 在主分支保持工作的同时处理紧急 bug
+
+**用法**: `/worktree` (引导) | `/worktree create` | `/worktree list` | `/worktree remove`
+
+## /cleanup - Python 代码冗余检测
+
+**核心**：先看有什么，再看写什么
+
+检测代码中是否有可用标准库或已安装包替代的冗余实现。
+
+**冗余模式对照表**：
+| 当前模式 | 应该用 | 检测命令 |
+|----------|--------|----------|
+| `os.path.join` | `pathlib.Path` | `grep -rn "os.path\."` |
+| `class X: def __init__` | `@dataclass` | `grep -rn "def __init__"` |
+| `urllib.request` | `requests` | `grep -rn "urllib"` |
+| `datetime.strptime` | `dateutil.parser` | `grep -rn "strptime"` |
+| `csv.reader/open` | `pandas.read_csv` | `grep -rn "csv\\.reader\|open.*\\.csv"` |
+
+**核心原则**：依赖优先、标准库优先、删除而非兼容
+
+**用法**: `/cleanup` (完整清单) | `/cleanup scan` (快速扫描) | `/cleanup <pattern>`
+
+---
+
+# 本地开发 Agent
+
+项目 `.claude/agents/` 目录包含本地开发智能体：
+
+## python-zen-coding-expert
+
+**用途**：编写符合 Python Zen 原则的代码，优先可读性和简洁性
+
+**适用场景**：
+- 编写新 Python 代码时
+- 重构现有代码使其更 Pythonic
+- 需要确保代码风格符合 PEP 20 原则
+
+**Zen of Python 核心原则**：
+- Beautiful is better than ugly
+- Explicit is better than implicit
+- Simple is better than complex
+- Readability counts
+
+---
+
+# tmp/ 目录说明
+
+`tmp/` 目录用于存放临时性、实验性代码和工具：
+
+- **spec-kit/**: GitHub Spec Kit 工具（`specify-cli`），用于规格驱动开发（SDD）
+  - 包含 `pyproject.toml`，定义了 specify CLI 的依赖
+  - 提供 `specify` 命令，用于项目初始化和管理
+
+**注意**：`tmp/` 目录内容不作为项目核心部分，可根据需要清理或迁移。
