@@ -1,0 +1,10 @@
+# Generated reports
+*.html
+
+# Literature search data
+*.json
+
+# Virtual environment
+venv/
+__pycache__/
+*.pyc
