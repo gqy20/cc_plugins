@@ -9,9 +9,16 @@ dependency:
 # 生命科学文献探索与可视化
 
 ## 任务目标
-- 本 Skill 用于：从 **Europe PMC** 数据库搜索**生命科学领域**的开放获取学术文献，并提取 PDF 下载链接
-- 能力包含：高级检索、PMC 过滤（确保 100% 可下载）、并行多检索、链接提取、生成美化的 HTML 报告
-- 适用领域：生物医学、临床医学、药学、生物学、公共卫生等生命科学相关学科
+- 本 Skill 用于：从 **PubMed** 和 **Europe PMC** 数据库搜索**生命科学领域**的开放获取学术文献，并提取 PDF 下载链接
+- 能力包含：
+  - **双数据源支持**：
+    - PubMed API（默认）：适合进化生物学、生态学、遗传学等非临床医学领域
+    - Europe PMC API（`--use-europepmc`）：适合临床医学、药学、生物医学等临床领域
+  - **高级检索**：支持 MeSH 主题词检索、精确短语搜索、上下文感知检索
+  - **PMC 过滤**：确保 100% 可下载（通过 `pubmed pmc[sb]` 过滤器）
+  - **并行多检索**：同时执行多个检索式，自动合并去重
+  - **智能分类报告**：根据全文/摘要可用性自动分组，生成 HTML 可视化报告
+- 适用领域：进化生物学、生态学、遗传学、生物医学、临床医学、药学、生物学、公共卫生等生命科学相关学科
 - 触发条件：用户需要搜索**生命科学领域**的学术文献，获取 PDF 下载链接，并生成可视化报告时
 
 ## 默认规范
@@ -23,7 +30,10 @@ dependency:
   - **MeSH 优势**：专业术语标准化、自动扩展同义词、精确匹配医学概念、避免关键词歧义
   - **MeSH 语法**：`"Neoplasms"[MeSH]`（主题词）、`"Neoplasms/drug therapy"[MeSH]`（副主题词）
   - **查找 MeSH**：使用 MeSH Browser（https://www.ncbi.nlm.nih.gov/mesh/）查询标准术语
-- **时间范围**：默认搜索**近 10 年**内的文献（从当前年份向前推算），确保文献的新颖性和相关性
+- **时间范围（默认10年）**：**默认获取近 10 年内的文献**，从当前年份向前推算（如当前年份 2026 年，默认检索范围是 2016-2026 年）
+  - **默认行为**：所有检索式自动添加 `2016:2026[pd]` 年份限制（根据当前年份动态计算）
+  - **自定义时间范围**：如需其他时间范围，用户明确指定后才调整
+  - **年份格式**：使用 `[pd]` 字段限定，格式为 `起始年:结束年[pd]`
 - **检索模式**：默认使用**较为宽泛的检索模式**，**多用 OR 连接关键词**，获取更广的结果范围；避免过度使用 AND，提高检索覆盖面
 - **文献类型过滤**：**默认排除会议论文**（conference proceedings），专注于期刊论文；使用 `NOT conference NOT proceedings` 过滤
 - **筛选策略**：先宽泛检索获取更多结果，后续在 HTML 报告中使用筛选功能缩小范围
@@ -52,23 +62,18 @@ dependency:
 - 标准流程：
 
   1. **理解需求并整理关键词**
-     - **优先使用 MeSH 术语**：查询 MeSH Browser（https://www.ncbi.nlm.nih.gov/mesh/）获取标准医学主题词
      - 分析用户的输入（可能是中文、英文或混合）
      - 将中文关键词翻译为规范的英文检索词（PubMed 标准术语）
      - 识别关键概念：疾病名称、药物、治疗方式、生物标志物、技术方法等
      - 扩展相关词汇：同义词、缩写、变体、专业术语
-     - **MeSH 术语示例**：
-       - 癌症 → `Neoplasms[MeSH]`
-       - 糖尿病 → `Diabetes Mellitus[MeSH]`
-       - 阿尔茨海默病 → `Alzheimer Disease[MeSH]`
-       - 药物治疗 → `Drug Therapy[MeSH]` 或 `Therapeutics[MeSH]`
-       - 诊断 → `Diagnosis[MeSH]`
+     - **MeSH 术语查询**：使用 MeSH Browser（https://www.ncbi.nlm.nih.gov/mesh/）获取标准主题词，参见默认规范中的 MeSH 检索说明
 
   2. **构建多组检索式**
      - **重要**：构建检索式时必须遵循默认规范
-       - 动态获取当前年份（使用 `datetime.now().year` 获取系统时间）
-       - 计算近 10 年范围（如当前 2026 年，则默认为 `2016:2026[pd]`）
-       - 所有检索式默认添加年份限制，除非用户明确要求其他时间范围
+       - **时间范围**：默认获取近 10 年内的文献（当前年份 - 10 至当前年份）
+       - **动态计算**：使用 `datetime.now().year` 获取系统时间，自动计算年份范围
+       - **示例**：如当前 2026 年，默认年份限制为 `2016:2026[pd]`
+       - **默认行为**：所有检索式必须添加近10年的年份限制，除非用户明确要求其他时间范围
        - **优先使用 MeSH 术语**，提升检索精度（参见 MeSH 检索说明）
        - **使用 OR 连接关键词，获取更广的结果**（后续可在 HTML 报告中筛选）
        - **默认排除会议论文**，使用 `NOT conference NOT proceedings` 专注于期刊论文
@@ -100,7 +105,7 @@ dependency:
        ```
      - 并行多检索模式：
        ```bash
-       python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
+       python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";"(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
        ```
      - 输出结果：`links.json` 包含文献信息和 PDF 链接
 
@@ -125,7 +130,6 @@ dependency:
      - **排序规则**：优先展示有全文和摘要的文献，将无全文/无摘要的文献放在最下面
        - 第一优先级：有全文 + 有摘要（高亮展示，绿色边框）
        - 第二优先级：有全文 + 无摘要（正常展示，蓝色边框）
-       - 第二优先级：有全文 + 无摘要（正常展示，蓝色边框）
        - 第三优先级：无全文 + 有摘要（次要展示，浅色样式）
        - 第四优先级：无全文 + 无摘要（置底，灰色显示）
      - 报告样式：卡片式布局、响应式设计、分组标题显示各优先级文献数量
@@ -138,7 +142,7 @@ dependency:
      - 验证年份显示是否为当前年份（动态获取）
 
 - 可选分支：
-  - 当用户明确要求其他时间范围：按用户指定的时间范围检索，否则默认使用近 10 年
+  - 当用户明确要求其他时间范围：按用户指定的时间范围检索，**否则默认使用近10年**
   - 当用户需要更精确的检索：使用字段限定（如 title:、author:）缩小范围
   - 当用户需要排除某些类型：使用 NOT 操作符排除无关文献
   - 当检索结果过多：进一步增加年份限制或添加更多关键词限定
@@ -163,35 +167,38 @@ dependency:
 - **数据源说明**：PubMed 和 Europe PMC 主要收录生物医学和生命科学领域的文献，不适用于物理、数学、计算机等其他学科
 - **PMC 过滤的重要性**：默认使用 `pubmed pmc[sb]` 过滤器可确保 100% 可下载
 - **文献类型过滤的重要性**：默认使用 `NOT conference NOT proceedings` 过滤会议论文，专注于期刊论文；如需检索会议论文，可移除此过滤
-- **时间范围默认规范**：默认搜索近 10 年的文献，确保文献新颖性；仅在用户明确要求其他时间范围时才调整
+- **时间范围默认规范（10年）**：**默认获取近 10 年内的文献**（当前年份 - 10 至当前年份）
+  - **示例**：当前 2026 年 → 默认范围 2016-2026 年
+  - **年份格式**：必须添加 `2016:2026[pd]` 格式的年份限制
+  - **例外情况**：仅在用户明确要求其他时间范围时才调整默认值
 - **检索模式默认规范**：默认使用较为宽泛的检索模式，**多用 OR 连接关键词**，获取更广的结果范围；后续可在 HTML 报告中使用筛选功能缩小范围；仅在用户需要精确检索时才使用 AND 连接或添加字段限定
 - **分步骤执行**：获取链接和下载是两个独立的步骤，可以先获取链接并审查结果，再决定是否下载
 - **API 速率限制**：未配置 API 密钥时，NCBI 每秒最多 3 个请求；配置后可提升至 10 个请求
 - **HTML 报告设计**：报告应美观、易用、功能完善，支持搜索和筛选，提升用户体验
 - **链接有效性**：部分文献可能因权限或访问限制导致 PDF 链接失效，建议优先使用 PMC 过滤器
-- **MeSH 检索的重要性**：优先使用 MeSH（Medical Subject Headings）主题词检索，提升检索精度和全面性；MeSH 检索自动扩展同义词、避免关键词歧义、精确匹配医学概念；参见 [references/literature-usage.md](references/literature-usage.md) 中的 MeSH 检索指南
+- **MeSH 检索**：参见默认规范中的 MeSH 检索说明和 [references/literature-usage.md](references/literature-usage.md) 中的详细指南
 
 ## 使用示例
 
 ### 示例 1：搜索文献并获取链接（默认模式）
-- **功能说明**：使用默认规范（近 10 年 + OR 宽泛检索 + PMC 过滤 + 排除会议）搜索文献并获取 PDF 下载链接
+- **功能说明**：使用默认规范（**默认10年** + OR 宽泛检索 + PMC 过滤 + 排除会议）搜索文献并获取 PDF 下载链接
 - **执行方式**：脚本执行
-- **关键参数**：`--search "检索关键词"`（使用 OR 连接，排除会议，默认添加近 10 年限制）、`--limit 100`（默认数量）、`--output links.json`（输出文件）
-- **示例代码**（当前年份 2026）：
+- **关键参数**：`--search "检索关键词"`（使用 OR 连接，排除会议，**默认添加近10年时间限制**）、`--limit 100`（默认数量）、`--output links.json`（输出文件）
+- **示例代码**（当前年份 2026，默认10年范围 2016-2026）：
   ```bash
   python scripts/get_pdf_links.py --search "(machine learning OR deep learning) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 100 --output links.json
   ```
-  输出：`links.json` 包含 100 篇近 10 年内有全文下载链接的期刊论文（已排除会议论文和无全文文献）
+  输出：`links.json` 包含 100 篇近10年（2016-2026）内有全文下载链接的期刊论文（已排除会议论文和无全文文献）
 
 ### 示例 2：并行搜索多组关键词（默认模式）
-- **功能说明**：同时执行多个检索式（均使用 OR 连接，排除会议，包含近 10 年限制），自动合并结果并获取链接
+- **功能说明**：同时执行多个检索式（均使用 OR 连接，排除会议，**包含默认10年时间限制**），自动合并结果并获取链接
 - **执行方式**：脚本执行
-- **关键参数**：`--search-multi`（多个检索式，逗号分隔，均排除会议）、`--limit 50`（每个检索的数量）、`--max-workers 3`（检索并发数）、`--output links.json`（输出文件）
-- **示例代码**（当前年份 2026）：
+- **关键参数**：`--search-multi`（多个检索式，分号`;`分隔，均包含近10年限制）、`--limit 50`（每个检索的数量）、`--max-workers 3`（检索并发数）、`--output links.json`（输出文件）
+- **示例代码**（当前年份 2026，默认10年范围 2016-2026）：
   ```bash
-  python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","(diabetes OR hyperglycemia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
+  python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";"(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";"(diabetes OR hyperglycemia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
   ```
-  输出：`links.json` 包含合并并去重后有全文下载链接的期刊论文（已排除会议论文和无全文文献）
+  输出：`links.json` 包含合并并去重后近10年内有全文下载链接的期刊论文（已排除会议论文和无全文文献）
 
 ### 示例 3：提取 PDF 下载链接
 - **功能说明**：从 JSON 文件提取 PDF 下载链接，输出为文本文件
@@ -206,54 +213,53 @@ dependency:
 ### 示例 4：生成美化的 HTML 报告（推荐方式）
 - **功能说明**：使用脚本直接从 JSON 文件生成美化的 HTML 报告，支持自动分类、智能排序、响应式设计、多主题选择
 - **执行方式**：脚本执行（推荐）或智能体生成（定制化需求）
+- **AI 标题生成规范**：
+  - **推荐方式**：AI 应根据用户的中文输入生成规范的研究主题标题，使用 `--title` 参数指定
+  - **标题格式**：`研究主题 + 文献检索报告` 或直接使用 `研究主题 + 相关文献`
+  - **示例标题**：
+    - `"杂交物种形成文献检索报告"`
+    - `"分子进化与群体遗传学相关文献"`
+    - `"基因编辑技术在作物育种中的应用研究"`
+  - **英文术语映射**（AI 自动处理）：
+    - `Hybridization` → 杂交
+    - `Speciation` → 物种形成
+    - `Evolution, Molecular` → 分子进化
+    - `Genetics, Population` → 群体遗传学
 - **脚本执行**：
   ```bash
-  # 默认主题：modern（蓝绿色系，适合在线浏览）
+  # 默认主题：modern（2025 Earth Organic 设计，蓝绿色系，适合在线浏览）
   python scripts/generate_html_report.py --json links.json --output literature_report.html --theme modern
-  
+
+  # AI 生成中文标题（推荐）
+  python scripts/generate_html_report.py --json links.json --output literature_report.html --title "杂交物种形成文献检索报告"
+
   # 学术主题：academic（黑白配色，适合打印）
   python scripts/generate_html_report.py --json links.json --output literature_report.html --theme academic
-  
+
   # 深色主题：dark（护眼配色，适合夜间阅读）
   python scripts/generate_html_report.py --json links.json --output literature_report.html --theme dark
   ```
+- **关键参数**：
+  - `--json links.json`：输入的文献 JSON 文件（必需）
+  - `--output literature_report.html`：输出的 HTML 文件（默认：literature_report.html）
+  - `--theme modern/academic/dark`：配色主题（默认：modern）
+  - `--title "中文标题"`：AI 生成的中文研究主题标题（强烈推荐）
 - **功能特性**：
-  - 自动获取当前年份（动态获取，无需手动指定）
-  - 智能分类：根据全文和摘要可用性自动分组（4 个优先级）
-  - 卡片式布局：每篇文献展示完整信息
-  - 视觉区分：不同优先级使用不同卡片样式（高亮/正常/浅色/灰色）
-  - 统计信息：显示总文献数和各组文献数量
-  - 响应式设计：支持移动端和桌面端
-  - 多主题支持：3 种配色方案（modern/academic/dark）
-  - 分组统计：显示各组文献数量
-- **输出**：`literature_report.html` 可直接在浏览器中打开
-- **智能体使用场景**：当需要自定义 HTML 样式或添加额外功能（如搜索、筛选）时
-  ```bash
-  python scripts/generate_html_report.py --json links.json --output literature_report.html
-  ```
-- **功能特性**：
-  - 自动获取当前年份（动态获取，无需手动指定）
-  - 智能分类：根据全文和摘要可用性自动分组（4 个优先级）
-  - 卡片式布局：每篇文献展示完整信息
-  - 视觉区分：不同优先级使用不同卡片样式（高亮/正常/浅色/灰色）
-  - 统计信息：显示总文献数和各组文献数量
-  - 响应式设计：支持移动端和桌面端
-  - 现代配色：蓝绿色系，符合生命科学领域
-  - 分组统计：显示各组文献数量
+  - **2025 Earth Organic 设计**：
+    - Sage Green（#8A9A5B）+ Tech Blue（#4158D0）配色方案
+    - Glassmorphism 玻璃态效果（backdrop-filter blur）
+    - 4 栏网格布局，2rem 间距优化
+    - 平滑悬停动画（cubic-bezier 缓动）
+  - **智能分类**：根据全文和摘要可用性自动分组（4 个优先级）
+  - **卡片式布局**：每篇文献展示完整信息（标题、作者、期刊、年份、摘要、PDF 链接）
+  - **视觉区分**：不同优先级使用不同卡片样式（高亮绿色/正常蓝色/浅色橙色/灰色）
+  - **统计信息**：显示总文献数和各组文献数量
+  - **响应式设计**：支持移动端（1 栏）、平板（2 栏）、桌面（4 栏）
+  - **多主题支持**：3 种配色方案（modern/academic/dark）
 - **输出**：`literature_report.html` 可直接在浏览器中打开
 - **智能体使用场景**：当需要自定义 HTML 样式或添加额外功能（如搜索、筛选）时
 
-### 示例 14：从标识符直接提取链接
-- **功能说明**：直接使用 PMCID/PMID/DOI 标识符获取下载链接
-- **执行方式**：脚本执行
-- **关键参数**：`--identifiers`（标识符列表，逗号分隔）、`--output pdf_links.txt`（输出文件）
-- **示例代码**：
-  ```bash
-  python scripts/extract_pdf_links.py --identifiers "PMC5764346,38238491,10.1186/s13059-020-02147-0" --output pdf_links.txt
-  ```
-  输出：`pdf_links.txt` 包含所有可用的 HTTP 下载链接
-
-### 示例 15：检索自定义主题的文献
+### 示例 5：检索自定义主题的文献
 - **功能说明**：检索任意生命科学主题的文献
 - **执行方式**：脚本执行
 - **关键参数**：`--search "检索式"`（根据主题调整）、`--limit`（数量）、`--output`（输出文件）
@@ -263,6 +269,8 @@ dependency:
   python scripts/get_pdf_links.py --search "\"Gene Editing\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 100 --output links.json
   ```
   输出：`links.json` 包含基因编辑相关期刊论文
+
+### 示例 6：从标识符直接提取链接
 - **功能说明**：直接使用 PMCID/PMID/DOI 标识符获取下载链接
 - **执行方式**：脚本执行
 - **关键参数**：`--identifiers`（标识符列表，逗号分隔）、`--output pdf_links.txt`（输出文件）
@@ -272,17 +280,19 @@ dependency:
   ```
   输出：`pdf_links.txt` 包含所有可用的 HTTP 下载链接
 
-### 示例 6：自定义时间范围检索（非默认场景）
-- **功能说明**：当用户明确要求其他时间范围时，使用指定的年份限制而非默认的近 10 年
+### 示例 7：自定义时间范围检索（非默认场景）
+- **功能说明**：当用户明确要求其他时间范围时，使用指定的年份限制而非默认的**近10年**
 - **执行方式**：脚本执行
 - **关键参数**：`--search`（包含自定义年份限制的检索式）、`--limit`（数量）、`--output`（输出文件）
-- **示例代码**（用户要求近 5 年，当前年份 2026）：
+- **示例代码**（用户要求近5年而非默认10年，当前年份 2026）：
   ```bash
   python scripts/get_pdf_links.py --search "(machine learning OR AI) AND pubmed pmc[sb] 2021:2026[pd]" --limit 100 --output links.json
   ```
-- **注意**：仅在用户明确要求其他时间范围时才使用此模式，否则默认使用近 10 年
+- **注意**：
+  - **默认规范**：除非用户明确要求，否则始终使用近10年作为默认时间范围
+  - 此示例为非默认场景，仅在用户明确指定其他时间范围时使用
 
-### 示例 7：使用 MeSH 术语检索（推荐模式）
+### 示例 8：使用 MeSH 术语检索（推荐模式）
 - **功能说明**：使用 MeSH（Medical Subject Headings）主题词检索，提升检索精度和全面性
 - **执行方式**：脚本执行
 - **关键参数**：`--search "MeSH 术语"`（使用 [MeSH] 字段）、`--limit 100`、`--output links.json`
@@ -295,44 +305,20 @@ dependency:
   python scripts/get_pdf_links.py --search "\"Neoplasms/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 100 --output links.json
   ```
   输出：`links.json` 包含所有癌症药物治疗的期刊论文（MeSH 自动扩展，覆盖全面）
-- **查找 MeSH 术语**：
-  - 使用 MeSH Browser：https://www.ncbi.nlm.nih.gov/mesh/
-  - 输入概念（如 "cancer"、"diabetes"）查询标准 MeSH 术语
-  - 查看副主题词（如 `/drug therapy`、`/diagnosis`）优化检索
+- **查找 MeSH 术语**：使用 MeSH Browser（https://www.ncbi.nlm.nih.gov/mesh/）查询标准术语和副主题词
 
-### 示例 8：并行搜索多个 MeSH 术语（推荐模式）
+### 示例 9：并行搜索多个 MeSH 术语（推荐模式）
 - **功能说明**：同时检索多个 MeSH 主题词，获取更全面的文献覆盖
 - **执行方式**：脚本执行
 - **关键参数**：`--search-multi`（多个 MeSH 检索式）、`--limit 50`（每个检索的数量）、`--max-workers 3`（并发数）
 - **示例代码**（当前年份 2026）：
   ```bash
   # 同时检索癌症、糖尿病、阿尔茨海默病的药物治疗文献
-  python scripts/get_pdf_links.py --search-multi "\"Neoplasms/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","\"Diabetes Mellitus/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","\"Alzheimer Disease/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
+  python scripts/get_pdf_links.py --search-multi "\"Neoplasms/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";\"Diabetes Mellitus/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";\"Alzheimer Disease/drug therapy\"[MeSH] AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --output links.json
   ```
   输出：`links.json` 包含三种疾病的药物治疗期刊论文（MeSH 精确检索，自动合并去重）
 
-### 示例 12：生成不同主题的 HTML 报告
-- **功能说明**：生成不同配色主题的 HTML 报告，满足不同场景需求
-- **执行方式**：脚本执行
-- **关键参数**：`--theme`（主题选择：modern/academic/dark）
-- **主题说明**：
-  - **modern**（默认）：蓝绿色系，卡片式布局，适合在线浏览
-  - **academic**：黑白配色，简化布局，适合打印
-  - **dark**：深色护眼，深紫色系，适合夜间阅读
-- **示例代码**：
-  ```bash
-  # 生成现代主题报告（蓝绿色系，适合在线浏览）
-  python scripts/generate_html_report.py --json links.json --output report_modern.html --theme modern
-  
-  # 生成学术主题报告（黑白配色，适合打印）
-  python scripts/generate_html_report.py --json links.json --output report_academic.html --theme academic
-  
-  # 生成深色主题报告（护眼配色，适合夜间阅读）
-  python scripts/generate_html_report.py --json links.json --output report_dark.html --theme dark
-  ```
-- **输出**：生成 3 个不同主题的 HTML 文件
-
-### 示例 13：检索会议论文（非默认场景）
+### 示例 10：检索会议论文（非默认场景）
 - **功能说明**：当用户需要检索会议论文时，移除 `NOT conference NOT proceedings` 过滤
 - **执行方式**：脚本执行
 - **关键参数**：`--search`（不包含会议排除的检索式）、`--limit`（数量）、`--output`（输出文件）
@@ -341,8 +327,6 @@ dependency:
   python scripts/get_pdf_links.py --search "(machine learning OR AI) AND pubmed pmc[sb] 2016:2026[pd]" --limit 100 --output links.json
   ```
 - **注意**：仅在用户明确需要会议论文时才移除此过滤，默认模式会排除会议论文
-
-### 示例 14：从标识符直接提取链接
 
 ## 高级功能
 
@@ -353,11 +337,7 @@ dependency:
 - **低优先级组**（无全文 + 有摘要）：浅色样式，次要位置
 - **最低优先级组**（无全文 + 无摘要）：灰色样式，置于页面底部
 
-### 自定义 HTML 报告样式
-用户可以指定报告的配色方案和布局风格：
-- **学术风格**：简洁黑白配色，适合打印
-- **现代风格**：蓝绿色系，适合在线浏览
-- **深色模式**：护眼配色，适合夜间阅读
+> **详细主题说明**：参见「示例 4：生成美化的 HTML 报告」，包含 3 种配色方案（modern/academic/dark）的完整介绍。
 
 ### 批量处理标识符
 支持从 CSV 文件批量提取下载链接：
@@ -375,9 +355,114 @@ python scripts/extract_pdf_links.py --csv identifiers.csv --column pmcid --outpu
   python scripts/get_pdf_links.py --search "(machine learning OR deep learning) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 100 --include-no-fulltext --output all_links.json
 
   # 多检索，包含无全文文献
-  python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]","(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --include-no-fulltext --output all_links.json
+  python scripts/get_pdf_links.py --search-multi "(cancer OR tumor) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]";"(Alzheimer OR dementia) AND pubmed pmc[sb] NOT conference NOT proceedings 2016:2026[pd]" --limit 50 --max-workers 3 --include-no-fulltext --output all_links.json
   ```
   输出：`all_links.json` 包含所有检索到的文献（包括没有全文链接的）
 
 ### 检索结果排序
 根据影响因子、引用次数、发表日期等维度对文献排序（需要在 HTML 报告中实现）
+
+### 检索策略最佳实践（基于实际测试）
+
+#### 术语歧义问题
+
+**问题说明**：许多生物学术语在非生物医学领域中存在歧义，导致检索结果包含无关文献。
+
+| 术语 | 生物学含义 | 歧义（非生物学） | 影响 |
+|------|-----------|----------------|------|
+| `speciation` | 物种形成 | 化学形态（chemical speciation） | 混入化学/材料文献 |
+| `hybridization` | 杂交/杂交物种形成 | 细胞杂交、分子杂交 | 混入癌症/细胞生物学文献 |
+| `evolution` | 进化 | 演变、算法进化 | 混入计算机科学文献 |
+
+#### 推荐检索策略
+
+**策略 1：精确短语搜索（推荐用于核心概念）**
+
+使用双引号进行精确短语搜索，避免术语歧义：
+
+```bash
+# 杂交物种形成（最精确）
+python scripts/get_pdf_links.py --search '"hybrid speciation"' --limit 100 --output links.json
+
+# 测试结果相关性：100%
+# 示例文献：
+# - "Hybrid fertility and the rarity of homoploid hybrid speciation"
+# - "Reticulate and Hybrid Speciation is Promoted by Environmental Instability"
+```
+
+**策略 2：上下文感知搜索（推荐用于宽泛主题）**
+
+结合多个相关术语构建上下文，提高检索精度：
+
+```bash
+# 物种形成 + 进化语境
+python scripts/get_pdf_links.py --search 'speciation AND (evolution OR "gene flow" OR introgression)' --limit 100 --output links.json
+
+# 测试结果相关性：70-80%
+# 示例文献：
+# - "The latitudinal speciation gradient in freshwater fishes"
+# - "Shared and Unique Patterns of Genomic Differentiation and Introgression Between Japanese Stickleback Species"
+```
+
+**策略 3：字段限定搜索（推荐用于精确检索）**
+
+限定检索字段，缩小检索范围：
+
+```bash
+# 标题字段限定（更精确）
+python scripts/get_pdf_links.py --search 'speciation[Title] AND (evolution[Title] OR genetic[Title])' --limit 100 --output links.json
+
+# MeSH 字段限定（生物医学领域）
+python scripts/get_pdf_links.py --search '"Evolution, Molecular"[MeSH] AND pubmed pmc[sb]' --limit 100 --output links.json
+```
+
+**策略 4：排除式检索（推荐用于过滤无关文献）**
+
+使用 NOT 操作符排除非生物学领域的文献：
+
+```bash
+# 排除化学/材料科学
+python scripts/get_pdf_links.py --search 'speciation NOT (chemistry OR material OR "chemical speciation")' --limit 100 --output links.json
+
+# 排除临床/细胞生物学（保留进化生物学）
+python scripts/get_pdf_links.py --search 'hybridization NOT (cell OR "in vitro" OR cancer)' --limit 100 --output links.json
+```
+
+#### 不同领域的 API 选择建议
+
+| 领域 | 推荐数据源 | 原因 |
+|------|-----------|------|
+| **进化生物学** | PubMed（默认） | Europe PMC 偏向临床医学，"hybridization" 返回细胞杂交而非物种杂交 |
+| **生态学** | PubMed（默认） | 更广泛的生物学覆盖，不限于生物医学 |
+| **临床医学** | Europe PMC（`--use-europepmc`） | 更精准的临床医学文献 |
+| **药学** | Europe PMC（`--use-europepmc`） | 专注于药物开发和临床试验 |
+
+```bash
+# 进化生物学 - 使用 PubMed（默认）
+python scripts/get_pdf_links.py --search '"hybrid speciation"' --limit 100 --output links.json
+
+# 临床医学 - 使用 Europe PMC
+python scripts/get_pdf_links.py --search 'cancer immunotherapy' --use-europepmc --limit 100 --output links.json
+```
+
+#### 测试验证数据
+
+以下检索策略已通过实际测试验证：
+
+| 检索式 | 相关性 | 有全文占比 | 备注 |
+|--------|--------|-----------|------|
+| `"hybrid speciation"` | 100% | 56.7% (17/30) | 推荐用于杂交物种形成 |
+| `speciation AND (evolution OR introgression)` | 70-80% | 40% (12/30) | 推荐用于宽泛主题 |
+| `speciation[Title]` | 25% | 33% (10/30) | 不推荐（术语歧义严重） |
+
+#### 构建检索式的决策树
+
+```
+是否检索核心概念（如"杂交物种形成"）？
+├─ 是 → 使用精确短语搜索："hybrid speciation"
+└─ 否 → 是否检索宽泛主题？
+    ├─ 是 → 使用上下文感知：speciation AND (evolution OR introgression)
+    └─ 否 → 是否需要极高精度？
+        ├─ 是 → 使用字段限定：term[Title] OR term[MeSH]
+        └─ 否 → 使用排除式：term NOT (unrelated_terms)
+```

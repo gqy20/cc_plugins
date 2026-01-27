@@ -11,6 +11,7 @@ Usage:
 
 import json
 import argparse
+import re
 from datetime import datetime
 from pathlib import Path
 from string import Template
@@ -21,8 +22,65 @@ def generate_current_year():
     return datetime.now().year
 
 
+def generate_report_title(data, user_title=None):
+    """
+    Generate report title from user input or query keywords.
+
+    Args:
+        data: Original JSON data (may contain query field)
+        user_title: User-provided title (takes priority)
+
+    Returns:
+        str: Generated report title
+    """
+    # If user provided a title, use it directly
+    if user_title:
+        return user_title
+
+    # Extract keywords from query as fallback
+    query = data.get('query', '') if isinstance(data, dict) else ''
+
+    if not query:
+        return '文献检索报告'
+
+    # Extract quoted terms from query (both MeSH and regular keywords)
+    all_terms = re.findall(r'"([^"]+)"', query)
+
+    # Filter out non-content terms
+    skip = {'AND', 'OR', 'NOT', 'pubmed', 'pmc[sb]', 'conference', 'proceedings',
+            'hasPmc', '[pd]', '[sb]'}
+
+    # Clean terms: remove field tags and short words
+    terms = []
+    for term in all_terms:
+        term_clean = term.strip()
+        # Remove field suffixes like [MeSH], [pd], [sb]
+        term_clean = re.sub(r'\s*\[.*?\]\s*$', '', term_clean)
+        if (len(term_clean) > 2 and
+            term_clean.lower() not in skip and
+            term_clean not in terms):
+            terms.append(term_clean)
+
+    # Build title from extracted terms
+    if not terms:
+        return '文献检索报告'
+
+    # Use up to 3 main terms
+    main_terms = terms[:3]
+    if len(main_terms) == 1:
+        return f'{main_terms[0]}相关文献'
+    elif len(main_terms) == 2:
+        return f'{main_terms[0]}与{main_terms[1]}相关文献'
+    else:
+        return f'{main_terms[0]}、{main_terms[1]}等主题文献'
+
+
 def load_json_data(json_file):
-    """Load literature data from JSON file."""
+    """Load literature data from JSON file.
+
+    Returns:
+        tuple: (literature_list, original_data)
+    """
     with open(json_file, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
@@ -30,9 +88,9 @@ def load_json_data(json_file):
     # 1. 直接是文献列表
     # 2. 包含在 'results' 字段中的包装格式
     if isinstance(data, dict) and 'results' in data:
-        return data['results']
+        return data['results'], data
     elif isinstance(data, list):
-        return data
+        return data, {}
     else:
         raise ValueError(f"Invalid JSON format: expected list or dict with 'results' field")
 
@@ -228,10 +286,13 @@ def generate_stats(categories):
     )
 
 
-def generate_html_report(categories, output_file, theme='modern', literature_list=None):
+def generate_html_report(categories, output_file, theme='modern', literature_list=None, original_data=None, user_title=None):
     """Generate HTML report from categorized literature."""
 
     current_year = generate_current_year()
+
+    # Generate title (user-specified or auto-generated from query)
+    report_title = generate_report_title(original_data if original_data else {}, user_title)
 
     # Load templates
     main_template = load_template('template.html')
@@ -246,6 +307,7 @@ def generate_html_report(categories, output_file, theme='modern', literature_lis
 
     # Fill main template
     html_content = main_template.substitute(
+        title=report_title,
         year=current_year,
         date=datetime.now().strftime('%Y-%m-%d'),
         css=css_template,
@@ -265,10 +327,11 @@ def main():
     parser.add_argument('--theme', default='modern',
                        choices=['modern', 'academic', 'dark'],
                        help='Color theme for HTML report (default: modern)')
+    parser.add_argument('--title', help='Custom report title (default: auto-generated from query)')
     args = parser.parse_args()
 
     # Load data
-    literature_list = load_json_data(args.json)
+    literature_list, original_data = load_json_data(args.json)
     print(f"✓ Loaded {len(literature_list)} papers from {args.json}")
 
     # Categorize
@@ -277,7 +340,7 @@ def main():
 
     # Generate HTML
     print(f"✓ Using theme: {args.theme}")
-    generate_html_report(categories, args.output, args.theme, literature_list)
+    generate_html_report(categories, args.output, args.theme, literature_list, original_data, args.title)
     print(f"✓ HTML report generated: {args.output}")
 
     # Print statistics
