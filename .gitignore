@@ -15,3 +15,5 @@ tmp/
 
 # Example files
 example
+.claude/projects/
+*.html
