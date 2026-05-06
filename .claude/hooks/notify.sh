@@ -145,15 +145,16 @@ esac
 echo "$(date) | $PRIORITY | $CWD | $MSG" >> "$LOG"
 
 # ntfy.sh 推送（带错误日志）
-HTTP_CODE=$(curl -s -o /tmp/cc_notify_resp.tmp -w "%{http_code}" \
+curl -s -o /tmp/cc_notify_resp.tmp -w "%{http_code}" \
   -H "Title: $TITLE" \
   -H "Tags: $TAGS" \
   -H "Priority: $PRIORITY" \
   --data-binary "$MSG" \
-  "https://ntfy.sh/$TOPIC" 2>/tmp/cc_notify_err.tmp &
+  "https://ntfy.sh/$TOPIC" > /tmp/cc_notify_http.tmp 2>/tmp/cc_notify_err.tmp &
 CURL_PID=$!
 wait $CURL_PID 2>/dev/null
 CURL_EXIT=$?
+HTTP_CODE=$(cat /tmp/cc_notify_http.tmp 2>/dev/null)
 
 if [ $CURL_EXIT -ne 0 ] || [ "$HTTP_CODE" != "200" ]; then
     CURL_ERR=$(cat /tmp/cc_notify_err.tmp 2>/dev/null)
@@ -161,7 +162,7 @@ if [ $CURL_EXIT -ne 0 ] || [ "$HTTP_CODE" != "200" ]; then
 else
     echo "$(date) | PUSH_OK | http=$HTTP_CODE" >> "$LOG"
 fi
-rm -f /tmp/cc_notify_resp.tmp /tmp/cc_notify_err.tmp
+rm -f /tmp/cc_notify_resp.tmp /tmp/cc_notify_err.tmp /tmp/cc_notify_http.tmp
 
 # 终端 BEL
 printf '\a' 2>/dev/null
