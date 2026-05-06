@@ -22,11 +22,8 @@ fi
 # Output intent routing rules file
 if [ -f "$INFO_MD" ]; then
     cat "$INFO_MD"
-else
-    # Fallback if info.md doesn't exist
-    echo "# 意图路由规则文件未找到"
-    echo "警告: $INFO_MD 不存在"
 fi
+# info.md 不存在时不输出警告，避免每次输入都产生噪音
 
 # Optional: Add a simple intent detection summary below the rules
 # This provides quick context without repeating the full rules

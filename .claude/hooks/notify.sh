@@ -1,19 +1,34 @@
 #!/bin/bash
+# Stop Hook - 会话结束时通过 ntfy.sh 推送通知
+set -euo pipefail
+
 LOG="$HOME/.claude/notify.log"
 TOPIC="claude-qy113-notify"
-
-# 脚本自身位置（不依赖 $CLAUDE_PROJECT_DIR）
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 
-# 读取 stdin（只读一次）
+# --- 依赖检查 ---
+for cmd in python3 curl; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "$(date) | SKIP | $cmd not found" >> "$LOG"
+        exit 0
+    fi
+done
+
+# --- 读取 stdin（只读一次）---
 INPUT=$(cat)
 echo "$(date): hook fired from $SCRIPT_DIR" >> "$LOG"
 
 # 取当前目录最后两级
 CWD=$(basename "$(dirname "$PWD")")/$(basename "$PWD")
 
-# 核心逻辑交给 python 处理（用临时文件避免 stdin 冲突）
+# --- 临时文件（唯一命名，避免并发冲突）---
 PYTMP=$(mktemp /tmp/cc_notify.XXXXXX.py)
+RESP_TMP=$(mktemp /tmp/cc_notify_resp.XXXXXX)
+HTTP_TMP=$(mktemp /tmp/cc_notify_http.XXXXXX)
+ERR_TMP=$(mktemp /tmp/cc_notify_err.XXXXXX)
+trap 'rm -f "$PYTMP" "$RESP_TMP" "$HTTP_TMP" "$ERR_TMP"' EXIT
+
+# --- Python 处理逻辑 ---
 cat > "$PYTMP" << 'PYEOF'
 import sys, json, re, os
 
@@ -25,43 +40,63 @@ except:
 
 msg = data.get('last_assistant_message', '') or ''
 
-# --- 提取最后三段作为摘要（上限 200 字）---
+# --- 清理 markdown 语法，提取纯文本 ---
+def clean_markdown(text):
+    # 移除代码块
+    text = re.sub(r'```[\s\S]*?```', '', text)
+    # 移除行内代码
+    text = re.sub(r'`[^`]*`', '', text)
+    # 移除 markdown 表格行（含 | 分隔符的行）
+    text = re.sub(r'^[\s]*\|.*\|[\s]*$', '', text, flags=re.MULTILINE)
+    # 移除表格分隔符行
+    text = re.sub(r'^[\s]*[\|\-\:\s]+$', '', text, flags=re.MULTILINE)
+    # 移除标题标记
+    text = re.sub(r'^#{1,6}\s+', '', text, flags=re.MULTILINE)
+    # 移除加粗/斜体标记但保留文字
+    text = re.sub(r'\*{1,3}([^*]+)\*{1,3}', r'\1', text)
+    text = re.sub(r'_{1,3}([^_]+)_{1,3}', r'\1', text)
+    # 移除链接标记，保留文字
+    text = re.sub(r'\[([^\]]*)\]\([^)]*\)', r'\1', text)
+    # 移除图片标记
+    text = re.sub(r'!\[([^\]]*)\]\([^)]*\)', '', text)
+    # 移除引用标记
+    text = re.sub(r'^>\s*', '', text, flags=re.MULTILINE)
+    # 移除列表标记
+    text = re.sub(r'^[\s]*[\*\-\+]\s+', '', text, flags=re.MULTILINE)
+    text = re.sub(r'^[\s]*\d+\.\s+', '', text, flags=re.MULTILINE)
+    # 移除水平线
+    text = re.sub(r'^[\s]*[-*_]{3,}[\s]*$', '', text, flags=re.MULTILINE)
+    # 移除 HTML 标签
+    text = re.sub(r'<[^>]+>', '', text)
+    # 清理多余空白
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text.strip()
+
+# --- 提取最后三段作为摘要 ---
 summary = '任务完成，等待输入'
-lines = msg.split('\n')
+cleaned = clean_markdown(msg)
 
-# 提取段落（以空行分隔）
-paragraphs = []
-current = []
-in_code = False
+if cleaned:
+    # 按空行分段
+    paragraphs = [p.strip() for p in cleaned.split('\n\n') if p.strip()]
+    if paragraphs:
+        raw_summary = ' '.join(paragraphs[-3:])
+        # UTF-8 安全截断（200 字符上限）
+        if len(raw_summary) > 200:
+            raw_summary = raw_summary[:200]
+            # 确保不在多字节字符中间截断
+            try:
+                raw_summary.encode('utf-8').decode('utf-8')
+            except UnicodeDecodeError:
+                raw_summary = raw_summary[:196] + '...'
+        summary = raw_summary
 
-for line in lines:
-    stripped = line.strip()
-    # 跳过代码块
-    if stripped.startswith('```'):
-        in_code = not in_code
-        if current:
-            paragraphs.append('\n'.join(current))
-            current = []
-        continue
-    if in_code:
-        continue
-    # 空行分隔段落
-    if not stripped:
-        if current:
-            paragraphs.append('\n'.join(current))
-            current = []
-        continue
-    # 跳过纯 markdown 语法行
-    if re.match(r'^[\|\-\+\s]+$|^[\-\*]\s*$', stripped):
-        continue
-    current.append(stripped)
-
-if current:
-    paragraphs.append('\n'.join(current))
-
-# 取最后三段
-if paragraphs:
-    summary = ' '.join(paragraphs[-3:])[:200]
+# 如果清理后为空，用原始消息的前 100 字符
+if not summary or summary == '任务完成，等待输入':
+    if msg:
+        fallback = re.sub(r'\s+', ' ', msg)[:100]
+        if fallback.strip():
+            summary = fallback.strip()
 
 # --- 判断优先级 ---
 priority = 'default'
@@ -117,10 +152,10 @@ PYEOF
 
 RESULT=$(echo "$INPUT" | python3 "$PYTMP")
 PY_EXIT=$?
-rm -f "$PYTMP"
 
 if [ $PY_EXIT -ne 0 ]; then
     echo "$(date) | ERROR | python exit code=$PY_EXIT" >> "$LOG"
+    exit 1
 fi
 
 MSG=$(echo "$RESULT" | sed -n '1p')
@@ -144,25 +179,21 @@ esac
 # 写日志
 echo "$(date) | $PRIORITY | $CWD | $MSG" >> "$LOG"
 
-# ntfy.sh 推送（带错误日志）
-curl -s -o /tmp/cc_notify_resp.tmp -w "%{http_code}" \
+# ntfy.sh 推送（带超时）
+HTTP_CODE=$(curl -s --connect-timeout 5 --max-time 15 \
+  -o "$RESP_TMP" -w "%{http_code}" \
   -H "Title: $TITLE" \
   -H "Tags: $TAGS" \
   -H "Priority: $PRIORITY" \
   --data-binary "$MSG" \
-  "https://ntfy.sh/$TOPIC" > /tmp/cc_notify_http.tmp 2>/tmp/cc_notify_err.tmp &
-CURL_PID=$!
-wait $CURL_PID 2>/dev/null
-CURL_EXIT=$?
-HTTP_CODE=$(cat /tmp/cc_notify_http.tmp 2>/dev/null)
+  "https://ntfy.sh/$TOPIC" 2>"$ERR_TMP" || echo "000")
 
-if [ $CURL_EXIT -ne 0 ] || [ "$HTTP_CODE" != "200" ]; then
-    CURL_ERR=$(cat /tmp/cc_notify_err.tmp 2>/dev/null)
-    echo "$(date) | PUSH_FAILED | curl_exit=$CURL_EXIT http=$HTTP_CODE err=$CURL_ERR" >> "$LOG"
+if [ "$HTTP_CODE" != "200" ]; then
+    CURL_ERR=$(cat "$ERR_TMP" 2>/dev/null)
+    echo "$(date) | PUSH_FAILED | http=$HTTP_CODE err=$CURL_ERR" >> "$LOG"
 else
     echo "$(date) | PUSH_OK | http=$HTTP_CODE" >> "$LOG"
 fi
-rm -f /tmp/cc_notify_resp.tmp /tmp/cc_notify_err.tmp /tmp/cc_notify_http.tmp
 
 # 终端 BEL
-printf '\a' 2>/dev/null
+printf '\a' 2>/dev/null || true

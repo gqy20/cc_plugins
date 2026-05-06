@@ -38,7 +38,6 @@ fi
 
 PDF_AUTO_PROCESS="${PDF_AUTO_PROCESS:-false}"
 PDF_BACKGROUND="${PDF_BACKGROUND:-true}"
-SCRIPT_DIR="$SCRIPT_DIR"
 
 # 1. 检查配套文件是否存在
 check_supporting_files() {

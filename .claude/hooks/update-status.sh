@@ -15,70 +15,66 @@ check_jq || exit 0
 # 初始化状态对象
 STATUS='{}'
 
-# 1. 读取任务信息
+# 1. 读取任务信息（单次 jq 调用批量获取）
 if [ -f "$TASKS_FILE" ]; then
-    # 查找活跃任务（选择最新创建的）
-    # 获取所有 active 任务和创建时间，在 bash 中找到最新的
-    ACTIVE_TASKS=$(jq -r '.tasks | to_entries[] | select(.value.status == "active") | .key + "@" + .value.created_at' "$TASKS_FILE" 2>/dev/null)
-    if [ -n "$ACTIVE_TASKS" ]; then
-        ACTIVE_TASK=$(echo "$ACTIVE_TASKS" | sort -t'@' -k2 -r | head -1 | cut -d'@' -f1)
-    else
-        ACTIVE_TASK=$(jq -r '.tasks | to_entries[] | select(.value.status == "active") | .[0].key // ""' "$TASKS_FILE" 2>/dev/null)
-    fi
+    # 一次 jq 调用获取所有任务统计信息
+    TASK_STATS=$(jq -r '{
+        active_task: (.tasks | to_entries | map(select(.value.status == "active")) | sort_by(.value.created_at // "") | reverse | .[0] // null),
+        total: (.tasks | length),
+        active: ([.tasks[] | select(.status == "active")] | length),
+        completed: ([.tasks[] | select(.status == "completed")] | length),
+        proven_count: (if .proven_skills then (.proven_skills | length) else 0 end),
+        has_proven: (.proven_skills != null and (.proven_skills | length > 0)),
+        top_skill: (.proven_skills | to_entries | sort_by(.value.usage_count // -100) | reverse | .[0] // null),
+        total_reuses: ([.proven_skills[].usage_count // 0] | add // 0),
+        active_proven: ([.proven_skills[] | select(.usage_count // 0 > 0)] | length)
+    } | [
+        (.active_task // {} | .key // ""),
+        (.active_task // {} | .value.name // "无"),
+        (.active_task // {} | .value.steps // [] | length),
+        (.active_task // {} | .value.current_step // 0),
+        .total, .active, .completed, .proven_count,
+        .has_proven,
+        (.top_skill // {} | .key // ""),
+        (.top_skill // {} | .value.usage_count // 0),
+        .total_reuses, .active_proven
+    ] | @tsv' "$TASKS_FILE" 2>/dev/null)
 
-    if [ -n "$ACTIVE_TASK" ]; then
-        TASK_NAME=$(json_read "$TASKS_FILE" ".tasks[\"$ACTIVE_TASK\"].name // \"无\"")
-        STEPS=$(json_read "$TASKS_FILE" ".tasks[\"$ACTIVE_TASK\"].steps // []")
-        STEP_COUNT=$(echo "$STEPS" | jq 'length' 2>/dev/null || echo "0")
-        COMPLETED=$(json_read "$TASKS_FILE" ".tasks[\"$ACTIVE_TASK\"].current_step // 0")
+    if [ -n "$TASK_STATS" ]; then
+        IFS=$'\t' read -r ACTIVE_TASK TASK_NAME STEP_COUNT COMPLETED \
+            TOTAL_TASKS ACTIVE_COUNT COMPLETED_COUNT PROVEN_COUNT \
+            HAS_PROVEN TOP_SKILL TOP_COUNT TOTAL_REUSES ACTIVE_PROVEN <<< "$TASK_STATS"
 
-        STATUS=$(echo "$STATUS" | jq --arg id "$ACTIVE_TASK" --arg name "$TASK_NAME" \
-            --argjson total "$STEP_COUNT" --argjson completed "$COMPLETED" \
-            '.active_task = $id | .task_name = $name | .total_steps = $total | .completed_steps = $completed')
-    fi
+        if [ -n "$ACTIVE_TASK" ]; then
+            STEP_COUNT="${STEP_COUNT:-0}"
+            COMPLETED="${COMPLETED:-0}"
+            STATUS=$(echo "$STATUS" | jq --arg id "$ACTIVE_TASK" --arg name "$TASK_NAME" \
+                --argjson total "$STEP_COUNT" --argjson completed "$COMPLETED" \
+                '.active_task = $id | .task_name = $name | .total_steps = $total | .completed_steps = $completed')
+        fi
 
-    # 统计任务数量
-    TOTAL_TASKS=$(json_read "$TASKS_FILE" '.tasks | length' || echo "0")
-    ACTIVE_COUNT=$(json_read "$TASKS_FILE" '[.tasks[] | select(.status == "active")] | length' || echo "0")
-    COMPLETED_COUNT=$(json_read "$TASKS_FILE" '[.tasks[] | select(.status == "completed")] | length' || echo "0")
-
-    STATUS=$(echo "$STATUS" | jq --argjson total "$TOTAL_TASKS" --argjson active "$ACTIVE_COUNT" \
-        --argjson completed "$COMPLETED_COUNT" \
-        '.total_tasks = $total | .active_tasks = $active | .completed_tasks = $completed')
-
-    # 统计 p_ 技能数量（验证技能）
-    PROVEN_COUNT=$(get_skill_count "proven")
-    STATUS=$(echo "$STATUS" | jq --argjson proven "$PROVEN_COUNT" '.proven_skills_count = $proven')
-
-    # 统计复用次数和热门技能
-    if [ -f "$TASKS_FILE" ]; then
-        # 检查是否有 p_ 技能
-        HAS_PROVEN=$(jq -r '.proven_skills != null and (.proven_skills | length > 0)' "$TASKS_FILE" 2>/dev/null)
+        STATUS=$(echo "$STATUS" | jq --argjson total "$TOTAL_TASKS" --argjson active "$ACTIVE_COUNT" \
+            --argjson completed "$COMPLETED_COUNT" --argjson proven "$PROVEN_COUNT" \
+            '.total_tasks = $total | .active_tasks = $active | .completed_tasks = $completed | .proven_skills_count = $proven')
 
         if [ "$HAS_PROVEN" = "true" ]; then
-            # 获取复用次数最多的技能
-            TOP_SKILL=$(jq -r '.proven_skills | to_entries | sort_by(.value.usage_count // -100) | reverse | .[0].key // ""' "$TASKS_FILE" 2>/dev/null)
-            TOP_COUNT=$(jq -r '.proven_skills | to_entries | sort_by(.value.usage_count // -100) | reverse | .[0].value.usage_count // 0' "$TASKS_FILE" 2>/dev/null)
-            TOTAL_REUSES=$(jq -r '[.proven_skills[].usage_count // 0] | add // 0' "$TASKS_FILE" 2>/dev/null || echo "0")
-            ACTIVE_PROVEN=$(jq -r '[.proven_skills[] | select(.usage_count // 0 > 0)] | length // 0' "$TASKS_FILE" 2>/dev/null || echo "0")
-
             STATUS=$(echo "$STATUS" | jq --arg top "$TOP_SKILL" --argjson topc "$TOP_COUNT" \
                 --argjson total "$TOTAL_REUSES" --argjson active "$ACTIVE_PROVEN" \
                 '.top_reused_skill = $top | .top_reuse_count = $topc | .total_reuses = $total | .active_proven_skills = $active')
         else
-            # 没有 p_ 技能时设置默认值
             STATUS=$(echo "$STATUS" | jq '.top_reused_skill = "" | .top_reuse_count = 0 | .total_reuses = 0 | .active_proven_skills = 0')
         fi
     fi
 fi
 
-# 2. 读取用户画像信息
+# 2. 读取用户画像信息（单次 jq 调用）
 if [ -f "$PROFILE_FILE" ]; then
-    USER_NAME=$(json_read "$PROFILE_FILE" '.basic_info.name // ""')
-    USER_ROLE=$(json_read "$PROFILE_FILE" '.basic_info.role // ""')
-
-    STATUS=$(echo "$STATUS" | jq --arg name "$USER_NAME" --arg role "$USER_ROLE" \
-        '.user_name = $name | .user_role = $role')
+    PROFILE_INFO=$(jq -r '[.basic_info.name // "", .basic_info.role // ""] | @tsv' "$PROFILE_FILE" 2>/dev/null)
+    if [ -n "$PROFILE_INFO" ]; then
+        IFS=$'\t' read -r USER_NAME USER_ROLE <<< "$PROFILE_INFO"
+        STATUS=$(echo "$STATUS" | jq --arg name "$USER_NAME" --arg role "$USER_ROLE" \
+            '.user_name = $name | .user_role = $role')
+    fi
 fi
 
 # 3. 统计技能数量（独立于用户画像）
