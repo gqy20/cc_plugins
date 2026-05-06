@@ -1,6 +1,7 @@
 ---
 name: squash
 description: Commit 历史整理与合并
+user-invocable: true
 version: 0.0.2
 tags:
   - git

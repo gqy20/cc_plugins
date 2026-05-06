@@ -1,6 +1,7 @@
 ---
 name: linus
 description: 实用主义代码审查与重构
+user-invocable: true
 version: 0.0.1
 tags: code-review, refactoring, pragmatism
 dependencies:

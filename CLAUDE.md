@@ -138,11 +138,11 @@ claude mcp add playwright npx @playwright/mcp@latest --browser chrome --headless
 export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 ```
 
-## 本地命令集
+## 本地技能集
 
-项目根目录的 `.claude/commands/` 提供开发工作流命令：
+项目根目录的 `.claude/skills/` 提供开发工作流技能（以 `SKILL.md` 格式）：
 
-| 命令 | 用途 |
+| 技能 | 用途 |
 |------|------|
 | `/tdd` | 测试驱动开发流程，增量测试策略 |
 | `/bdd` | 行为驱动开发流程，可执行文档 |
@@ -155,15 +155,16 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 | `/lint` | 代码质量检查工具集 |
 | `/worktree` | Git Worktree 工作流 - PR Review、并行开发 |
 | `/cleanup` | Python 代码冗余检测清单 |
+| `/explore` | 并行代码库探索 |
 
-**命令协同**：
+**技能协同**：
 - `/tdd` → `/squash`：TDD 产生小 commit → 功能完成后合并
 - `/elegant` + `/tdd`：优雅编码 + 测试驱动
 - `/sdr` → `/gh`：规格驱动 → GitHub 操作
 - `/bdd` + `/tdd`：BDD (验收) + TDD (单元)，双层测试
 - `/worktree` + `/gh`：多 worktree 并行 PR review + gh 操作
 - `/cleanup` + `/elegant`：冗余检测 + 优雅重构
-- `/docs` + 任何命令：代码变更后更新文档
+- `/docs` + 任何技能：代码变更后更新文档
 
 ## 版本控制
 
@@ -200,7 +201,7 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 
 ---
 
-# 本地命令详细说明
+# 本地技能详细说明
 
 ## /tdd - 测试驱动开发
 

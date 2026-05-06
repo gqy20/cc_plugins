@@ -1,6 +1,7 @@
 ---
 name: gh
 description: GitHub CLI 专家助手，提供 gh 命令的场景化指导
+user-invocable: true
 version: 0.0.2
 tags:
   - git

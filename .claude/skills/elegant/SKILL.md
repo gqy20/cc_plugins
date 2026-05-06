@@ -1,6 +1,7 @@
 ---
 name: elegant
 description: 优雅编码与重构规范
+user-invocable: true
 version: 0.0.5
 tags:
   - elegance

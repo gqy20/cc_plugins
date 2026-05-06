@@ -1,6 +1,7 @@
 ---
 name: lint
 description: 代码质量检查工具集
+user-invocable: true
 version: 0.0.1
 tags: lint, quality, check
 dependencies: {}

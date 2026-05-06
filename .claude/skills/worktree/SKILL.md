@@ -1,6 +1,7 @@
 ---
 name: worktree
 description: Git Worktree 工作流 - PR Review、并行开发、完整开发生命周期
+user-invocable: true
 version: 0.0.1
 tags:
   - git

@@ -1,6 +1,7 @@
 ---
 name: tdd
 description: 测试驱动开发（TDD）流程助手
+user-invocable: true
 version: 0.0.4
 tags:
   - testing

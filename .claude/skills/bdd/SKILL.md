@@ -1,6 +1,7 @@
 ---
 name: bdd
 description: 行为驱动开发（BDD）流程助手
+user-invocable: true
 version: 0.0.2
 tags:
   - bdd

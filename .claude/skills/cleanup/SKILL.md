@@ -1,6 +1,7 @@
 ---
 name: cleanup
 description: Python 代码冗余检测清单
+user-invocable: true
 version: 0.0.1
 tags:
   - python

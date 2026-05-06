@@ -1,6 +1,7 @@
 ---
 name: explore
 description: 并行代码库探索
+user-invocable: true
 version: 0.0.1
 tags: [research, exploration]
 argument-hint: [topic] [parallel]

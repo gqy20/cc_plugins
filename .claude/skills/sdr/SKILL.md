@@ -1,6 +1,7 @@
 ---
 name: sdr
 description: 规格驱动开发（SDD）流程助手，包含 Git 工作流管理
+user-invocable: true
 version: 0.0.2
 tags:
   - workflow

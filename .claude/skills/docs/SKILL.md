@@ -1,6 +1,7 @@
 ---
 name: docs
 description: 活文档维护
+user-invocable: true
 version: 0.0.4
 tags:
   - documentation
