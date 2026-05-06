@@ -2,9 +2,12 @@
 LOG="$HOME/.claude/notify.log"
 TOPIC="claude-qy113-notify"
 
+# 脚本自身位置（不依赖 $CLAUDE_PROJECT_DIR）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+
 # 读取 stdin（只读一次）
 INPUT=$(cat)
-echo "$(date): hook fired" >> "$LOG"
+echo "$(date): hook fired from $SCRIPT_DIR" >> "$LOG"
 
 # 取当前目录最后两级
 CWD=$(basename "$(dirname "$PWD")")/$(basename "$PWD")
@@ -113,7 +116,12 @@ print(duration)
 PYEOF
 
 RESULT=$(echo "$INPUT" | python3 "$PYTMP")
+PY_EXIT=$?
 rm -f "$PYTMP"
+
+if [ $PY_EXIT -ne 0 ]; then
+    echo "$(date) | ERROR | python exit code=$PY_EXIT" >> "$LOG"
+fi
 
 MSG=$(echo "$RESULT" | sed -n '1p')
 PRIORITY=$(echo "$RESULT" | sed -n '2p')
@@ -136,13 +144,24 @@ esac
 # 写日志
 echo "$(date) | $PRIORITY | $CWD | $MSG" >> "$LOG"
 
-# ntfy.sh 推送
-curl -s -o /dev/null \
+# ntfy.sh 推送（带错误日志）
+HTTP_CODE=$(curl -s -o /tmp/cc_notify_resp.tmp -w "%{http_code}" \
   -H "Title: $TITLE" \
   -H "Tags: $TAGS" \
   -H "Priority: $PRIORITY" \
-  -d "$MSG" \
-  "https://ntfy.sh/$TOPIC" 2>/dev/null &
+  --data-binary "$MSG" \
+  "https://ntfy.sh/$TOPIC" 2>/tmp/cc_notify_err.tmp &
+CURL_PID=$!
+wait $CURL_PID 2>/dev/null
+CURL_EXIT=$?
+
+if [ $CURL_EXIT -ne 0 ] || [ "$HTTP_CODE" != "200" ]; then
+    CURL_ERR=$(cat /tmp/cc_notify_err.tmp 2>/dev/null)
+    echo "$(date) | PUSH_FAILED | curl_exit=$CURL_EXIT http=$HTTP_CODE err=$CURL_ERR" >> "$LOG"
+else
+    echo "$(date) | PUSH_OK | http=$HTTP_CODE" >> "$LOG"
+fi
+rm -f /tmp/cc_notify_resp.tmp /tmp/cc_notify_err.tmp
 
 # 终端 BEL
 printf '\a' 2>/dev/null
