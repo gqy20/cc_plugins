@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# uv / venv
+.venv/
+.python-version
+
+# 测试
+.pytest_cache/
+.ruff_cache/
+
+# pyscn 生成的临时报告
+.pyscn/
+
+# 编辑器
+.vscode/
+.idea/
+*.swp

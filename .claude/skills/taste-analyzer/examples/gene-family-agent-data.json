@@ -1,0 +1,160 @@
+{
+  "project": {
+    "path": "/tmp/gene-family-agent",
+    "name": "gene-family-agent",
+    "is_agent_project": true
+  },
+  "complexity": {
+    "mean_cc": 4.228592162554427,
+    "p95_cc": 11,
+    "max_cc": 111,
+    "hotspots": [
+      {
+        "file": "/tmp/gene-family-agent/src/gene_family_agent/teams/gene_family_team.py",
+        "function": "analyze",
+        "cc": 111
+      },
+      {
+        "file": "/tmp/gene-family-agent/src/gene_family_agent/teams/review_generator.py",
+        "function": "build_multi_species_prompt",
+        "cc": 76
+      },
+      {
+        "file": "/tmp/gene-family-agent/src/gene_family_agent/tools/genome_tools.py",
+        "function": "get_gene_by_symbol_with_uniprot_fallback",
+        "cc": 60
+      },
+      {
+        "file": "/tmp/gene-family-agent/src/gene_family_agent/agents/literature_orchestrator.py",
+        "function": "comprehensive_search",
+        "cc": 50
+      },
+      {
+        "file": "/tmp/gene-family-agent/src/gene_family_agent/literature/retrieval_pipeline.py",
+        "function": "execute_retrieval_strategies",
+        "cc": 40
+      }
+    ],
+    "source": "radon"
+  },
+  "dead_code": {
+    "count": 191,
+    "samples": [
+      {
+        "file": "_test_intent.py",
+        "line": 33,
+        "name": "?"
+      },
+      {
+        "file": "scripts/agents/test_literature_agent.py",
+        "line": 27,
+        "name": "?"
+      },
+      {
+        "file": "scripts/parallel_model_test.py",
+        "line": 46,
+        "name": "?"
+      },
+      {
+        "file": "scripts/parallel_model_test.py",
+        "line": 47,
+        "name": "?"
+      },
+      {
+        "file": "scripts/test_mcp_vs_cli.py",
+        "line": 27,
+        "name": "?"
+      }
+    ],
+    "source": "vulture"
+  },
+  "clones": {
+    "type1": 0,
+    "type2": 0,
+    "type3": 0,
+    "samples": [],
+    "source": "unavailable"
+  },
+  "coupling": {
+    "cbo_top": [],
+    "cycles": [],
+    "source": "unavailable"
+  },
+  "lint": {
+    "violations": 135,
+    "by_rule": {
+      "E401": 1,
+      "I001": 16,
+      "F401": 24,
+      "E402": 4,
+      "E702": 6,
+      "RUF010": 4,
+      "F541": 4,
+      "PTH123": 6,
+      "SIM114": 1,
+      "PTH118": 1,
+      "PTH120": 1,
+      "TC003": 5,
+      "TC001": 3,
+      "UP037": 31,
+      "ARG002": 3,
+      "C416": 2,
+      "F821": 4,
+      "RUF022": 2,
+      "RUF012": 1,
+      "RUF100": 1,
+      "SIM113": 1,
+      "RUF005": 1,
+      "SIM118": 1,
+      "SIM102": 5,
+      "SIM110": 1,
+      "RUF059": 3,
+      "UP035": 1,
+      "B009": 1,
+      "SIM300": 1
+    },
+    "source": "ruff"
+  },
+  "types": {
+    "coverage_pct": 94.1,
+    "errors": 0,
+    "mypy_strict": false,
+    "source": "mypy"
+  },
+  "git": {
+    "commits": 50,
+    "contributors": 1,
+    "conventional_pct": 100.0,
+    "has_lockfile": true,
+    "sample_messages": [
+      "docs: update README with architecture diagrams and config说明",
+      "fix: 加强修订阶段的引用完整性和孤儿引用防护",
+      "fix: 修复 QueryAnalysisAgent 和 ReviewAgent 的 token 统计缺失问题",
+      "fix: 修复 num_turns 统计为 0 的问题",
+      "fix: 加强引用数量要求和自检机制",
+      "fix: 添加基因名斜体格式要求到写作提示词",
+      "refactor: 移除 claim_citation_plan 机制",
+      "feat: 在 revision prompt 中添加 claim-citation mapping 约束",
+      "fix: record QueryAnalysisAgent token usage in stage_token_usage",
+      "feat: 为 ReviewAgent 添加详细 trace 日志记录"
+    ]
+  },
+  "repo": {
+    "has_ci": true,
+    "has_tests": true,
+    "test_ratio": 0.44,
+    "readme_lines": 437
+  },
+  "agent": {
+    "has_claude_dir": true,
+    "has_mcp_config": false,
+    "has_claude_sdk": true,
+    "cli_json_flags": 0,
+    "write_protection": true,
+    "state_persistence": false,
+    "dashboard": true,
+    "claude_subdirs": [
+      "skills"
+    ]
+  }
+}

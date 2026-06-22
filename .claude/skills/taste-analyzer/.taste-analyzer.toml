@@ -1,0 +1,53 @@
+# taste-analyzer 默认配置
+# 可放在项目根的 .taste-analyzer.toml 覆盖
+
+[collect]
+# 是否启用 pyscn（如果装了 pyscn 二进制）
+enable_pyscn = true
+
+# ruff 检查的目录（默认 ".")
+ruff_paths = ["."]
+
+# vulture 最小置信度（0-100）
+vulture_min_confidence = 60
+
+# mypy 检查模式：default / strict
+mypy_mode = "default"
+
+# git log 采样数
+git_log_limit = 500
+
+[radar]
+# SVG 尺寸
+size = 400
+
+# 分数颜色阈值
+green_threshold = 4.0
+yellow_threshold = 2.5
+
+# 分数标尺
+max_score = 5
+
+[report]
+# 输出文件名
+default_filename = "taste-report.md"
+
+# 是否在报告中嵌入完整 JSON 数据
+include_raw_json = true
+
+[thresholds]
+# 复杂度阈值（用于自动标记）
+warn_cc = 10
+hot_cc = 15
+
+# Lint 阈值
+warn_violations = 30
+hot_violations = 100
+
+# 类型覆盖率阈值
+warn_coverage_pct = 50
+hot_coverage_pct = 80
+
+# Conventional commits 阈值
+warn_conventional_pct = 50
+hot_conventional_pct = 80

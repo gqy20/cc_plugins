@@ -1,0 +1,1 @@
+# taste-analyzer tests package

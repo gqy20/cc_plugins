@@ -1,0 +1,96 @@
+[project]
+name = "taste-analyzer"
+version = "0.1.0"
+description = "Python 项目代码品位分析 — 6 维度评分 + 诊断 + SVG 雷达图报告"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "gqy20" },
+]
+
+# 核心依赖：render 模式必需 + Python API 调用所需
+dependencies = [
+    "jinja2>=3.1",      # render 模式渲染报告
+    "radon>=6.0",       # 圈复杂度 / 可维护性指数（Python API）
+]
+
+[project.optional-dependencies]
+# 数据采集层依赖（subprocess）
+subprocess = [
+    "ruff>=0.1",        # linter（subprocess）
+    "vulture>=2.0",     # 死代码检测（subprocess）
+    "mypy>=1.0",        # 类型检查（subprocess）
+]
+# 核心引擎（Go 二进制，通过 pipx/uv tool 安装）
+core = [
+    "pyscn>=1.0",
+]
+
+# 完整的便捷安装：所有依赖
+all = [
+    "taste-analyzer[subprocess,core]",
+]
+
+[project.scripts]
+taste-analyzer = "scripts.analyze:main"
+
+# ============================================================================
+# uv 配置
+# ============================================================================
+
+[tool.uv]
+# 包管理行为
+managed = true
+package = true
+
+# 开发依赖分组（PEP 735）
+[dependency-groups]
+dev = [
+    "ruff>=0.1",          # lint 这个 skill 自己
+    "mypy>=1.0",          # 类型检查
+    "pytest>=7.0",        # 单元测试
+    "pytest-cov>=4.0",    # 覆盖率
+]
+
+# ============================================================================
+# 构建系统
+# ============================================================================
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["scripts"]
+
+# ============================================================================
+# 工具配置
+# ============================================================================
+
+# Ruff 配置（lint 这个 skill 自己）
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+ignore = ["E501"]  # 行长度让 formatter 控制
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/*.py" = ["E402"]  # CLI 脚本允许 import 在后面
+
+# mypy 配置
+[tool.mypy]
+python_version = "3.10"
+strict = false
+warn_unused_ignores = true
+disallow_untyped_defs = false  # skill 脚本不需要强制类型
+
+# pytest 配置
+[tool.pytest.ini_options]
+testpaths = ["unit"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
