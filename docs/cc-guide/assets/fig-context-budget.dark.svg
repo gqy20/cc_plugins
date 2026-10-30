@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 404"
      width="960" height="404" role="img" aria-labelledby="t d">
   <title id="t">启动时的上下文预算：skill 清单已超预算</title>
-  <desc id="d">三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10428 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。</desc>
+  <desc id="d">三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10518 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。</desc>
   <style>
   :root {
 
@@ -85,10 +85,10 @@
   <text x="910" y="90" class="t-small" text-anchor="end">101 用户级 + 23 项目级 + 9 插件 + 内置</text>
   <rect x="50" y="100" width="860.0" height="30" rx="6" fill="var(--danger-bg)" stroke="var(--danger)" stroke-width="1.4"/>
   <text x="898.0" y="121" class="t-h" text-anchor="end" fill="var(--danger)">46,109 字符</text>
-  <text x="50" y="156" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">CLAUDE.md（项目级，408 行）</text>
+  <text x="50" y="156" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">CLAUDE.md（项目级，412 行）</text>
   <text x="910" y="156" class="t-small" text-anchor="end">官方建议 ≤ 200 行</text>
-  <rect x="50" y="166" width="194.5" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
-  <text x="232.49738662733955" y="187" class="t-h" text-anchor="end" fill="var(--accent)">10,428 字符</text>
+  <rect x="50" y="166" width="196.2" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="234.1760176971958" y="187" class="t-h" text-anchor="end" fill="var(--accent)">10,518 字符</text>
   <text x="50" y="222" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">agent description（15 个生效 / 18 个文件）</text>
   <text x="910" y="222" class="t-small" text-anchor="end">8 用户级 + 3 项目级 + 4 插件</text>
   <rect x="50" y="232" width="60.6" height="30" rx="6" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.4"/>

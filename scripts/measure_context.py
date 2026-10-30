@@ -64,8 +64,10 @@ def est_tokens(text: str) -> int:
     分词器未公开，这里用社区常用的经验值：
       * CJK / 全角字符 ≈ 1 token / 字
       * ASCII ≈ 4 字符 / token
-    与 Claude Code 自己的 `claude plugin details` 估算基本吻合
-    （实测：526 字符的中文 description ≈ 386 tok）。
+
+    与官方 `claude plugin details` 的 Always-on 估算**有偏差，官方更保守**
+    （实测本插件 436 字符 → 本函数 388 tok，官方报 ~232 tok）。
+    所以：**量级可用，别当精确值**；字符数才是精确的。
     """
     cjk = sum(1 for c in text if ord(c) > 0x2E80)
     ascii_n = len(text) - cjk

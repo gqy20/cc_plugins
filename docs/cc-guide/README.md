@@ -80,8 +80,8 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 
 | 指南章节 | 本仓库的实现 |
 |---------|-------------|
-| 01 能力选型 | `.claude/skills/`（22 个）+ `plugins/`（6 个插件、15 个技能）+ `.claude/agents/`（4 个） |
-| 02 上下文经济学 | `CLAUDE.md`（408 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
+| 01 能力选型 | `.claude/skills/`（23 个目录，22 个生效）+ `plugins/`（6 个插件、15 个技能）+ `.claude/agents/`（4 个） |
+| 02 上下文经济学 | `CLAUDE.md`（412 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
 | 04 权限与护栏 | `.claude/settings.json` 的 `permissions.allow/deny` + `hooks/`（18 个脚本，当前未注册） |
 | 05 多代理编排 | `.claude/agents/` 4 个本地 agent + `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
 | 06 插件与市场 | `.claude-plugin/marketplace.json` + 6 个 `plugins/*/.claude-plugin/plugin.json` |
@@ -102,6 +102,12 @@ uv run python scripts/serve.py
 
 `mkdocs.yml` 里开了 `validation.anchors: warn` 与 `unrecognized_links: warn`，
 配合 `--strict`，**写错的锚点会在构建期报错**，而不是等到线上点开是 404。
+
+但**表格结构构建期抓不到** —— 列数不一致、分隔行写错，Markdown 解析器会静默补齐：
+
+```bash
+uv run python scripts/check_tables.py docs/cc-guide
+```
 
 插图由 `scripts/gen_guide_figures.py` 生成 —— 明暗两套 SVG，共 18 个文件：
 

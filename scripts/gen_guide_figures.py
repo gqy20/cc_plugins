@@ -282,7 +282,7 @@ def fig_context_budget():
     rows = [
         ("skill 清单（145 个 skill 的 description）", 46109, "d",
          "101 用户级 + 23 项目级 + 9 插件 + 内置"),
-        ("CLAUDE.md（项目级，408 行）", 10428, "a",
+        ("CLAUDE.md（项目级，412 行）", 10518, "a",
          "官方建议 ≤ 200 行"),
         ("agent description（15 个生效 / 18 个文件）", 3250, "w",
          "8 用户级 + 3 项目级 + 4 插件"),
@@ -328,7 +328,7 @@ def fig_context_budget():
     b.append(txt(x0 + 18, 378, "解法：/skills 停用不用的 skill，或调高 settings 里的 skillListingBudgetFraction。",
                  "t-small"))
     return svg(W, H, "启动时的上下文预算：skill 清单已超预算",
-               "三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10428 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。",
+               "三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10518 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。",
                "\n".join(b))
 
 

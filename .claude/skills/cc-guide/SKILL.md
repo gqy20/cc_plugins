@@ -24,7 +24,7 @@ tags:
 
 | 用户在问 | 去读 | 关键结论速记 |
 |---------|------|------------|
-| 该用哪个扩展层？CLAUDE.md 还是 skill 还是 hook？ | `docs/cc-guide/01-能力选型矩阵.md` | 11 层扩展；**确定性的只有权限/hook/沙箱**，其余都是建议性的 |
+| 该用哪个扩展层？CLAUDE.md 还是 skill 还是 hook？ | `docs/cc-guide/01-能力选型矩阵.md` | 12 层扩展；**确定性的只有权限/hook/沙箱**，其余都是建议性的 |
 | 上下文为什么这么贵？什么被压缩掉了？ | `docs/cc-guide/02-上下文经济学.md` | 启动时 skill description 就超预算 7.6 倍；压缩会丢带 `paths:` 的规则 |
 | 怎么写提示词？消息怎么排队？快捷键？ | `docs/cc-guide/03-提示词与交互技巧.md` | **排队 = `Ctrl+X Enter`**，`Enter` = 立即发送 |
 | 权限怎么配？沙箱有没有？deny 怎么写才有效？ | `docs/cc-guide/04-权限与护栏.md` | deny 是唯一不可绕过的层；**`Write(...)` 规则不生效，要写 `Edit(...)`** |
@@ -76,6 +76,10 @@ uv run --with pyyaml python scripts/measure_context.py
 ```bash
 # 严格构建：链接写错、锚点失效直接让构建失败
 PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-dir site
+
+# 表格结构体检：列数不一致 / 分隔行错位 / 整列为空
+# （Markdown 解析器会静默补齐，构建期抓不到，只有这个脚本能抓）
+uv run python scripts/check_tables.py docs/cc-guide
 
 # 插图改了就重新生成（明暗两套，共 18 个 SVG）
 uv run python scripts/gen_guide_figures.py

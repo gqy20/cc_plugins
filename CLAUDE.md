@@ -31,6 +31,9 @@ uv run --with pyyaml python scripts/validate_skills.py      # skill/agent frontm
 uv run --with pyyaml python scripts/measure_context.py      # 常驻上下文成本 + frontmatter 体检
 uv run python scripts/extract_keybindings.py --context Chat # 出厂默认键位（从二进制提取）
 uv run python scripts/extract_changelog.py --since 2.1.305  # 内嵌 CHANGELOG（从二进制提取）
+
+# 文档表格结构（列数不一致 / 分隔行错位 / 整列为空）
+uv run python scripts/check_tables.py docs/cc-guide
 ```
 
 ### GitHub Actions 工作流
@@ -57,7 +60,7 @@ PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-d
 | 文件 | 用途 |
 |------|------|
 | `docs/cc-guide/README.md` | 章节索引 + 三条速查 |
-| `docs/cc-guide/01-能力选型矩阵.md` | 11 个扩展层各自管什么 |
+| `docs/cc-guide/01-能力选型矩阵.md` | 12 个扩展层各自管什么 |
 | `docs/cc-guide/02-上下文经济学.md` | 上下文预算、压缩保留/丢弃规则 |
 | `docs/cc-guide/03-提示词与交互技巧.md` | 提示词配方、快捷键、消息队列 |
 | `docs/cc-guide/04-权限与护栏.md` | 权限模式、deny、hook、沙箱 |
