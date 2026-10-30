@@ -1,44 +1,20 @@
 # 诊断 runbook —— 症状 → 命令 → 动作
 
-> 完整版（诊断方法论 + 本仓库踩过的 6 个坑）见
+> 完整版（诊断方法论 + 三层证据源 + 本仓库踩过的 6 个坑）见
 > [`docs/cc-guide/07-排错手册.md`](../../../../docs/cc-guide/07-排错手册.md)。
 > **本文件只留可直接执行的部分** —— 叙述一律回指 07 章，不在这里另抄一份。
 
-## 三层证据源
-
-**先跑 1，再看 2，最后用 3 确认**：
-
-| 层 | 工具 | 能看到什么 |
-|----|------|-----------|
-| **1. 启动日志** | `claude --debug` | 实际加载了什么、跳过了什么、为什么（**最权威**） |
-| **2. 官方校验** | `claude plugin validate` / `claude plugin details` | manifest 是否合规、插件成本 |
-| **3. 交互命令** | `/context` `/skills` `/doctor` `/plugin` | 运行时视角的分解 |
-
-> ⚠️ **反向结论不能只靠日志**：日志和脚本**只报告它们能解析到的部分**。
-> "日志里没出现 X" ≠ "X 不存在"。要断言某个能力不存在，
-> 必须直接查二进制原文（`extract_keybindings.py` / `extract_changelog.py`）。
-
-## 标准诊断流程
+## 起手式：拿到日志
 
 ```bash
-# 1) 起一个最小会话，把启动过程完整记录下来
-claude --debug -p "回复 OK 两个字即可"
-
-# 2) 找这次会话的日志文件（按时间排序，最新的那个）
-ls -t ~/.claude/debug/*.txt | head -1
-
-# 3) 按症状 grep
-LOG=$(ls -t ~/.claude/debug/*.txt | head -1)
-grep -iE "skill|agent|plugin" "$LOG" | head -40
+claude --debug -p "回复 OK 两个字即可"        # 1) 起最小会话，留启动日志
+LOG=$(ls -t ~/.claude/debug/*.txt | head -1)   # 2) 找最新日志
+grep -iE "skill|agent|plugin" "$LOG"          # 3) 按症状 grep
 ```
 
-更多开关：
-
-```bash
-claude --debug --verbose      # 更啰嗦
-claude --debug <插件名>       # 只看某个插件相关的日志
-claude --debug-file /tmp/cc.log   # 日志直接写到指定文件（隐含开启 debug）
-```
+更多开关：`--debug --verbose`（更啰嗦）、`--debug <插件名>`（只看某个插件）、
+`--debug-file <path>`（日志直接写到文件）。
+完整说明见 07 章「标准诊断流程」。
 
 ## 日志关键字速查表
 
@@ -161,6 +137,8 @@ uv run python scripts/extract_changelog.py --grep queue
 | `scripts/extract_keybindings.py` | 出厂键位表（`--context Chat` / `--json`） |
 | `scripts/extract_changelog.py` | 内嵌 CHANGELOG（`--since` / `--grep`） |
 | `scripts/validate_skills.py` | 全仓库 skill/agent frontmatter 合规性 |
+| `scripts/check_skill_links.py` | skill 里指向 cc-guide 的链接与锚点是否还有效 |
+| `scripts/check_doc_numbers.py` | 文档里写死的 CLAUDE.md 尺寸数字是否与文件一致 |
 | `.github/scripts/check_references.py` | Markdown 里引用的文件是否存在 |
 | `.github/scripts/check_mcp_dependencies.py` | MCP 依赖是否声明齐全 |
 | `.github/scripts/validate_content.py <plugin>` | 插件内容质量 |
