@@ -1,5 +1,5 @@
 {
-    "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+    "$schema": "https://www.schemastore.org/claude-code-marketplace.json",
     "name": "cc_plugins",
     "version": "0.1.4",
     "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools",

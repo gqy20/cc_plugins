@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "infographic-viz",
   "version": "0.1.0",
   "description": "Create beautiful infographics using AntV Infographic framework",

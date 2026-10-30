@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "evolutionary-ecology-expert",
   "version": "0.1.2",
   "description": "Expert consultant specializing in natural selection mechanisms, adaptation processes, and ecological interactions.",

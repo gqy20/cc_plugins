@@ -8,6 +8,7 @@ on:
             - "plugins/**"
             - ".claude/**"
             - "scripts/validate_skills.py"
+            - "scripts/validate_manifests.py"
             - ".github/workflows/plugin-validation.yml"
     pull_request:
         branches: [main]
@@ -16,6 +17,7 @@ on:
             - "plugins/**"
             - ".claude/**"
             - "scripts/validate_skills.py"
+            - "scripts/validate_manifests.py"
     workflow_dispatch:
 
 jobs:
@@ -78,6 +80,11 @@ jobs:
                     echo "marketplace_valid=false" >> $GITHUB_OUTPUT
                     exit 1
                   fi
+
+            - name: Validate manifests against their JSON Schema
+              run: |
+                  echo "🔍 Validating marketplace.json + plugin.json against \$schema..."
+                  python3 scripts/validate_manifests.py
 
             - name: Validate Plugin Structure
               id: structure-validation
@@ -367,6 +374,9 @@ jobs:
                   python3 .github/scripts/validate_content.py plugins/hybrid-speciation-expert || echo "Content quality warnings found"
                   python3 .github/scripts/validate_content.py plugins/crop-breeding-expert || echo "Content quality warnings found"
                   python3 .github/scripts/validate_content.py plugins/evolutionary-ecology-expert || echo "Content quality warnings found"
+
+                  echo "Running manifest schema validation..."
+                  python3 scripts/validate_manifests.py
 
                   echo "✅ All validation checks completed successfully!"
 

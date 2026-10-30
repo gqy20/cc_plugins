@@ -32,6 +32,9 @@ uv run --with pyyaml python scripts/measure_context.py      # 常驻上下文成
 uv run python scripts/extract_keybindings.py --context Chat # 出厂默认键位（从二进制提取）
 uv run python scripts/extract_changelog.py --since 2.1.305  # 内嵌 CHANGELOG（从二进制提取）
 
+# manifest schema 校验（$schema 可达性 + 字段类型）
+uv run --with jsonschema python scripts/validate_manifests.py
+
 # 文档表格结构（列数不一致 / 分隔行错位 / 整列为空）
 uv run python scripts/check_tables.py docs/cc-guide
 ```
@@ -124,10 +127,12 @@ plugins/<plugin-name>/
 1. **marketplace.json** - 定义所有插件集合，包含 owner、metadata、plugins 数组
    - 字段 `category`: 在这里定义 (research, expert-advisor, utility)
    - 字段 `source`: 插件目录相对路径
+   - 字段 `$schema`: 指向 SchemaStore（**Anthropic 官方地址已 404**，别改回去）
 2. **plugin.json** (`.claude-plugin/plugin.json`) - 单个插件配置，使用扁平结构：
    - 必需字段: name, version, description, author (对象格式)
    - 入口点: agents (数组), skills (数组), commands (数组)
    - 禁止字段: category, entry_points (这些在 marketplace.json 中)
+   - 字段 `$schema`: 同上，指向 SchemaStore 的 plugin manifest schema
 
 ### Agent/Skill/Command 关系
 - **Agent**: 核心分析逻辑，定义工作流程（调用技能、使用 MCP 工具）

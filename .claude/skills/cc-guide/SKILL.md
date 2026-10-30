@@ -28,8 +28,8 @@ tags:
 | 上下文为什么这么贵？什么被压缩掉了？ | `docs/cc-guide/02-上下文经济学.md` | 启动时 skill description 就超预算 7.6 倍；压缩会丢带 `paths:` 的规则 |
 | 怎么写提示词？消息怎么排队？快捷键？ | `docs/cc-guide/03-提示词与交互技巧.md` | **排队 = `Ctrl+X Enter`**，`Enter` = 立即发送 |
 | 权限怎么配？沙箱有没有？deny 怎么写才有效？ | `docs/cc-guide/04-权限与护栏.md` | deny 是唯一不可绕过的层；**`Write(...)` 规则不生效，要写 `Edit(...)`** |
-| subagent / teams / worktree 怎么选？ | `docs/cc-guide/05-多代理编排.md` | 本仓库插件 skill 一个都没加载（缓存是旧快照） |
-| 插件怎么写？manifest 字段怎么填？ | `docs/cc-guide/06-插件与市场.md` | `skills` 指目录、`commands` 指文件；插件是**装到缓存**再加载的 |
+| subagent / teams / worktree 怎么选？ | `docs/cc-guide/05-多代理编排.md` | 本仓库插件 skill 一个都没加载（缓存跟的是远端版本） |
+| 插件怎么写？manifest 字段怎么填？ | `docs/cc-guide/06-插件与市场.md` | `skills` 指目录、`commands` 指文件；插件是**装到缓存**再加载的；**`$schema` 的官方地址已 404** |
 | 出问题了怎么查？ | `docs/cc-guide/07-排错手册.md` | **先 `claude --debug`**，猜是没用的 |
 | 下一步往哪走？ | `docs/cc-guide/08-演进趋势.md` | v2.1.284 起 **auto 模式是默认**；v2.1.314 起空闲即压缩 |
 
@@ -44,8 +44,9 @@ tags:
    而 `Edit` 规则覆盖所有文件编辑类工具。→ 写 `Edit(.env*)`。
 
 2. **改了仓库里的插件源码，本机的插件不会自动更新。**
-   插件是"安装到缓存再加载"的模型。改完要 `claude plugin update --all`，
-   调试时用 `claude --plugin-dir ./plugins/<name>` 就地加载。
+   插件是"安装到缓存再加载"的模型，而**缓存同步的是 git 远端的已发布版本** ——
+   本地没 push 的改动永远进不去。改完先 `git push`，再 `claude plugin update --all`；
+   调试时直接 `claude --plugin-dir ./plugins/<name>` 就地加载。
 
 3. **`Enter` 不是排队键。**
    出厂绑定是 `enter → chat:submit`（立即发送）、`ctrl+x enter → chat:queueSubmit`（排队）。
@@ -69,7 +70,7 @@ uv run --with pyyaml python scripts/measure_context.py
 ```
 
 会逐来源统计 skill / agent 的 description 字符数，并**标出 frontmatter 解析失败的文件**
-和**不会被加载的旧平铺布局**。
+和**缓存里还没跟上的旧平铺布局**。
 
 ## 改指南文档后
 
@@ -86,6 +87,13 @@ uv run python scripts/gen_guide_figures.py
 
 # 本地预览（修正 Windows 上 .svg 的 MIME，否则图裂）
 uv run python scripts/serve.py
+```
+
+## 改插件 manifest 后
+
+```bash
+# 按 manifest 自己声明的 $schema 校验（顺带确认那个地址还活着）
+uv run --with jsonschema python scripts/validate_manifests.py
 ```
 
 ## 事实来源优先级

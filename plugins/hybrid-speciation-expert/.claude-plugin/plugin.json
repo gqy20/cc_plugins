@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "hybrid-speciation-expert",
   "version": "0.1.1",
   "description": "Expert consultant specializing in hybrid speciation mechanisms, genomic introgression analysis, and reproductive isolation evolution.",

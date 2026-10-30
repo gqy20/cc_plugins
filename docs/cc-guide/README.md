@@ -81,10 +81,10 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 | 指南章节 | 本仓库的实现 |
 |---------|-------------|
 | 01 能力选型 | `.claude/skills/`（23 个目录，22 个生效）+ `plugins/`（6 个插件、15 个技能）+ `.claude/agents/`（4 个） |
-| 02 上下文经济学 | `CLAUDE.md`（412 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
+| 02 上下文经济学 | `CLAUDE.md`（416 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
 | 04 权限与护栏 | `.claude/settings.json` 的 `permissions.allow/deny` + `hooks/`（18 个脚本，当前未注册） |
 | 05 多代理编排 | `.claude/agents/` 4 个本地 agent + `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
-| 06 插件与市场 | `.claude-plugin/marketplace.json` + 6 个 `plugins/*/.claude-plugin/plugin.json` |
+| 06 插件与市场 | `.claude-plugin/marketplace.json` + 6 个 `plugins/*/.claude-plugin/plugin.json` + `scripts/validate_manifests.py`（按 `$schema` 校验 manifest） |
 | 07 排错手册 | `.github/scripts/` 三个校验脚本 + `claude plugin validate` + `claude --debug` + `scripts/measure_context.py`、`scripts/extract_keybindings.py`、`scripts/extract_changelog.py` |
 
 ---

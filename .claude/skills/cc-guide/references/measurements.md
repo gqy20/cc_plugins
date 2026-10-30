@@ -10,7 +10,7 @@
 | 内容 | 加载时机 | 本机实测 |
 |------|---------|---------|
 | skill 清单（145 个 skill 的 description） | 启动时 | **46,109 字符**（预算 6,000，**超 7.6 倍**） |
-| CLAUDE.md（项目级，412 行） | 启动时 | **10,518 字符** |
+| CLAUDE.md（项目级，416 行） | 启动时 | **10,748 字符** |
 | agent 的 description | 启动时 | **3,250 字符**（15 个生效 / 18 个文件） |
 
 > **后果不是"描述变短"**，而是：**排在后面的 skill 的 `description` 被整个截掉 →
@@ -106,9 +106,9 @@ Use Edit(.env*) instead (Edit rules cover all file-editing tools).
 |------|---------|
 | 插件加载方式 | **装到缓存再加载**，不是就地读仓库源码 |
 | `installed_plugins.json` 指向 | `~/.claude/plugins/cache/<marketplace>/<plugin>/<hash>/` |
-| 改了仓库源码 | 本机**不会**自动更新，要 `claude plugin update --all` |
-| 调试替代方案 | `claude --plugin-dir ./plugins/<name>`（就地加载） |
-| 本仓库旗舰插件 | `Loaded 0 skills from plugin evolutionary-biology-expert`（缓存是迁移前的旧平铺布局），但 agent 正常加载 |
+| 改了仓库源码 | 本机**不会**自动更新 —— 缓存跟的是**远端已发布版本**，先 push 再 `claude plugin update --all` |
+| 调试替代方案 | `claude --plugin-dir ./plugins/<name>`（就地加载，不经缓存） |
+| 本仓库旗舰插件 | `Loaded 0 skills from plugin evolutionary-biology-expert`（缓存还停在迁移前的远端版本），但 agent 正常加载 |
 
 ## 5. 平台限制
 

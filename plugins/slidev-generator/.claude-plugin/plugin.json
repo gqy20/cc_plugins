@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "slidev-generator",
   "version": "0.1.1",
   "description": "Convert Markdown files to Slidev presentations and export to PDF/HTML",

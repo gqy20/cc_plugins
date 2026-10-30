@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "evolutionary-biology-expert",
   "version": "0.1.2",
   "description": "Expert analysis system for evolutionary biology researchers with thought map reconstruction and academic network analysis capabilities.",

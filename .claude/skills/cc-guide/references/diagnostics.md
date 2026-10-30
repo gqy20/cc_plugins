@@ -41,7 +41,7 @@ claude --debug <插件名>       # 只看某个插件相关的日志
 | skill 清单超预算 | `Skill listing over budget` | description 被截断，后面的 skill Claude 根本不知道 |
 | frontmatter 解析失败 | `Failed to parse YAML frontmatter` | 该文件被**静默忽略** |
 | 字段名不认识 | `does not recognize or apply` | 字段拼错了 |
-| 插件 skill 为 0 | `Loaded 0 skills from plugin` | 布局不对，或缓存是旧的 |
+| 插件 skill 为 0 | `Loaded 0 skills from plugin` | 布局不对，或缓存跟的是**远端**旧版本 |
 | 插件整体没加载 | `not cached at` / `plugin-cache-miss` | 市场副本过期 |
 | 权限规则不生效 | `Permission deny rule` | 写成了 `Write(...)`，只有 `Edit(...)` 会被匹配 |
 | 沙箱相关 | `sandbox` | 原生 Windows 上没有沙箱 |
@@ -77,8 +77,9 @@ description: |
 ### 插件内容没更新
 
 ```bash
+git push                                      # 缓存同步的是远端版本，先 push
 claude plugin update --all                     # 重新复制到缓存
-claude --plugin-dir ./plugins/<name>           # 或就地加载（调试首选）
+claude --plugin-dir ./plugins/<name>           # 或就地加载（调试首选，不经缓存）
 ```
 
 ### 插件整体不加载
