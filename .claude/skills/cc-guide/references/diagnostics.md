@@ -12,6 +12,10 @@
 
 **顺序固定：先跑 1，再看 2，最后用 3 确认。**
 
+> ⚠️ **反向结论不能只靠日志**：日志和脚本**只报告它们能解析到的部分**。
+> "日志里没出现 X" ≠ "X 不存在"。要断言某个能力不存在，
+> 必须直接查二进制原文（`extract_keybindings.py` / `extract_changelog.py`）。
+
 ## 标准诊断流程
 
 ```bash
@@ -31,6 +35,7 @@ grep -iE "skill|agent|plugin" "$LOG" | head -40
 ```bash
 claude --debug --verbose      # 更啰嗦
 claude --debug <插件名>       # 只看某个插件相关的日志
+claude --debug-file /tmp/cc.log   # 日志直接写到指定文件（隐含开启 debug）
 ```
 
 ## 日志关键字速查表
@@ -121,6 +126,8 @@ file permission checks — only Edit(path) rules are.
 ```bash
 uv run --with pyyaml python scripts/measure_context.py
 /skills        # 停用当前项目用不到的 skill
+/skill-doctor  # 官方报告：哪些 skill 从没被调用过、各占多少上下文
+/context       # 运行时视角的上下文分解
 ```
 
 ### 想知道插件花了多少
