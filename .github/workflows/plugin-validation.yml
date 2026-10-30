@@ -6,12 +6,16 @@ on:
         paths:
             - ".claude-plugin/**"
             - "plugins/**"
+            - ".claude/**"
+            - "scripts/validate_skills.py"
             - ".github/workflows/plugin-validation.yml"
     pull_request:
         branches: [main]
         paths:
             - ".claude-plugin/**"
             - "plugins/**"
+            - ".claude/**"
+            - "scripts/validate_skills.py"
     workflow_dispatch:
 
 jobs:
@@ -86,7 +90,7 @@ jobs:
                     echo "✅ Plugin directory exists: $plugin_dir"
 
                     # 检查必需文件
-                    required_files=("plugin.json" "README.md")
+                    required_files=(".claude-plugin/plugin.json" "README.md")
                     required_dirs=("agents" "skills")
 
                     all_valid=true
@@ -115,6 +119,30 @@ jobs:
                       fi
                     done
 
+                    # skills 必须是 <name>/SKILL.md 目录结构（官方规范）
+                    if [ -d "$plugin_dir/skills" ]; then
+                      skill_ok=true
+                      if compgen -G "$plugin_dir/skills/*.md" > /dev/null; then
+                        echo "❌ skills/ contains loose .md files, expected <name>/SKILL.md"
+                        skill_ok=false
+                      fi
+                      for skill_entry in "$plugin_dir"/skills/*/; do
+                        [ -d "$skill_entry" ] || continue
+                        skill_name=$(basename "$skill_entry")
+                        if [ ! -f "$skill_entry/SKILL.md" ]; then
+                          echo "❌ skills/$skill_name/SKILL.md missing"
+                          skill_ok=false
+                        else
+                          echo "✅ skills/$skill_name/SKILL.md exists"
+                        fi
+                      done
+                      if [ "$skill_ok" = true ]; then
+                        echo "✅ Skills layout valid"
+                      else
+                        all_valid=false
+                      fi
+                    fi
+
                     if [ "$all_valid" = true ]; then
                       echo "✅ Plugin structure validation passed"
                       echo "structure_valid=true" >> $GITHUB_OUTPUT
@@ -134,7 +162,7 @@ jobs:
               run: |
                   echo "🔍 Validating plugin configuration: ${{ matrix.plugin }}..."
 
-                  plugin_json="plugins/${{ matrix.plugin }}/plugin.json"
+                  plugin_json="plugins/${{ matrix.plugin }}/.claude-plugin/plugin.json"
 
                   if [ -f "$plugin_json" ]; then
                     if jq empty "$plugin_json"; then
@@ -274,6 +302,30 @@ jobs:
                     echo "Plugin ${{ matrix.plugin }} has failed one or more validation checks." >> $GITHUB_STEP_SUMMARY
                     exit 1
                   fi
+
+    skills-validation:
+        name: Skill Frontmatter Validation
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Validate plugin skills (blocking)
+              run: |
+                  pip install pyyaml
+                  python scripts/validate_skills.py --root plugins
+
+            - name: Validate local skills (non-blocking)
+              continue-on-error: true
+              run: |
+                  pip install pyyaml
+                  python scripts/validate_skills.py --root .claude || \
+                      echo "⚠️ 本地 skill frontmatter 有问题——Claude Code 会静默忽略这些文件，见 docs/cc-guide/07-排错手册.md"
 
     integration-validation:
         name: Integration Validation

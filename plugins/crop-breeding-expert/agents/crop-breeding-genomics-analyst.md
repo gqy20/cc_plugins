@@ -1,3 +1,9 @@
+---
+name: crop-breeding-genomics-analyst
+description: 作物育种基因组分析智能体。整合育种方案设计、品种改良策略与分子育种咨询三大技能模块，为作物育种提供从传统育种到现代分子育种的全流程专业支持。适用于育种目标规划、技术路线选择与分子标记应用咨询。
+tools: Read, Write, Edit, Bash, Grep, Glob, Task
+---
+
 # 作物育种基因组分析智能体
 
 ## 智能体描述

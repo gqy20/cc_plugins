@@ -1,3 +1,8 @@
+---
+description: 将 Markdown 文件转换为 Slidev 演示文稿（slides.md）并导出为 PDF 或 HTML。
+argument-hint: <input.md> [options]
+---
+
 # /md-to-slidev
 
 将 Markdown 文件转换为 Slidev 演示文稿并导出。

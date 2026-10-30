@@ -1,3 +1,8 @@
+---
+description: 进化生态学专家分析。调用 evolutionary-ecology-analyst 智能体，分析自然选择机制、适应过程与生态互作。
+argument-hint: <expert_name> [ecological_context]
+---
+
 # Analyze Evolutionary Ecology Expert
 
 Use the evolutionary ecology expert agent to analyze natural selection mechanisms, adaptation processes, and ecological interactions in evolutionary contexts.

@@ -40,13 +40,25 @@ def check_references():
         if plugin_path.exists():
             print(f"  ✅ 插件目录存在: {plugin_source}")
 
-            # 检查是否包含 plugin.json
-            plugin_json = plugin_path / "plugin.json"
+            # 检查是否包含 .claude-plugin/plugin.json（官方标准位置）
+            plugin_json = plugin_path / ".claude-plugin" / "plugin.json"
             if plugin_json.exists():
-                print(f"  ✅ plugin.json 存在")
+                print(f"  ✅ .claude-plugin/plugin.json 存在")
             else:
-                print(f"  ⚠️  plugin.json 不存在")
+                print(f"  ⚠️  .claude-plugin/plugin.json 不存在")
                 all_valid = False
+
+            # 检查 skills 目录结构：每个 skill 必须是 <name>/SKILL.md
+            skills_dir = plugin_path / "skills"
+            if skills_dir.is_dir():
+                for skill_dir in sorted(skills_dir.iterdir()):
+                    if not skill_dir.is_dir():
+                        print(f"  ⚠️  skills/{skill_dir.name} 是文件，应为目录（含 SKILL.md）")
+                        all_valid = False
+                        continue
+                    if not (skill_dir / "SKILL.md").is_file():
+                        print(f"  ⚠️  skills/{skill_dir.name}/SKILL.md 不存在")
+                        all_valid = False
 
         else:
             print(f"  ❌ 插件源目录不存在: {plugin_source}")

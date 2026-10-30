@@ -1,9 +1,8 @@
 ---
-name: 数据整合格式化技能
-description: 专为专家分析报告生成而设计的数据整合与格式化技能。整合Google Scholar数据获取和Nature格式参考文献标准化，提供统一的数据处理流程，确保报告的数据完整性、格式规范性和可验证性。该技能避免了多个数据处理工具的切换，提供高效的一站式数据整合格式化服务。
+name: data-integration-formatting
+description: 数据整合与格式化技能。整合 Google Scholar 数据获取和 Nature 格式参考文献标准化，提供统一的数据处理流程，确保分析报告的数据完整性、格式规范性和可验证性。
 allowed-tools: Read, Write, Edit, Bash, Task, mcp__playwright__playwright_navigate, mcp__playwright__playwright_get_visible_text, mcp__playwright__playwright_click, mcp__playwright__playwright_fill, mcp__playwright__playwright_evaluate, mcp__playwright__playwright_screenshot, mcp__playwright__playwright_get_visible_html, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details
 ---
-
 # 🔧 数据整合格式化技能
 
 ## 🎯 核心功能定位
@@ -171,3 +170,19 @@ https://pubmed.ncbi.nlm.nih.gov/PMID/
 ---
 
 *这个技能整合了数据获取和格式化的完整流程，为专家分析报告提供高质量、标准化的数据支撑。*
+
+## 使用示例
+
+### 示例 1：Google Scholar 数据整合
+
+**输入**："获取并整理某学者的 Google Scholar 引用与 h 指数数据。"
+
+**执行流程**：数据获取（浏览器自动化抓取）→ 字段标准化 → 与规范化参考文献条目交叉验证。
+
+**产出**：结构化数据表，含引用数、h 指数、i10 指数与逐年引用曲线。
+
+### 示例 2：参考文献格式统一
+
+**输入**："把这批 Nature 风格的参考文献统一成输出格式。"
+
+**产出**：符合规范的参考文献条目列表，以及数据质量报告（缺失字段与格式异常项清单）。

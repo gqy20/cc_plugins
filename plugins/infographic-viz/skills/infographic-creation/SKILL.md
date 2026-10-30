@@ -1,8 +1,8 @@
 ---
 name: infographic-creation
-description: Create beautiful infographics based on the given text content using AntV Infographic framework.
+description: 基于 AntV Infographic 框架，根据给定文本内容生成美观的信息图表，支持时间线、图表、对比图与层级结构等多种可视化类型。
+allowed-tools: Read, Write, Edit, Bash
 ---
-
 # Infographic Creation Skill
 
 ## Overview

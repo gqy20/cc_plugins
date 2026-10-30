@@ -1,3 +1,9 @@
+---
+name: hybrid-speciation-analyst
+description: 杂交物种形成分析智能体。整合杂交起源分析、基因流图谱绘制与物种形成机制咨询三大技能模块，从基因组数据识别杂交物种形成历史、构建基因流时空动态图谱并提供理论指导。适用于杂交物种形成机制、基因组渐渗与生殖隔离演化的分析。
+tools: Read, Write, Edit, Bash, Grep, Glob, Task
+---
+
 # 杂交物种形成分析智能体
 
 ## 智能体描述

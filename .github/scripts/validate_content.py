@@ -84,15 +84,19 @@ def validate_agent_file(agent_path: Path) -> Tuple[bool, List[str]]:
         issues.append(f"Agent 文件过短: {agent_path.name}")
 
     # 检查是否包含工具调用相关内容
-    tool_keywords = ["tool_use", "Tool", "工具", "mcp", "function"]
-    has_tool_references = any(keyword in content for keyword in tool_keywords)
+    tool_keywords = ["tool_use", "tool", "工具", "mcp", "function"]
+    has_tool_references = any(
+        keyword in content.lower() for keyword in tool_keywords
+    )
 
     if not has_tool_references:
         issues.append(f"Agent 文件可能缺少工具定义: {agent_path.name}")
 
     # 检查是否有明确的目标描述
     goal_keywords = ["目标", "任务", "职责", "objective", "goal", "task"]
-    has_goal_description = any(keyword in content for keyword in goal_keywords)
+    has_goal_description = any(
+        keyword in content.lower() for keyword in goal_keywords
+    )
 
     if not has_goal_description:
         issues.append(f"Agent 文件缺少明确的目标描述: {agent_path.name}")
@@ -134,20 +138,71 @@ def validate_skill_file(skill_path: Path) -> Tuple[bool, List[str]]:
         "purpose",
         "functionality",
     ]
-    has_description = any(keyword in content for keyword in description_keywords)
+    has_description = any(
+        keyword in content.lower() for keyword in description_keywords
+    )
 
     if not has_description:
         issues.append(f"Skill 文件缺少功能描述: {skill_path.name}")
 
     # 检查是否有使用示例
     example_keywords = ["示例", "例子", "example", "用法", "usage"]
-    has_examples = any(keyword in content for keyword in example_keywords)
+    has_examples = any(keyword in content.lower() for keyword in example_keywords)
 
     if not has_examples:
         issues.append(f"Skill 文件建议添加使用示例: {skill_path.name}")
 
     success = len(issues) == 0
     return success, issues
+
+
+def validate_skill_frontmatter(skill_path: Path) -> List[str]:
+    """验证 SKILL.md 的 YAML frontmatter（官方规范）
+
+    要求：
+      - 存在 frontmatter 块
+      - name 存在、kebab-case、且与所在目录名一致
+      - description 存在且非空
+    """
+    issues: List[str] = []
+
+    try:
+        content = skill_path.read_text(encoding="utf-8")
+    except Exception as e:  # pragma: no cover - 与 validate_skill_file 行为一致
+        return [f"无法读取 skill 文件 {skill_path}: {e}"]
+
+    match = re.match(r"\A---\n(.*?)\n---\n", content, re.S)
+    if not match:
+        return [f"frontmatter: {skill_path.parent.name}/SKILL.md 缺少 YAML frontmatter"]
+
+    fields: Dict[str, str] = {}
+    for line in match.group(1).split("\n"):
+        field = re.match(r"^([A-Za-z_][\w-]*):\s*(.*)$", line)
+        if field:
+            fields[field.group(1)] = field.group(2).strip()
+
+    name = fields.get("name", "")
+    if not name:
+        issues.append(f"frontmatter: {skill_path.parent.name}/SKILL.md 缺少 name 字段")
+    else:
+        if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", name):
+            issues.append(
+                f"frontmatter: name '{name}' 不是 kebab-case（应为小写字母、数字与连字符）"
+            )
+        if name != skill_path.parent.name:
+            issues.append(
+                f"frontmatter: name '{name}' 与目录名 '{skill_path.parent.name}' 不一致"
+            )
+
+    description = fields.get("description", "")
+    if not description:
+        issues.append(f"frontmatter: {skill_path.parent.name}/SKILL.md 缺少 description 字段")
+    elif len(description) < 20:
+        issues.append(
+            f"frontmatter: {skill_path.parent.name}/SKILL.md 的 description 过短（< 20 字符）"
+        )
+
+    return issues
 
 
 def validate_command_file(command_path: Path) -> Tuple[bool, List[str]]:
@@ -169,7 +224,7 @@ def validate_command_file(command_path: Path) -> Tuple[bool, List[str]]:
     else:
         # 检查是否有使用说明
         usage_keywords = ["用法", "使用", "usage", "参数", "parameter"]
-        has_usage = any(keyword in content for keyword in usage_keywords)
+        has_usage = any(keyword in content.lower() for keyword in usage_keywords)
 
         if not has_usage:
             issues.append(f"命令文件建议添加使用说明: {command_path.name}")
@@ -212,11 +267,20 @@ def validate_plugin_content(plugin_path: Path) -> Dict:
             if success:
                 results["valid_files"] += 1
 
-    # 验证 skills
+    # 验证 skills（官方规范：skills/<name>/SKILL.md）
     skills_dir = plugin_path / "skills"
     if skills_dir.exists():
-        for skill_file in skills_dir.glob("*.md"):
+        for skill_dir in sorted(skills_dir.iterdir()):
+            if not skill_dir.is_dir():
+                results["success"] = False
+                results["issues"].append(
+                    f"Skill 必须是目录结构 skills/<name>/SKILL.md，发现散落文件: {skill_dir.name}"
+                )
+                continue
+            skill_file = skill_dir / "SKILL.md"
             success, issues = validate_skill_file(skill_file)
+            issues.extend(validate_skill_frontmatter(skill_file))
+            success = success and not any("frontmatter" in i for i in issues)
             results["success"] &= success
             results["issues"].extend(issues)
             results["file_count"] += 1

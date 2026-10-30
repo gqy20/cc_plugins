@@ -1,3 +1,9 @@
+---
+name: slidev-converter
+description: Slidev 转换智能体。读取 Markdown 文件并转换为 Slidev 演示文稿（slides.md），自动匹配主题并导出为 PDF 或 HTML。
+tools: Read, Write, Edit, Bash
+---
+
 # Slidev Converter Agent
 
 将 Markdown 文件转换为 Slidev 演示文稿的核心处理流程。

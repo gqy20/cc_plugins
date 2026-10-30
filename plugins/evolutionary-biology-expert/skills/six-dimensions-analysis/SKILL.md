@@ -1,9 +1,8 @@
 ---
-name: 六维度综合分析技能
-description: 专为专家思想地图重建而设计的统一六维度分析技能。整合时间动态、背景感知、专家网络、批判性思维四个维度的深度分析，使用sequentialthinking进行结构化推理，确保分析的深度、逻辑性和全面性。该技能避免了多个独立技能的切换开销，提供一致的分析框架和高效的分析流程。
+name: six-dimensions-analysis
+description: 六维度综合分析技能。整合时间动态、背景感知、专家网络、批判性思维等维度的深度分析，使用 sequentialthinking 进行结构化推理，提供一致的分析框架，避免多个独立技能之间的切换开销。
 allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references, mcp__sequentialthinking__sequentialthinking
 ---
-
 # 🎯 六维度综合分析技能
 
 ## 🎯 核心分析哲学
@@ -121,3 +120,20 @@ allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literatur
 ---
 
 *这个技能通过统一框架整合了原本分散的四个分析技能，提供了更高效、更一致的六维度分析能力。*
+## 使用示例
+
+### 示例 1：六维度完整分析
+
+**输入**："对 Susumu Ohno 的学术思想做六维度完整分析。"
+
+**执行流程**：整体文献梳理 → 六维度并行分析（时间 / 背景 / 网络 / 批判 / 方法论 / 影响力）→ 维度交叉分析（时间×网络、批判×方法论等交叉验证）。
+
+**产出**：六维度分析报告，含各维度发现、交叉维度的一致性检验与核心结论整合。
+
+### 示例 2：单维度聚焦分析
+
+**输入**："只分析该专家的理论边界与替代解释。"
+
+**执行流程**：批判维度单独执行——理论主张提取 → 证据强度评估 → 替代解释考量 → 边界条件界定。
+
+**产出**：批判维度专项分析，含理论适用边界、证据强度评级与待检验的替代假说清单。

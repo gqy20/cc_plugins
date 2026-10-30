@@ -52,7 +52,7 @@ repos:
           echo "✅ $file 格式正确";
           ' bash
         language: system
-        files: '^plugins/[^/]*/plugin\.json$'
+        files: '^plugins/[^/]*/\.claude-plugin/plugin\.json$'
 
   # === General Code Quality (from cc_plugins) ===
   - repo: https://github.com/pre-commit/pre-commit-hooks

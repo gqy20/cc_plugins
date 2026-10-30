@@ -1,3 +1,8 @@
+---
+description: 进化生物学专家分析。调用 evolutionary-biology-analyst 智能体，重建专家思想地图、学术网络与研究影响力。
+argument-hint: <expert_name> [research_topic]
+---
+
 # Analyze Evolutionary Biology Expert
 
 Use the evolutionary biology expert agent to analyze a researcher's thought map, academic network, and research impact.

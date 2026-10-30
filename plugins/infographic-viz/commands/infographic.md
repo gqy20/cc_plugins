@@ -1,3 +1,8 @@
+---
+description: 使用 AntV Infographic 框架创建美观的信息图表，支持时间线、图表、对比与层级结构等多种可视化类型。
+argument-hint: <内容描述>
+---
+
 # /infographic
 
 使用 AntV Infographic 框架创建美观的信息图表。

@@ -1,0 +1,28 @@
+{
+  "name": "hybrid-speciation-expert",
+  "version": "0.1.1",
+  "description": "Expert consultant specializing in hybrid speciation mechanisms, genomic introgression analysis, and reproductive isolation evolution.",
+  "author": {
+    "name": "qingyu_ge",
+    "email": "qingyuge@foxmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/gqy20/cc_plugins",
+  "repository": "https://github.com/gqy20/cc_plugins",
+  "keywords": [
+    "hybrid-speciation",
+    "expert-system",
+    "evolutionary-biology",
+    "genomics",
+    "introgression"
+  ],
+  "agents": [
+    "./agents/hybrid-speciation-analyst.md"
+  ],
+  "skills": [
+    "./skills/"
+  ],
+  "commands": [
+    "./commands/hybrid-analyze.md"
+  ]
+}

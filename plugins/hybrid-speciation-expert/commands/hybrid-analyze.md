@@ -1,3 +1,8 @@
+---
+description: 杂交物种形成专家分析。调用 hybrid-speciation-analyst 智能体，分析杂交机制、基因组渐渗与生殖隔离演化。
+argument-hint: <expert_name> [focus_area]
+---
+
 # Analyze Hybrid Speciation Expert
 
 Use the hybrid speciation expert agent to analyze hybridization mechanisms, genomic introgression, and reproductive isolation evolution.

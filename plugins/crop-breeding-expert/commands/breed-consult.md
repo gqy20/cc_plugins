@@ -1,3 +1,8 @@
+---
+description: 作物育种专家咨询。调用 crop-breeding-genomics-analyst 智能体，就育种方案设计、分子育种技术与品种改良策略提供专业指导。
+argument-hint: <crop_type> <breeding_goal> [method]
+---
+
 # Consult Crop Breeding Expert
 
 Use the crop breeding expert agent to get professional guidance on breeding program design, molecular techniques, and variety improvement strategies.

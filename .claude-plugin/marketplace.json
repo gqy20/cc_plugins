@@ -4,8 +4,7 @@
     "version": "0.1.4",
     "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools",
     "metadata": {
-        "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools",
-        "summary": "Professional expert advisor plugins for evolutionary biology research and analysis with visualization capabilities"
+        "description": "Claude Code research plugins collection featuring expert analysis systems for evolutionary biology, ecology, crop breeding, and visualization tools"
     },
     "owner": {
         "name": "gqy20",

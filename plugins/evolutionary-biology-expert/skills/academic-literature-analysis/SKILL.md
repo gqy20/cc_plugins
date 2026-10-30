@@ -1,9 +1,8 @@
 ---
-name: 深度学术文献分析技能
-description: 专为专家思想地图重建而设计的高阶学术文献分析技能。重点不是简单的文献收集，而是通过深度文献分析理解专家的理论发展脉络、学术影响力和思想演进轨迹。使用sequentialthinking进行结构化思考，确保分析的深度和逻辑性。
+name: academic-literature-analysis
+description: 深度学术文献分析技能。重点不是简单的文献收集，而是通过深度文献分析理解专家的理论发展脉络、学术影响力和思想演进轨迹，使用 sequentialthinking 进行结构化推理以保证分析深度与逻辑性。
 allowed-tools: Read, Write, Edit, Bash, Task, mcp__article_mcp__search_literature, mcp__article_mcp__get_article_details, mcp__article_mcp__get_references, mcp__sequentialthinking__sequentialthinking
 ---
-
 # 🧠 深度学术文献分析技能
 
 ## 🎯 核心分析哲学

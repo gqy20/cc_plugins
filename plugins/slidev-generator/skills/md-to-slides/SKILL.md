@@ -1,3 +1,8 @@
+---
+name: md-to-slides
+description: 将 Markdown 内容转换为 Slidev 演示文稿（slides.md），自动匹配合适主题，并支持导出为 PDF 或 HTML。
+allowed-tools: Read, Write, Edit, Bash
+---
 # MD to Slides Skill
 
 将 Markdown 内容转换为 Slidev 格式的 slides.md。
