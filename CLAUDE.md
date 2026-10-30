@@ -37,6 +37,12 @@ uv run --with jsonschema python scripts/validate_manifests.py
 
 # 文档表格结构（列数不一致 / 分隔行错位 / 整列为空）
 uv run python scripts/check_tables.py docs/cc-guide
+
+# skill 目录指向 cc-guide 的链接（mkdocs --strict 抓不到 skill 里的坏锚点）
+uv run python scripts/check_skill_links.py
+
+# 文档里写死的 CLAUDE.md 尺寸数字（行数 / 字符数 / token / 超标百分比）
+uv run --with pyyaml python scripts/check_doc_numbers.py
 ```
 
 ### GitHub Actions 工作流

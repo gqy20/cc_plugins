@@ -21,6 +21,17 @@ import math
 import pathlib
 
 OUT_DIR = pathlib.Path(__file__).resolve().parent.parent / "docs" / "cc-guide" / "assets"
+PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+def claude_md_size() -> tuple[int, int]:
+    """现读 CLAUDE.md，返回 (行数, 字符数)。
+
+    为什么现读而不是写死：CLAUDE.md 自己一改，写死的数字就过期了 ——
+    而这张图会把它印在正文里，比正文还显眼。
+    """
+    text = (PROJECT_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    return text.count("\n"), len(text)
 
 # --------------------------------------------------------------------------
 # 主题 token。
@@ -279,10 +290,11 @@ def fig_context_budget():
     b.append(txt(W/2, 34, "会话还没开口，skill 清单就已经超预算 7.6 倍", "t-title", "middle"))
 
     # 全部来自 `claude --debug` 日志，单位统一为「字符」
+    md_lines, md_chars = claude_md_size()
     rows = [
         ("skill 清单（145 个 skill 的 description）", 46109, "d",
          "101 用户级 + 23 项目级 + 9 插件 + 内置"),
-        ("CLAUDE.md（项目级，416 行）", 10748, "a",
+        (f"CLAUDE.md（项目级，{md_lines} 行）", md_chars, "a",
          "官方建议 ≤ 200 行"),
         ("agent description（15 个生效 / 18 个文件）", 3250, "w",
          "8 用户级 + 3 项目级 + 4 插件"),
@@ -328,7 +340,9 @@ def fig_context_budget():
     b.append(txt(x0 + 18, 378, "解法：/skills 停用不用的 skill，或调高 settings 里的 skillListingBudgetFraction。",
                  "t-small"))
     return svg(W, H, "启动时的上下文预算：skill 清单已超预算",
-               "三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10748 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。",
+               f"三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、"
+               f"CLAUDE.md {md_chars} 字符、agent description 3250 字符（15 个生效）。"
+               "红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。",
                "\n".join(b))
 
 

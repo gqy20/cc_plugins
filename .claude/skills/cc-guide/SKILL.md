@@ -82,6 +82,14 @@ PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-d
 # （Markdown 解析器会静默补齐，构建期抓不到，只有这个脚本能抓）
 uv run python scripts/check_tables.py docs/cc-guide
 
+# skill 目录指向 cc-guide 的链接
+# （mkdocs --strict 只看 docs/，skill 里的坏锚点是隐形的）
+uv run python scripts/check_skill_links.py
+
+# 文档里写死的 CLAUDE.md 尺寸数字
+# （行数 / 字符数 / token / 超标百分比 —— 这些数字随 CLAUDE.md 本身漂移）
+uv run --with pyyaml python scripts/check_doc_numbers.py
+
 # 插图改了就重新生成（明暗两套，共 18 个 SVG）
 uv run python scripts/gen_guide_figures.py
 

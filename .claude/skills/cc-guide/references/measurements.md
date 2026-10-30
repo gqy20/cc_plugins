@@ -2,6 +2,10 @@
 
 > **测量环境**：Windows 11 · Claude Code **2.1.314** · 测量日期 **2026-10-30**
 > 复现命令见每一节的末尾。数字会随环境变化，**引用前请重测**。
+>
+> ⚠️ **本文件只留"数字 + 复现命令"**。按来源拆分的完整表格、对账链与口径说明
+> 全部以 `docs/cc-guide/02-上下文经济学.md` 为准 —— **不要在这里另抄一份表**。
+> 改数字时先改 02 章，再同步这里。
 
 ## 1. 常驻上下文成本
 
@@ -10,30 +14,15 @@
 | 内容 | 加载时机 | 本机实测 |
 |------|---------|---------|
 | skill 清单（145 个 skill 的 description） | 启动时 | **46,109 字符**（预算 6,000，**超 7.6 倍**） |
-| CLAUDE.md（项目级，416 行） | 启动时 | **10,748 字符** |
+| `CLAUDE.md`（项目级） | 启动时 | 体积**随文件本身漂移** —— 现值见 02 章 |
 | agent 的 description | 启动时 | **3,250 字符**（15 个生效 / 18 个文件） |
 
 > **后果不是"描述变短"**，而是：**排在后面的 skill 的 `description` 被整个截掉 →
 > Claude 不知道它们存在 → 永远不会被调用。**
 
-### 按来源拆分
-
-| 来源 | 数量 | description 字符数 | 估算 tokens |
-|------|------|------------------|------------|
-| 用户级 `~/.claude/skills/` | 101 | **26,269** | ≈12,088 |
-| 项目级 `.claude/skills/` | 22/23 | 1,616 | ≈978 |
-| 插件 skill（已启用） | 9 | 1,141 | ≈360 |
-| **skill 小计** | **132** | **29,026** | **≈13,430** |
-| 已安装但本项目未启用 | — | 11,960 | ≈2,974 |
-
-> ⚠️ **46,109 只含 skill**：agent 的 description 走独立加载路径，不进 skill 清单；
-> figma / vercel 未启用，那 11,960 也不在 46,109 里。
-> 对账：**29,026 + 17,083（内置 / bundled + 名称前缀 + 格式化开销）= 46,109**。
-
-> **token 估算口径**：`CJK 字数 + ASCII 字符数 ÷ 4`，与官方
-> `claude plugin details` 的 Always-on 估算**有偏差，官方更保守**
-> （实测本插件 436 字符 → 本公式 388 tok，官方报 ~232 tok）。
-> **量级可用，字符数才是精确值。**
+> **按来源拆分、对账链（29,026 + 17,083 = 46,109）、token 估算口径**
+> —— 见 [docs/cc-guide/02-上下文经济学.md · 启动时就已经占掉的部分](../../../../docs/cc-guide/02-上下文经济学.md#启动时就已经占掉的部分)。
+> 要数字直接跑下面的命令，别引用记忆。
 
 ### 本项目贡献了多少
 
@@ -44,6 +33,8 @@
 | `plugins/*/skills/` | 15 | **0** | — |
 
 > **插件 skill 为 0 不是笔误** —— 见"坑 2"。
+> 注意 `.claude/skills/` 那 23 个目录里，`explore/SKILL.md` 解析失败被静默忽略，
+> 能生效的是 **22** 个；启动日志的 `project: 23` 数的是**目录数**。
 
 **复现**：
 
@@ -51,17 +42,21 @@
 uv run --with pyyaml python scripts/measure_context.py
 ```
 
+> **token 估算口径**：`非 ASCII 字符数 + ASCII 字符数 ÷ 4`，**逐文件取整后再求和**，
+> 与官方 `claude plugin details` 的 Always-on 估算**有偏差，官方更保守**
+> （实测本插件 436 字符 → 本公式 388 tok，官方报 ~232 tok）。
+> **量级可用，字符数才是精确值。**
+
 ## 2. 已确认的官方文档过时之处
+
+> 完整对照表与推导见 [docs/cc-guide/07-排错手册.md · 坑 6](../../../../docs/cc-guide/07-排错手册.md#坑-6-官方文档自相矛盾-以二进制为准)。
+> 这里只留结论。
 
 ### 过时 1：`Enter` 到底排不排队
 
-| 来源 | 说法 | 权威度 |
-|------|------|-------|
-| [interactive-mode](https://code.claude.com/docs/en/interactive-mode) §Queue messages | "press `Enter` … queues the message" | ❌ **v2.1.247 之前的旧行为** |
-| [keybindings](https://code.claude.com/docs/en/keybindings) §Chat actions | `chat:submit`=`Enter`=Submit message；`chat:queueSubmit`=`Ctrl+X Enter`=queues it and **never interrupts the turn**（需 v2.1.247+） | ✅ 权威 |
-| 二进制（2.1.314） | `enter:"chat:submit"`、`"ctrl+x enter":"chat:queueSubmit"` | ✅ 事实 |
-
-**结论**：排队用 **`Ctrl+X Enter`**；`Enter` = `chat:submit`（立即发送，会打断当前轮）。
+**结论**：排队用 **`Ctrl+X Enter`**（`chat:queueSubmit`）；
+`Enter` = `chat:submit`（立即发送，会打断当前轮）。
+官方 interactive-mode 页那句 "press Enter … queues the message" 是 **v2.1.247 之前的旧行为**。
 
 **复现**：
 
@@ -71,15 +66,10 @@ uv run python scripts/extract_keybindings.py --context Chat
 
 ### 过时 2：`Write(.env*)` deny 规则
 
-Claude Code 启动时会打印告警：
+**结论**：只有 `Edit(path)` 规则会被文件权限检查匹配，而 `Edit` 规则覆盖所有文件编辑类工具 ——
+写 `Edit(.env*)`，不要写 `Write(.env*)`。Claude Code 启动时会就此打印告警。
 
-```text
-Permission deny rule (.claude\settings.json): Write(.env*) is not matched by
-file permission checks — only Edit(path) rules are.
-Use Edit(.env*) instead (Edit rules cover all file-editing tools).
-```
-
-只有 `Edit(path)` 规则会被文件权限检查匹配，而 `Edit` 规则覆盖所有文件编辑类工具。
+**复现**：看启动日志里的 `Permission deny rule` 那一行。
 
 ## 3. 出厂默认键位（2.1.314，Chat 上下文）
 

@@ -9,6 +9,8 @@ on:
             - ".claude/**"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
+            - "scripts/check_skill_links.py"
+            - "scripts/check_doc_numbers.py"
             - ".github/workflows/plugin-validation.yml"
     pull_request:
         branches: [main]
@@ -18,6 +20,8 @@ on:
             - ".claude/**"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
+            - "scripts/check_skill_links.py"
+            - "scripts/check_doc_numbers.py"
     workflow_dispatch:
 
 jobs:
@@ -334,6 +338,11 @@ jobs:
                   python scripts/validate_skills.py --root .claude || \
                       echo "⚠️ 本地 skill frontmatter 有问题——Claude Code 会静默忽略这些文件，见 docs/cc-guide/07-排错手册.md"
 
+            - name: Validate skill links into docs/cc-guide (blocking)
+              run: |
+                  echo "🔍 Validating links from .claude/skills/ into docs/cc-guide/..."
+                  python3 scripts/check_skill_links.py
+
     integration-validation:
         name: Integration Validation
         runs-on: ubuntu-latest
@@ -353,7 +362,7 @@ jobs:
               run: |
                   sudo apt-get update
                   sudo apt-get install -y python3 python3-pip jq
-                  pip3 install jsonschema
+                  pip3 install jsonschema pyyaml
 
             - name: Run Complete Validation Suite
               run: |
@@ -377,6 +386,12 @@ jobs:
 
                   echo "Running manifest schema validation..."
                   python3 scripts/validate_manifests.py
+
+                  echo "Running skill link validation..."
+                  python3 scripts/check_skill_links.py
+
+                  echo "Running doc number validation..."
+                  python3 scripts/check_doc_numbers.py
 
                   echo "✅ All validation checks completed successfully!"
 

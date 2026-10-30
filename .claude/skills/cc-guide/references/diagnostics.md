@@ -1,16 +1,18 @@
 # 诊断 runbook —— 症状 → 命令 → 动作
 
-> 完整版见 `docs/cc-guide/07-排错手册.md`。这里是可直接执行的部分。
+> 完整版（诊断方法论 + 本仓库踩过的 6 个坑）见
+> [`docs/cc-guide/07-排错手册.md`](../../../../docs/cc-guide/07-排错手册.md)。
+> **本文件只留可直接执行的部分** —— 叙述一律回指 07 章，不在这里另抄一份。
 
 ## 三层证据源
+
+**先跑 1，再看 2，最后用 3 确认**：
 
 | 层 | 工具 | 能看到什么 |
 |----|------|-----------|
 | **1. 启动日志** | `claude --debug` | 实际加载了什么、跳过了什么、为什么（**最权威**） |
 | **2. 官方校验** | `claude plugin validate` / `claude plugin details` | manifest 是否合规、插件成本 |
 | **3. 交互命令** | `/context` `/skills` `/doctor` `/plugin` | 运行时视角的分解 |
-
-**顺序固定：先跑 1，再看 2，最后用 3 确认。**
 
 > ⚠️ **反向结论不能只靠日志**：日志和脚本**只报告它们能解析到的部分**。
 > "日志里没出现 X" ≠ "X 不存在"。要断言某个能力不存在，
@@ -48,7 +50,7 @@ claude --debug-file /tmp/cc.log   # 日志直接写到指定文件（隐含开�
 | 字段名不认识 | `does not recognize or apply` | 字段拼错了 |
 | 插件 skill 为 0 | `Loaded 0 skills from plugin` | 布局不对，或缓存跟的是**远端**旧版本 |
 | 插件整体没加载 | `not cached at` / `plugin-cache-miss` | 市场副本过期 |
-| 权限规则不生效 | `Permission deny rule` | 写成了 `Write(...)`，只有 `Edit(...)` 会被匹配 |
+| 权限规则不生效 | `Permission deny rule` | 写成了 `Write(...)`，只有 `Edit(...)` 会被匹配（见 07 坑 4） |
 | 沙箱相关 | `sandbox` | 原生 Windows 上没有沙箱 |
 
 ## 常见症状 → 具体动作
