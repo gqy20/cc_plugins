@@ -94,3 +94,9 @@ tmp/
 example
 .claude/projects/
 *.html
+
+# MkDocs 站点构建产物
+/site/
+
+# Playwright MCP 临时产物
+/.playwright-mcp/

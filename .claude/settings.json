@@ -21,7 +21,7 @@
     "deny": [
       "Bash(sudo:*)",
       "Read(*/secrets/*)",
-      "Write(.env*)"
+      "Edit(.env*)"
     ]
   },
   "enableAllProjectMcpServers": true,

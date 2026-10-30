@@ -2,6 +2,11 @@
 
 专业的专家顾问插件集合，为科学研究提供领域专家分析，以及实用的开发工具。
 
+> 📖 **Claude Code 使用指南**：[`docs/cc-guide/`](./docs/cc-guide/README.md) —— 8 章实操文档，
+> 结论全部来自**本机实测 + 二进制逆向 + 官方文档**（含 2 处已确认的官方文档过时）。
+> 覆盖扩展层选型、上下文成本、权限与沙箱、插件 manifest 规范、快捷键、启动失败诊断。
+> 在线版由 `.github/workflows/docs.yml` 发布到 GitHub Pages。
+
 ## 📦 插件概览
 
 ### 研究专家插件
@@ -147,11 +152,14 @@ cc_plugins/
 
 ```
 plugins/<plugin-name>/
-├── plugin.json          # 插件元数据
+├── .claude-plugin/
+│   └── plugin.json      # 插件元数据（官方规范位置）
 ├── README.md            # 插件说明文档
 ├── agents/              # Agent 文件 (MD 格式)
-├── skills/              # 技能模块 (MD 格式)
-├── commands/            # 用户命令接口
+├── skills/              # 技能模块（每个技能一个目录）
+│   └── <skill-name>/
+│       └── SKILL.md
+├── commands/            # 用户命令接口 (平铺 .md)
 └── templates/           # 输出模板
 ```
 

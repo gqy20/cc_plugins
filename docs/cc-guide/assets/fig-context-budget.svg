@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 404"
+     width="960" height="404" role="img" aria-labelledby="t d">
+  <title id="t">启动时的上下文预算：skill 清单已超预算</title>
+  <desc id="d">三条横向条形共用同一比例尺，单位为字符：skill 清单 46109 字符（145 个 skill）、CLAUDE.md 10428 字符、agent description 3250 字符（15 个生效）。红色虚线标出 6000 字符的 skill 清单预算线，超出后 description 会被截断。</desc>
+  <style>
+  :root {
+
+    --ink:#0f172a; --muted:#64748b; --line:#cbd5e1;
+    --panel:#f8fafc; --panel2:#f1f5f9;
+    --accent:#4f46e5; --accent-bg:#eef2ff; --accent-line:#c7d2fe;
+    --danger:#dc2626; --danger-bg:#fef2f2; --danger-line:#fecaca;
+    --warn:#b45309; --warn-bg:#fffbeb; --warn-line:#fde68a;
+    --ok:#047857; --ok-bg:#ecfdf5; --ok-line:#a7f3d0;
+    --shadow:rgba(15,23,42,.06);
+
+  }
+  text {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    fill: var(--ink);
+  }
+  /* 字号是按「图在正文列里显示后的实际大小」定的：
+     正文列约 740px，图的设计宽度是 960 → 缩放约 0.77。
+     所以这里的 15px 在页面上大约是 11.6px，不能再小了。 */
+  .t-title  { font-size:22px; font-weight:700; }
+  .t-sub    { font-size:15.5px; fill:var(--muted); }
+  .t-h      { font-size:17px; font-weight:650; }
+  .t-body   { font-size:15px; }
+  .t-small  { font-size:13px; fill:var(--muted); }
+  .t-mono   { font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, monospace; font-size:13.5px; }
+  .t-badge  { font-size:12.5px; font-weight:700; letter-spacing:.4px; }
+  .panel    { fill:var(--panel); stroke:var(--line); stroke-width:1.2; }
+  .panel-a  { fill:var(--accent-bg); stroke:var(--accent-line); stroke-width:1.2; }
+  .panel-d  { fill:var(--danger-bg); stroke:var(--danger-line); stroke-width:1.2; }
+  .panel-w  { fill:var(--warn-bg);   stroke:var(--warn-line);   stroke-width:1.2; }
+  .panel-o  { fill:var(--ok-bg);     stroke:var(--ok-line);     stroke-width:1.2; }
+  .edge     { stroke:var(--line); stroke-width:1.6; fill:none; }
+  .edge-a   { stroke:var(--accent); stroke-width:2; fill:none; }
+  .edge-d   { stroke:var(--danger); stroke-width:2; fill:none; }
+  .edge-w   { stroke:var(--warn);   stroke-width:2; fill:none; }
+  .ink-a    { fill:var(--accent); }
+  .ink-d    { fill:var(--danger); }
+  .ink-w    { fill:var(--warn); }
+  .ink-o    { fill:var(--ok); }
+  .ink-m    { fill:var(--muted); }
+
+  /* —— 动画 —— */
+  @keyframes dash  { to { stroke-dashoffset:-40; } }
+  @keyframes pulse { 0%,100% { opacity:.35; } 50% { opacity:1; } }
+  @keyframes rise  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes sweep { from { transform:translateX(-40px); } to { transform:translateX(40px); } }
+
+  .flow    { stroke-dasharray:7 13; animation:dash 1.6s linear infinite; }
+  .pulse   { animation:pulse 2.2s ease-in-out infinite; }
+  .rise    { animation:rise .5s ease-out both; }
+  .rise-2  { animation:rise .5s .12s ease-out both; }
+  .rise-3  { animation:rise .5s .24s ease-out both; }
+  .rise-4  { animation:rise .5s .36s ease-out both; }
+  .sweep   { animation:sweep 2.6s ease-in-out infinite alternate; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow,.pulse,.rise,.rise-2,.rise-3,.rise-4,.sweep { animation:none; }
+  }
+</style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
+    </marker>
+    <marker id="ah-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+    </marker>
+    <marker id="ah-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--danger)"/>
+    </marker>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="var(--shadow)"/>
+    </filter>
+  </defs>
+  <rect width="960" height="404" fill="var(--panel)"/>
+  <rect width="960" height="404" fill="none"/>
+  <text x="480.0" y="34" class="t-title" text-anchor="middle">会话还没开口，skill 清单就已经超预算 7.6 倍</text>
+  <text x="50" y="64" class="t-small">统一单位：字符（chars）。数据源：claude --debug 启动日志。</text>
+  <path d="M161.9,86 L161.9,262" stroke="var(--danger)" stroke-width="1.6" stroke-dasharray="5 4" opacity="0.65"/>
+  <text x="50" y="90" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">skill 清单（145 个 skill 的 description）</text>
+  <text x="910" y="90" class="t-small" text-anchor="end">101 用户级 + 23 项目级 + 9 插件 + 内置</text>
+  <rect x="50" y="100" width="860.0" height="30" rx="6" fill="var(--danger-bg)" stroke="var(--danger)" stroke-width="1.4"/>
+  <text x="898.0" y="121" class="t-h" text-anchor="end" fill="var(--danger)">46,109 字符</text>
+  <text x="50" y="156" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">CLAUDE.md（项目级，408 行）</text>
+  <text x="910" y="156" class="t-small" text-anchor="end">官方建议 ≤ 200 行</text>
+  <rect x="50" y="166" width="194.5" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
+  <text x="232.49738662733955" y="187" class="t-h" text-anchor="end" fill="var(--accent)">10,428 字符</text>
+  <text x="50" y="222" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">agent description（15 个生效 / 18 个文件）</text>
+  <text x="910" y="222" class="t-small" text-anchor="end">8 用户级 + 3 项目级 + 4 插件</text>
+  <rect x="50" y="232" width="60.6" height="30" rx="6" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.4"/>
+  <text x="120.61723307814093" y="253" class="t-h" text-anchor="start" fill="var(--warn)">3,250 字符</text>
+  <text x="169.908737990414" y="284" class="t-small ink-d">预算 6,000 字符 —— 超出即截断 description</text>
+  <rect x="50" y="312" width="860" height="78" rx="10" class="panel-d"/>
+  <text x="68" y="338" class="t-h ink-d">Claude Code 自己给出的告警：</text>
+  <text x="68" y="360" class="t-mono ink-d">Skill listing over budget: 145 skills, 46109 chars &gt; 6000 budget — descriptions will be truncated.</text>
+  <text x="68" y="378" class="t-small">解法：/skills 停用不用的 skill，或调高 settings 里的 skillListingBudgetFraction。</text>
+</svg>

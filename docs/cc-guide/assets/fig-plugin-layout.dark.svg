@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 470"
+     width="960" height="470" role="img" aria-labelledby="t d">
+  <title id="t">插件目录结构与 manifest 字段语义</title>
+  <desc id="d">左侧是插件包的标准目录骨架，标出 .claude-plugin/plugin.json 与 skills 子目录为关键项；右侧列出 manifest 各字段指向目录还是文件。</desc>
+  <style>
+  :root {
+
+    --ink:#e2e8f0; --muted:#94a3b8; --line:#475569;
+    --panel:#1e293b; --panel2:#172033;
+    --accent:#a5b4fc; --accent-bg:#312e81; --accent-line:#4f46e5;
+    --danger:#fca5a5; --danger-bg:#4c1d1d; --danger-line:#7f1d1d;
+    --warn:#fcd34d; --warn-bg:#451a03; --warn-line:#78350f;
+    --ok:#6ee7b7; --ok-bg:#064e3b; --ok-line:#065f46;
+    --shadow:rgba(0,0,0,.35);
+
+  }
+  text {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    fill: var(--ink);
+  }
+  /* 字号是按「图在正文列里显示后的实际大小」定的：
+     正文列约 740px，图的设计宽度是 960 → 缩放约 0.77。
+     所以这里的 15px 在页面上大约是 11.6px，不能再小了。 */
+  .t-title  { font-size:22px; font-weight:700; }
+  .t-sub    { font-size:15.5px; fill:var(--muted); }
+  .t-h      { font-size:17px; font-weight:650; }
+  .t-body   { font-size:15px; }
+  .t-small  { font-size:13px; fill:var(--muted); }
+  .t-mono   { font-family: ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, monospace; font-size:13.5px; }
+  .t-badge  { font-size:12.5px; font-weight:700; letter-spacing:.4px; }
+  .panel    { fill:var(--panel); stroke:var(--line); stroke-width:1.2; }
+  .panel-a  { fill:var(--accent-bg); stroke:var(--accent-line); stroke-width:1.2; }
+  .panel-d  { fill:var(--danger-bg); stroke:var(--danger-line); stroke-width:1.2; }
+  .panel-w  { fill:var(--warn-bg);   stroke:var(--warn-line);   stroke-width:1.2; }
+  .panel-o  { fill:var(--ok-bg);     stroke:var(--ok-line);     stroke-width:1.2; }
+  .edge     { stroke:var(--line); stroke-width:1.6; fill:none; }
+  .edge-a   { stroke:var(--accent); stroke-width:2; fill:none; }
+  .edge-d   { stroke:var(--danger); stroke-width:2; fill:none; }
+  .edge-w   { stroke:var(--warn);   stroke-width:2; fill:none; }
+  .ink-a    { fill:var(--accent); }
+  .ink-d    { fill:var(--danger); }
+  .ink-w    { fill:var(--warn); }
+  .ink-o    { fill:var(--ok); }
+  .ink-m    { fill:var(--muted); }
+
+  /* —— 动画 —— */
+  @keyframes dash  { to { stroke-dashoffset:-40; } }
+  @keyframes pulse { 0%,100% { opacity:.35; } 50% { opacity:1; } }
+  @keyframes rise  { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @keyframes sweep { from { transform:translateX(-40px); } to { transform:translateX(40px); } }
+
+  .flow    { stroke-dasharray:7 13; animation:dash 1.6s linear infinite; }
+  .pulse   { animation:pulse 2.2s ease-in-out infinite; }
+  .rise    { animation:rise .5s ease-out both; }
+  .rise-2  { animation:rise .5s .12s ease-out both; }
+  .rise-3  { animation:rise .5s .24s ease-out both; }
+  .rise-4  { animation:rise .5s .36s ease-out both; }
+  .sweep   { animation:sweep 2.6s ease-in-out infinite alternate; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow,.pulse,.rise,.rise-2,.rise-3,.rise-4,.sweep { animation:none; }
+  }
+</style>
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/>
+    </marker>
+    <marker id="ah-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+    </marker>
+    <marker id="ah-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--danger)"/>
+    </marker>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="var(--shadow)"/>
+    </filter>
+  </defs>
+  <rect width="960" height="470" fill="var(--panel)"/>
+  <rect width="960" height="470" fill="none"/>
+  <text x="480.0" y="34" class="t-title" text-anchor="middle">插件包的标准骨架</text>
+  <rect x="46" y="54" width="340" height="34" rx="8" class="panel-a"/>
+  <text x="60" y="78" class="t-mono ink-a">plugins/&lt;plugin-name&gt;/</text>
+  <rect x="310" y="52" width="66" height="20" rx="10" fill="var(--accent-bg)" stroke="none"/>  <text x="343.0" y="66" class="t-badge" text-anchor="middle" fill="var(--accent)">插件根</text>
+  <rect x="80" y="100" width="400" height="34" rx="8" class="panel-d"/>
+  <text x="94" y="124" class="t-mono ink-d">.claude-plugin/plugin.json</text>
+  <rect x="414" y="98" width="130" height="20" rx="10" fill="var(--danger-bg)" stroke="none"/>  <text x="479.0" y="112" class="t-badge" text-anchor="middle" fill="var(--danger)">必需 · 官方位置</text>
+  <text x="94" y="170" class="t-mono ink-m">README.md</text>
+  <text x="94" y="216" class="t-mono ink-m">agents/*.md</text>
+  <rect x="80" y="238" width="400" height="34" rx="8" class="panel-w"/>
+  <text x="94" y="262" class="t-mono ink-w">skills/&lt;skill-name&gt;/SKILL.md</text>
+  <rect x="414" y="236" width="110" height="20" rx="10" fill="var(--warn-bg)" stroke="none"/>  <text x="469.0" y="250" class="t-badge" text-anchor="middle" fill="var(--warn)">必须是目录</text>
+  <text x="94" y="308" class="t-mono ink-m">commands/*.md</text>
+  <text x="94" y="354" class="t-mono ink-m">templates/*.md</text>
+  <text x="94" y="400" class="t-mono ink-m">tools/.mcp.json</text>
+  <rect x="560" y="74" width="370" height="300" rx="14" class="panel" filter="url(#sh)"/>
+  <text x="580" y="106" class="t-h">manifest 字段语义</text>
+  <text x="580" y="134" class="t-mono">"skills"   → 指向目录</text>
+  <text x="594" y="152" class="t-small">替换默认扫描</text>
+  <text x="580" y="180" class="t-mono">"commands" → 指向文件</text>
+  <text x="594" y="198" class="t-small">平铺的 .md</text>
+  <text x="580" y="226" class="t-mono">"hooks" / "mcpServers" → 合并</text>
+  <text x="594" y="244" class="t-small">与用户设置叠加</text>
+  <text x="580" y="272" class="t-mono">"agents" → 指向文件</text>
+  <text x="594" y="290" class="t-small">agent 文件</text>
+  <text x="580" y="318" class="t-mono">"outputStyles" / "workflows"</text>
+  <text x="594" y="336" class="t-small">替换默认扫描</text>
+  <rect x="560" y="388" width="370" height="56" rx="10" class="panel-d"/>
+  <text x="580" y="412" class="t-h ink-d">写错是 error，不是 warning</text>
+  <text x="580" y="432" class="t-small">claude plugin validate 会当场判死</text>
+</svg>

@@ -27,10 +27,11 @@ paths:
 每个插件并行执行以下验证：
 
 1. **文件结构检查**
-   - ✅ 检查必需文件：`plugin.json`, `README.md`
+   - ✅ 检查必需文件：`.claude-plugin/plugin.json`, `README.md`
    - ✅ 检查必需目录：`agents/`, `skills/`
    - ✅ 检查可选目录：`commands/`, `templates/`
    - ✅ 确保目录非空
+   - ✅ 检查 skills 布局：每个技能必须是 `skills/<name>/SKILL.md`
 
 2. **配置文件验证**
    - ✅ JSON 格式有效性检查
@@ -150,12 +151,14 @@ python3 .github/scripts/validate_content.py plugins/evolutionary-biology-expert
 ```
 plugins/
 ├── plugin-name/
-│   ├── plugin.json          # 必需：插件配置文件
+│   ├── .claude-plugin/      # 必需：官方清单目录
+│   │   └── plugin.json      # 必需：插件配置文件
 │   ├── README.md            # 必需：插件说明文档
 │   ├── agents/              # 必需：Agent 文件目录
 │   │   └── *.md
-│   ├── skills/              # 必需：Skill 文件目录
-│   │   └── *.md
+│   ├── skills/              # 必需：Skill 目录（每个技能一个子目录）
+│   │   └── <skill-name>/
+│   │       └── SKILL.md
 │   ├── commands/            # 可选：命令文件目录
 │   │   └── *.md
 │   ├── templates/           # 可选：模板文件目录
@@ -225,7 +228,7 @@ plugins/
    
    # 检查 JSON 格式
    jq empty .claude-plugin/marketplace.json
-   jq empty plugins/plugin-name/plugin.json
+   jq empty plugins/plugin-name/.claude-plugin/plugin.json
    ```
 
 2. **查看详细错误信息**

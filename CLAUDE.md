@@ -25,14 +25,52 @@ claude plugin validate .claude-plugin/marketplace.json
 python3 .github/scripts/check_references.py           # 文件引用检查
 python3 .github/scripts/check_mcp_dependencies.py     # MCP依赖检查
 python3 .github/scripts/validate_content.py <plugin>  # 内容质量检查
+
+# Claude Code 专项体检（见 docs/cc-guide/07-排错手册.md）
+uv run --with pyyaml python scripts/validate_skills.py      # skill/agent frontmatter 合规性
+uv run --with pyyaml python scripts/measure_context.py      # 常驻上下文成本 + frontmatter 体检
+uv run python scripts/extract_keybindings.py --context Chat # 出厂默认键位（从二进制提取）
+uv run python scripts/extract_changelog.py --since 2.1.305  # 内嵌 CHANGELOG（从二进制提取）
 ```
 
 ### GitHub Actions 工作流
 - **plugin-validation.yml**: 自动化验证，当插件相关文件变更时触发
-  - 验证插件结构（plugin.json, README.md, agents/, skills/）
+  - 验证插件结构（.claude-plugin/plugin.json, README.md, agents/, skills/<name>/SKILL.md）
   - 检查文件引用、配置格式、MCP依赖
   - 使用矩阵策略并行验证所有插件
   - 集成验证阶段确保所有插件整体一致性
+  - `skills-validation` 作业：跑 `scripts/validate_skills.py`
+    （`plugins/` 范围阻塞式，`.claude/` 范围非阻塞 —— 当前有历史遗留错误）
+
+## Claude Code 使用指南（docs/cc-guide/）
+
+一套 8 章的 Claude Code 实操文档，**结论全部来自本机实测 + 二进制逆向 + 官方文档**。
+
+```bash
+# 本地预览
+PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs serve
+
+# 严格构建（CI 用，零告警才算过）
+PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-dir site
+```
+
+| 文件 | 用途 |
+|------|------|
+| `docs/cc-guide/README.md` | 章节索引 + 三条速查 |
+| `docs/cc-guide/01-能力选型矩阵.md` | 11 个扩展层各自管什么 |
+| `docs/cc-guide/02-上下文经济学.md` | 上下文预算、压缩保留/丢弃规则 |
+| `docs/cc-guide/03-提示词与交互技巧.md` | 提示词配方、快捷键、消息队列 |
+| `docs/cc-guide/04-权限与护栏.md` | 权限模式、deny、hook、沙箱 |
+| `docs/cc-guide/05-多代理编排.md` | subagent / teams / workflows |
+| `docs/cc-guide/06-插件与市场.md` | manifest 语义、缓存模型、校验 |
+| `docs/cc-guide/07-排错手册.md` | 诊断方法论 + 本仓库踩过的 6 个坑 |
+| `docs/cc-guide/08-演进趋势.md` | 从 433 个 release 看 8 条演进主线 |
+
+配套：
+- `.claude/skills/cc-guide/` —— 内部 skill，把上面的结论变成可调用的操作入口
+- `scripts/mkdocs_slug.py` —— 中文锚点 slugify（默认 slugify 会把中文全删掉）
+- `scripts/gen_guide_figures.py` —— 生成 9 张 SVG 插图（明暗两套共 18 个文件，含减少动效支持）
+- `.github/workflows/docs.yml` —— 构建并发布到 GitHub Pages
 
 ## Git 提交规范
 
@@ -62,20 +100,28 @@ Co-authored-by: Claude <noreply@anthropic.com>
 ### 目录结构
 ```
 plugins/<plugin-name>/
-├── plugin.json           # 插件元数据 (name, version, author, agents, skills, commands)
+├── .claude-plugin/
+│   └── plugin.json       # 插件元数据 (name, version, author, agents, skills, commands)
 ├── README.md             # 插件说明文档
-├── agents/               # Agent 文件 (MD 格式，包含 input_schema)
-├── skills/               # 技能模块 (MD 格式，被 Agent 调用)
-├── commands/             # 用户命令接口
+├── agents/               # Agent 文件 (MD 格式，包含 frontmatter)
+├── skills/               # 技能模块 (每个技能一个目录，内含 SKILL.md)
+│   └── <skill-name>/
+│       └── SKILL.md
+├── commands/             # 用户命令接口 (平铺 .md 文件)
 ├── templates/            # 输出模板
 └── tools/.mcp.json       # MCP 服务器配置 (可选)
 ```
+
+> **官方规范**：`plugin.json` 必须位于 `.claude-plugin/` 子目录（`claude plugin validate` 会在根目录报
+> "No manifest found in directory"）；`skills` 字段必须指向**目录**（内含 `<name>/SKILL.md`），
+> 指向单个 `.md` 文件会报 "skills entries must be directories containing SKILL.md"；
+> `commands` 字段则是**平铺的 .md 文件**数组。
 
 ### 配置层次
 1. **marketplace.json** - 定义所有插件集合，包含 owner、metadata、plugins 数组
    - 字段 `category`: 在这里定义 (research, expert-advisor, utility)
    - 字段 `source`: 插件目录相对路径
-2. **plugin.json** - 单个插件配置，使用扁平结构：
+2. **plugin.json** (`.claude-plugin/plugin.json`) - 单个插件配置，使用扁平结构：
    - 必需字段: name, version, description, author (对象格式)
    - 入口点: agents (数组), skills (数组), commands (数组)
    - 禁止字段: category, entry_points (这些在 marketplace.json 中)
@@ -156,6 +202,7 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 | `/worktree` | Git Worktree 工作流 - PR Review、并行开发 |
 | `/cleanup` | Python 代码冗余检测清单 |
 | `/explore` | 并行代码库探索 |
+| `/cc-guide` | Claude Code 使用指南（配置/扩展/排错，引用 `docs/cc-guide/` 的实测结论） |
 
 **技能协同**：
 - `/tdd` → `/squash`：TDD 产生小 commit → 功能完成后合并
@@ -165,6 +212,7 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 - `/worktree` + `/gh`：多 worktree 并行 PR review + gh 操作
 - `/cleanup` + `/elegant`：冗余检测 + 优雅重构
 - `/docs` + 任何技能：代码变更后更新文档
+- `/cc-guide` + 任何技能：改 Claude Code 配置前先查实测结论，别凭记忆
 
 ## 版本控制
 
@@ -175,15 +223,15 @@ export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
 ## 添加新插件
 
 1. 在 `plugins/` 创建新目录
-2. 创建 `plugin.json`，定义 agents/skills/commands 数组
-3. 创建对应的 agents、skills、commands、templates 文件
+2. 创建 `.claude-plugin/plugin.json`，定义 agents/skills/commands 数组
+3. 创建对应的 agents、skills（`skills/<name>/SKILL.md`）、commands、templates 文件
 4. 更新 `.claude-plugin/marketplace.json` 的 plugins 数组
 5. 运行 `claude plugin validate .claude-plugin/marketplace.json` 验证
 
 ## 修改现有插件
 
 1. 修改对应 MD 文件
-2. 如新增技能/命令，更新 `plugin.json` 中对应数组
+2. 如新增技能/命令，更新 `.claude-plugin/plugin.json` 中对应数组
 3. 如需被 Agent 调用，更新对应 Agent 文件
 4. 验证配置
 

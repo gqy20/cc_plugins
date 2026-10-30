@@ -1,0 +1,111 @@
+site_name: Claude Code 使用指南
+site_description: 基于官方文档与 CHANGELOG 的 Claude Code 实战手册
+site_url: https://gqy20.github.io/cc_plugins/
+repo_url: https://github.com/gqy20/cc_plugins
+repo_name: gqy20/cc_plugins
+edit_uri: edit/main/docs/
+copyright: Copyright &copy; 2026 gqy20 · 内容基于 Anthropic 官方文档与 CHANGELOG
+
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+    - content.action.view
+    - content.tooltips
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换到深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换到浅色模式
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Noto Sans SC
+    code: Noto Sans Mono
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+      # 默认 slugify 会把中文和 emoji 全部丢掉（标题锚点变成 _1 / _2），
+      # 换成本仓库自己的实现，保留中文、去掉 emoji 和前导分隔符。
+      slugify: !!python/name:scripts.mkdocs_slug.slugify
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/theme-figures.js
+  - javascripts/external-links.js
+
+nav:
+  - 首页: index.md
+  - Claude Code 使用指南:
+      - 概览: cc-guide/README.md
+      - 01 能力选型矩阵: cc-guide/01-能力选型矩阵.md
+      - 02 上下文经济学: cc-guide/02-上下文经济学.md
+      - 03 提示词与交互技巧: cc-guide/03-提示词与交互技巧.md
+      - 04 权限与护栏: cc-guide/04-权限与护栏.md
+      - 05 多代理编排: cc-guide/05-多代理编排.md
+      - 06 插件与市场: cc-guide/06-插件与市场.md
+      - 07 排错手册: cc-guide/07-排错手册.md
+      - 08 演进趋势: cc-guide/08-演进趋势.md
+
+exclude_docs: |
+  test.md
+
+# 链接校验：让锚点写错在构建期就报错，而不是等到线上点开是 404。
+# `anchors: warn` + `mkdocs build --strict` = 锚点不存在直接让构建失败。
+validation:
+  anchors: warn
+  unrecognized_links: warn
+  absolute_links: relative_to_docs
+
+watch:
+  - docs
+  - scripts/gen_guide_figures.py

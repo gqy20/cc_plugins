@@ -1,0 +1,76 @@
+name: Docs
+
+# 文档站（MkDocs Material）构建并发布到 GitHub Pages
+#
+# 触发条件：
+#   - push / PR 改动 docs/、mkdocs.yml、scripts/gen_guide_figures.py 时
+#   - 手动触发（workflow_dispatch）
+#
+# 权限：仅在发布到 gh-pages 时需要 contents: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "scripts/gen_guide_figures.py"
+      - ".github/workflows/docs.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+      - "scripts/gen_guide_figures.py"
+      - ".github/workflows/docs.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 构建文档站
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 安装 MkDocs Material
+        run: pip install "mkdocs-material>=9.5"
+
+      - name: 重新生成 SVG 图
+        run: python scripts/gen_guide_figures.py
+
+      # mkdocs.yml 用 !!python/name:scripts.mkdocs_slug.slugify 自定义中文锚点，
+      # 需要把仓库根目录放进 PYTHONPATH 才能 import 到
+      - name: 严格校验并构建
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: mkdocs build --strict --site-dir site
+
+      - name: 上传 Pages 产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: 部署到 GitHub Pages
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: 部署
+        id: deployment
+        uses: actions/deploy-pages@v4

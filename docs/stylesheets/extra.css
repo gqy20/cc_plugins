@@ -1,0 +1,694 @@
+/* ============================================================
+   Claude Code 使用指南 —— 站点专属样式
+
+   设计基调
+   --------
+   1. 配色与插图共用一套 token（slate 中性色 + indigo 品牌色），
+      页面与 SVG 不打架。
+   2. 中文正文按 1.75 行高排版，字号比 Material 默认略大，
+      单行控制在 ~45 个汉字，减少折行带来的阅读断裂。
+   3. 间距用同一把尺子（--cc-*）度量，标题/段落/表格/代码块
+      的呼吸感一致。
+   ============================================================ */
+
+/* ---------- 1. 设计 token ---------- */
+
+:root {
+  /* 品牌 —— 与 SVG 里的 --accent 同源 */
+  --cc-accent: #4f46e5;
+  --cc-accent-hover: #4338ca;
+  --cc-accent-soft: #eef2ff;
+  --cc-accent-line: #c7d2fe;
+
+  /* 语义色 */
+  --cc-danger: #dc2626;
+  --cc-danger-soft: #fef2f2;
+  --cc-danger-line: #fecaca;
+  --cc-warn: #b45309;
+  --cc-warn-soft: #fffbeb;
+  --cc-warn-line: #fde68a;
+  --cc-ok: #047857;
+  --cc-ok-soft: #ecfdf5;
+  --cc-ok-line: #a7f3d0;
+
+  /* 表面与文字 */
+  --cc-surface: #ffffff;
+  --cc-surface-2: #f8fafc;
+  --cc-surface-3: #f1f5f9;
+  --cc-border: #e2e8f0;
+  --cc-border-strong: #cbd5e1;
+  --cc-ink: #0f172a;
+  --cc-ink-muted: #64748b;
+
+  /* 节奏尺 */
+  --cc-r-sm: 6px;
+  --cc-r-md: 10px;
+  --cc-r-lg: 14px;
+  --cc-r-pill: 999px;
+
+  /* Material 主题色覆写 —— 让站点 chrome 与插图同源 */
+  --md-primary-fg-color: #4f46e5;
+  --md-primary-fg-color--light: #6366f1;
+  --md-primary-fg-color--dark: #4338ca;
+  --md-primary-bg-color: #ffffff;
+  --md-accent-fg-color: #4f46e5;
+
+  --md-default-bg-color: #ffffff;
+  --md-default-bg-color--light: #f8fafc;
+  --md-default-fg-color: #1e293b;
+  --md-default-fg-color--light: #475569;
+  --md-default-fg-color--lighter: #64748b;
+  --md-typeset-a-color: #4f46e5;
+
+  --md-code-bg-color: #f8fafc;
+  --md-code-fg-color: #334155;
+}
+
+[data-md-color-scheme="slate"] {
+  --cc-accent: #a5b4fc;
+  --cc-accent-hover: #c7d2fe;
+  --cc-accent-soft: #312e81;
+  --cc-accent-line: #4f46e5;
+
+  --cc-danger: #fca5a5;
+  --cc-danger-soft: #4c1d1d;
+  --cc-danger-line: #7f1d1d;
+  --cc-warn: #fcd34d;
+  --cc-warn-soft: #451a03;
+  --cc-warn-line: #78350f;
+  --cc-ok: #6ee7b7;
+  --cc-ok-soft: #064e3b;
+  --cc-ok-line: #065f46;
+
+  --cc-surface: #0f172a;
+  --cc-surface-2: #172033;
+  --cc-surface-3: #1e293b;
+  --cc-border: #263449;
+  --cc-border-strong: #334155;
+  --cc-ink: #e2e8f0;
+  --cc-ink-muted: #94a3b8;
+
+  --md-primary-fg-color: #a5b4fc;
+  --md-primary-fg-color--light: #c7d2fe;
+  --md-primary-fg-color--dark: #818cf8;
+  --md-primary-bg-color: #0f172a;
+  --md-accent-fg-color: #a5b4fc;
+
+  --md-default-bg-color: #0f172a;
+  --md-default-bg-color--light: #172033;
+  --md-default-fg-color: #e2e8f0;
+  --md-default-fg-color--light: #b6c2d2;
+  --md-default-fg-color--lighter: #94a3b8;
+  --md-typeset-a-color: #a5b4fc;
+
+  --md-code-bg-color: #172033;
+  --md-code-fg-color: #cbd5e1;
+}
+
+/* ---------- 1.5 Material 变量钉死 ----------
+   Material 的调色板规则写作 `[data-md-color-scheme=…][data-md-color-primary=…]`
+   （特异度 0,2,0），比本文件的 `[data-md-color-scheme="slate"]`（0,1,0）高，
+   所以同名变量直接裸写会输给它 —— 表现为链接还是 Material 的默认靛蓝。
+   这里统一在 body 级用 !important 钉死（!important 压过任何特异度）。
+
+   规则：内容色一律走 --cc-* token；这里只钉 Material 自己会去读的变量。 */
+body[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #4f46e5 !important;
+  --md-primary-fg-color: #4f46e5 !important;
+  --md-accent-fg-color: #4f46e5 !important;
+  --md-code-bg-color: #f8fafc !important;
+  --md-code-fg-color: #334155 !important;
+  --md-default-bg-color: #ffffff !important;
+  --md-default-fg-color: #1e293b !important;
+}
+
+body[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #a5b4fc !important;
+  --md-primary-fg-color: #a5b4fc !important;
+  --md-accent-fg-color: #a5b4fc !important;
+  --md-code-bg-color: #172033 !important;
+  --md-code-fg-color: #cbd5e1 !important;
+  --md-default-bg-color: #0f172a !important;
+  --md-default-fg-color: #e2e8f0 !important;
+}
+
+/* ---------- 2. 排版基线与节奏 ---------- */
+
+/* 正文列放宽一点：中文一行 50 字左右刚好，
+   61rem 时正文列只有 688px，插图里的字会被压到 9px。 */
+.md-grid {
+  max-width: 65rem;
+}
+
+.md-typeset {
+  font-size: 0.86rem;
+  line-height: 1.75;
+  color: var(--cc-ink);
+}
+
+.md-typeset p {
+  margin: 0 0 1em;
+  text-wrap: pretty;
+}
+
+/* 段落里夹了行内代码或加粗时，前后留白更均匀 */
+.md-typeset p > code:first-child,
+.md-typeset p > strong:first-child {
+  margin-left: 0.02em;
+}
+
+.md-typeset hr {
+  margin: 2.2rem 0;
+  border: 0;
+  border-top: 1px solid var(--cc-border);
+  opacity: 1;
+}
+
+/* ---------- 3. 标题 ---------- */
+
+.md-typeset h1 {
+  margin: 0 0 1.2rem;
+  font-size: 1.75rem;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--cc-ink);
+}
+
+.md-typeset h2 {
+  margin: 2.4rem 0 0.9rem;
+  padding-bottom: 0.4rem;
+  font-size: 1.28rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--cc-ink);
+  border-bottom: 1px solid var(--cc-border);
+}
+
+.md-typeset h3 {
+  margin: 1.8rem 0 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--cc-ink);
+}
+
+.md-typeset h4 {
+  margin: 1.4rem 0 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--cc-ink-muted);
+}
+
+/* 标题不落在页尾 */
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
+  break-after: avoid-page;
+}
+
+/* ---------- 4. 链接 ---------- */
+
+.md-typeset a {
+  color: var(--cc-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+/* 只有正文里的链接才带下划线，标题/表格/卡片保持干净 */
+.md-typeset p a,
+.md-typeset li a {
+  border-bottom-color: color-mix(in srgb, var(--cc-accent) 32%, transparent);
+}
+
+.md-typeset a:hover {
+  color: var(--cc-accent-hover);
+  border-bottom-color: var(--cc-accent-hover);
+}
+
+.md-typeset a:visited {
+  color: var(--cc-accent);
+}
+
+/* 外链加个 ↗ 提示，避免和站内跳转混淆。
+   注意：不能靠 a[href^="http"] 判断 —— Material 的运行时会把所有相对
+   href 改写成绝对地址，站内链接也会命中。这里改用 JS 按 origin 打的
+   data-cc-external 标记。 */
+.md-typeset a[data-cc-external]::after {
+  content: "↗";
+  display: inline-block;
+  margin-left: 0.15em;
+  font-size: 0.78em;
+  line-height: 1;
+  vertical-align: 0.15em;
+  opacity: 0.5;
+}
+
+.md-typeset a[data-cc-external]:hover::after {
+  opacity: 1;
+}
+
+/* ---------- 5. 代码 ---------- */
+
+.md-typeset code {
+  padding: 0.15em 0.4em;
+  font-size: 0.86em;
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-r-sm);
+  background: var(--cc-surface-2);
+  color: var(--cc-ink);
+  word-break: keep-all;
+}
+
+.md-typeset pre > code {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+
+.md-typeset pre {
+  margin: 1.2rem 0;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--cc-border);
+  border-radius: var(--cc-r-md);
+  background: var(--cc-surface-2);
+  box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
+
+.md-typeset pre code {
+  word-break: normal;
+}
+
+/* 代码块右上角：语言标签（Material 自带 copy 按钮） */
+.md-typeset pre > code > span:first-child {
+  border-radius: var(--cc-r-sm);
+}
+
+/* ---------- 6. 表格 ---------- */
+
+.md-typeset table:not([class]) {
+  width: 100%;
+  margin: 1.3rem 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  border-collapse: collapse;
+  border-radius: var(--cc-r-md);
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--cc-border);
+}
+
+.md-typeset table:not([class]) thead {
+  background: var(--cc-surface-3);
+}
+
+.md-typeset table:not([class]) th {
+  padding: 0.6rem 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  color: var(--cc-ink);
+  border-bottom: 1.5px solid var(--cc-border-strong);
+  white-space: nowrap;
+}
+
+.md-typeset table:not([class]) td {
+  padding: 0.55rem 0.8rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--cc-border);
+}
+
+.md-typeset table:not([class]) tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* 斑马纹：宽表格扫读更容易 */
+.md-typeset table:not([class]) tbody tr:nth-child(even) {
+  background: var(--cc-surface-2);
+}
+
+/* 首列当作行标题 */
+.md-typeset table:not([class]) tbody td:first-child {
+  font-weight: 600;
+  color: var(--cc-ink);
+}
+
+/* 表格里的代码要能换行 —— 否则一条长命令就能把整表撑到两倍宽，
+   读者只能横向拖动。 */
+.md-typeset table:not([class]) code {
+  font-size: 0.9em;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  background: transparent;
+  border-color: var(--cc-border);
+}
+
+/* Material 把表格包在 .md-typeset__table 里，用的是 inline-block +
+   shrink-to-fit：宽表会把 wrapper 撑到正文列之外，压到右侧目录下面。
+   改成 block + 内部横向滚动，宽表自己滚，不动版面。 */
+.md-typeset .md-typeset__table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 1.3rem 0;
+}
+
+/* 表格里的数字列用等宽数字，避免左右跳 */
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 7. 引用块 ---------- */
+
+.md-typeset blockquote {
+  margin: 1.2rem 0;
+  padding: 0.85rem 1.1rem;
+  border-left: 3px solid var(--cc-accent);
+  border-radius: 0 var(--cc-r-md) var(--cc-r-md) 0;
+  background: var(--cc-surface-2);
+  color: var(--cc-ink-muted);
+}
+
+.md-typeset blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.md-typeset blockquote strong {
+  color: var(--cc-ink);
+}
+
+/* ---------- 8. 列表 ---------- */
+
+.md-typeset ul,
+.md-typeset ol {
+  margin: 0 0 1em;
+  padding-left: 1.4rem;
+}
+
+.md-typeset li {
+  margin: 0.3rem 0;
+}
+
+.md-typeset li > ul,
+.md-typeset li > ol {
+  margin: 0.3rem 0 0.4rem;
+}
+
+.md-typeset li::marker {
+  color: var(--cc-ink-muted);
+}
+
+.md-typeset ul > li::marker {
+  color: var(--cc-accent);
+}
+
+/* ---------- 9. 提示框（admonition） ---------- */
+
+.md-typeset .admonition,
+.md-typeset details {
+  margin: 1.3rem 0;
+  border-radius: var(--cc-r-md);
+  box-shadow: 0 0 0 1px var(--cc-border);
+}
+
+.md-typeset .admonition > .admonition-title,
+.md-typeset details > summary {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.md-typeset .admonition > .admonition-title::before,
+.md-typeset details > summary::before {
+  border-radius: var(--cc-r-sm);
+}
+
+/* ---------- 10. 插图与图注 ---------- */
+
+.md-typeset img {
+  max-width: 100%;
+  height: auto;
+}
+
+.md-typeset figure {
+  margin: 1.8rem 0;
+  padding: 0;
+  text-align: center;
+}
+
+.md-typeset figure img {
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--cc-r-md);
+  background: var(--cc-surface);
+  border: 1px solid var(--cc-border);
+  box-shadow: 0 2px 12px rgb(15 23 42 / 6%);
+}
+
+.md-typeset figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  color: var(--cc-ink-muted);
+}
+
+.md-typeset figcaption::before {
+  content: "▸ ";
+  color: var(--cc-accent);
+}
+
+/* ---------- 11. 首页：Hero / 徽章 / 卡片 ---------- */
+
+.hero {
+  margin: 0 0 2rem;
+  padding: 3rem 1.2rem 2rem;
+  text-align: center;
+  border-radius: var(--cc-r-lg);
+  background:
+    radial-gradient(120% 140% at 50% -20%, var(--cc-accent-soft) 0%, transparent 62%),
+    var(--cc-surface-2);
+  border: 1px solid var(--cc-border);
+}
+
+.hero h1 {
+  margin: 0 0 0.6rem;
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--cc-ink);
+}
+
+.hero h1 + p {
+  margin: 0 auto;
+  max-width: 40rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--cc-ink-muted);
+}
+
+.md-typeset .badges p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0 0 1.8rem;
+}
+
+/* 徽章本身是图片，外框再套一层会显脏 —— 只留图片 */
+.md-typeset .badges a {
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 0;
+}
+
+.md-typeset .badges a::after {
+  content: none;
+}
+
+.md-typeset .badges img {
+  border-radius: var(--cc-r-sm);
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-radius: var(--cc-r-md);
+  border-left: 3px solid var(--cc-accent);
+  transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  box-shadow: 0 6px 22px rgb(15 23 42 / 12%);
+  transform: translateY(-2px);
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child {
+  font-weight: 700;
+}
+
+/* 卡片里的箭头对齐 */
+.md-typeset .grid.cards > ul > li > p:last-child {
+  margin-bottom: 0;
+}
+
+.md-typeset .grid.cards > ul > li > p:last-child a {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* 卡片里的链接不画下划线，避免和卡片边框打架 */
+.md-typeset .grid.cards a {
+  border-bottom-color: transparent;
+}
+
+/* 卡片间距：Material 默认 8px，带边框的卡片挤在一起 */
+.md-typeset .grid.cards {
+  gap: 1rem;
+}
+
+/* 4 张卡片时排成 2×2，比 3+1 平衡。
+   注意：Material 9.x 把 <ul> 设成 display:contents，
+   真正的 grid 容器是外层 div.grid.cards —— 改 ul 是没用的。 */
+@media screen and (min-width: 76.1875em) {
+  .md-typeset .grid.cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- 12. 页头 / 导航 / 目录 ---------- */
+
+/* Material 的 header/tabs 默认是「主色底 + 反色字」，
+   这里改成白底深字，所以文字色必须一并改掉，否则白底白字。 */
+.md-header,
+.md-tabs {
+  background: var(--cc-surface);
+  color: var(--cc-ink);
+}
+
+.md-header {
+  border-bottom: 1px solid var(--cc-border);
+  box-shadow: 0 1px 0 rgb(15 23 42 / 3%);
+}
+
+.md-header__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.md-search__form {
+  border-radius: var(--cc-r-pill);
+  border: 1px solid var(--cc-border);
+  background: var(--cc-surface-2);
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.md-search__form:focus-within {
+  border-color: var(--cc-accent-line);
+  background: var(--cc-surface);
+}
+
+.md-search__input {
+  border-radius: var(--cc-r-pill);
+  color: var(--cc-ink);
+}
+
+.md-search__input::placeholder {
+  color: var(--cc-ink-muted);
+  opacity: 1;
+}
+
+.md-sidebar__title {
+  font-weight: 700;
+}
+
+.md-nav__title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cc-ink-muted);
+}
+
+.md-nav__link {
+  font-size: 0.76rem;
+  line-height: 1.5;
+}
+
+/* Material 的规则是 `.md-nav__item .md-nav__link--active`（0,2,0），
+   这里跟着它的结构写，否则高亮色会被它压回去。 */
+.md-nav__item .md-nav__link--active,
+.md-nav__link--active {
+  font-weight: 600;
+  color: var(--cc-accent);
+}
+
+.md-nav__item--section > .md-nav__link {
+  font-weight: 600;
+}
+
+.md-typeset .md-nav__link {
+  font-size: 0.76rem;
+}
+
+.md-typeset .md-nav__link--active {
+  font-weight: 600;
+}
+
+.md-footer-meta {
+  background: var(--cc-surface-2);
+  border-top: 1px solid var(--cc-border);
+}
+
+/* ---------- 13. 焦点可见性 ---------- */
+
+.md-typeset a:focus-visible,
+.md-typeset button:focus-visible,
+.md-header__button:focus-visible,
+.md-nav__link:focus-visible {
+  outline: 2px solid var(--cc-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* ---------- 14. 无障碍：减少动效 ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset *,
+  .md-header *,
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset .badges a {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+
+  .md-typeset .grid.cards > ul > li:hover,
+  .md-typeset .badges a:hover {
+    transform: none;
+  }
+}
+
+/* ---------- 15. 打印 ---------- */
+
+@media print {
+  .md-header,
+  .md-tabs,
+  .md-sidebar,
+  .md-footer,
+  .md-top {
+    display: none !important;
+  }
+
+  .md-typeset pre,
+  .md-typeset table:not([class]) {
+    break-inside: avoid;
+  }
+
+  .md-typeset a[data-cc-external]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    opacity: 0.7;
+  }
+}
