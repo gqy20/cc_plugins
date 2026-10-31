@@ -83,6 +83,14 @@ extra_javascript:
   - javascripts/theme-figures.js
   - javascripts/external-links.js
 
+# 构建期改写：
+#   h1 拆成「章号徽章 + 标题」
+#   变更日志表补列标签、拆「版本（日期）」单元格
+# 样式见 extra.css。
+hooks:
+  - scripts/mkdocs_chapter_head.py
+  - scripts/mkdocs_table_meta.py
+
 nav:
   - 首页: index.md
   - Claude Code 使用指南:

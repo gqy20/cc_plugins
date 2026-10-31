@@ -30,41 +30,31 @@ hide:
 
 - :material-compass-outline: **第一次用 Claude Code**
 
-    → [01 能力选型矩阵](cc-guide/01-能力选型矩阵.md)
+    扩展层不是越多越好：哪些只是"建议"，哪些是硬约束。
+    **只有权限、hook、沙箱绕不过** —— 剩下的都可能被上下文挤掉。
 
-    12 个扩展层各自管什么，选错就是用错工具。
-    先建立这张地图，后面所有配置才有归属。
+    [:octicons-arrow-right-24: 01 能力选型矩阵](cc-guide/01-能力选型矩阵.md)
 
-    [:octicons-arrow-right-24: 开始阅读](cc-guide/01-能力选型矩阵.md)
+- :material-chart-line: **上下文不够用了**
 
-- :material-chart-line: **会话变慢 / 变贵 / 丢信息**
-
-    → [02 上下文经济学](cc-guide/02-上下文经济学.md)
-
-    上下文窗口怎么被填满的，什么会被压缩掉。
     **本仓库实测：145 个 skill 的 description 合计 46,109 字符，超预算 7.6 倍。**
+    顺带给出 5 个手动控制上下文的手段。
 
-    [:octicons-arrow-right-24: 开始阅读](cc-guide/02-上下文经济学.md)
+    [:octicons-arrow-right-24: 02 上下文经济学](cc-guide/02-上下文经济学.md)
 
-- :material-shield-lock-outline: **配置安全边界**
+- :material-shield-lock-outline: **给自动化划边界**
 
-    → [04 权限与护栏](cc-guide/04-权限与护栏.md)
+    **deny 规则按工具名匹配：`Write(.env*)` 根本不生效，要写 `Edit(.env*)`。**
+    权限规则不是安全边界，沙箱才是 —— 而原生 Windows 上没有沙箱。
 
-    6 种权限模式、不可绕过的 deny 规则、hooks 策略层。
-    **权限规则不是安全边界，沙箱才是 —— 而原生 Windows 上没有沙箱。**
+    [:octicons-arrow-right-24: 04 权限与护栏](cc-guide/04-权限与护栏.md)
 
-    [:octicons-arrow-right-24: 开始阅读](cc-guide/04-权限与护栏.md)
+- :material-bug: **故障怎么定位**
 
-- :material-bug: **出问题了**
+    `claude --debug` 怎么用：3 步起手式 + 关键字速查表，
+    外加本仓库真实踩过的 6 个坑。
 
-    → [07 排错手册](cc-guide/07-排错手册.md)
-
-    从症状到根因的诊断路径。
-    收录了本仓库真实踩过的 6 个坑：frontmatter 解析失败、插件缓存过期、
-    `Write` vs `Edit` 规则失效、skill 清单超预算、官方文档自相矛盾、
-    以及一条"文档说了但二进制不认"的坑。
-
-    [:octicons-arrow-right-24: 开始阅读](cc-guide/07-排错手册.md)
+    [:octicons-arrow-right-24: 07 排错手册](cc-guide/07-排错手册.md)
 
 </div>
 

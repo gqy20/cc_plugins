@@ -38,6 +38,7 @@
   --cc-border: #e2e8f0;
   --cc-border-strong: #cbd5e1;
   --cc-ink: #0f172a;
+  --cc-ink-soft: #475569;
   --cc-ink-muted: #64748b;
 
   /* 节奏尺 */
@@ -86,6 +87,7 @@
   --cc-border: #263449;
   --cc-border-strong: #334155;
   --cc-ink: #e2e8f0;
+  --cc-ink-soft: #cbd5e1;
   --cc-ink-muted: #94a3b8;
 
   --md-primary-fg-color: #a5b4fc;
@@ -164,6 +166,14 @@ body[data-md-color-scheme="slate"] {
   opacity: 1;
 }
 
+/* 分隔线后面紧跟标题时，别再叠一层标题的上边距：
+   hr 的 2.2rem + h2 的 2.4rem = 4.6rem（≈92px）的断层，
+   在章节切换处显得像页面缺了一块。 */
+.md-typeset hr + h2,
+.md-typeset hr + h3 {
+  margin-top: 0;
+}
+
 /* ---------- 3. 标题 ---------- */
 
 .md-typeset h1 {
@@ -173,6 +183,30 @@ body[data-md-color-scheme="slate"] {
   line-height: 1.3;
   letter-spacing: -0.015em;
   color: var(--cc-ink);
+}
+
+/* 章节页的 h1：章号做成徽章，标题独立成行。
+   原来是「02 · 上下文经济学」—— U+00B7 在中文字体里是全角（≈0.99em），
+   两侧再各有一个空格，视觉空隙比标题内部的字距还宽；
+   窄屏上还会把标题挤成两行（"…上下文经" + "济学"）。
+   结构由 scripts/mkdocs_chapter_head.py 在构建期生成。 */
+.md-typeset .cc-chapter-no {
+  display: inline-block;
+  margin-right: 0.55em;
+  padding: 0.3em 0.62em;
+  font-size: 0.45em;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  vertical-align: 0.1em;
+  color: var(--cc-accent);
+  background: var(--cc-accent-soft);
+  border: 1px solid var(--cc-accent-line);
+  border-radius: var(--cc-r-pill);
+}
+
+.md-typeset .cc-chapter-title {
+  letter-spacing: -0.015em;
 }
 
 .md-typeset h2 {
@@ -294,6 +328,14 @@ body[data-md-color-scheme="slate"] {
 
 .md-typeset table:not([class]) {
   width: 100%;
+  /* 表格框不能比内容还窄。
+     overflow: hidden 是为了把斑马纹裁在圆角里（Material 原本用 overflow:auto），
+     但它同时会把「列的最小宽度超出表格框」的那部分内容裁掉 ——
+     读者既看不到，也滚不过去（滚动条在外层 wrapper 上，
+     而 wrapper 只知道表格的边框宽度，滚不出被裁掉的那截）。
+     min-width: min-content 让表格框至少跟内容一样宽：
+     窄屏上由 wrapper 横着滚，宽屏上照旧填满正文列。 */
+  min-width: min-content;
   margin: 1.3rem 0;
   font-size: 0.78rem;
   line-height: 1.6;
@@ -313,13 +355,18 @@ body[data-md-color-scheme="slate"] {
   text-align: left;
   color: var(--cc-ink);
   border-bottom: 1.5px solid var(--cc-border-strong);
-  white-space: nowrap;
+  /* 表头不锁行：nowrap 的表头在窄屏上会被裁在表格框外 ——
+     读者既看不到那几列，也滚不过去（表格自己是滚动容器，滚动条在表格底边）。
+     放开之后，有空间时照样排成一行。 */
+  white-space: normal;
 }
 
 .md-typeset table:not([class]) td {
   padding: 0.55rem 0.8rem;
   vertical-align: top;
   border-bottom: 1px solid var(--cc-border);
+  /* 单元格里的长串（URL、命令）折行，而不是把表格撑破 */
+  overflow-wrap: break-word;
 }
 
 .md-typeset table:not([class]) tbody tr:last-child td {
@@ -338,7 +385,12 @@ body[data-md-color-scheme="slate"] {
 }
 
 /* 表格里的代码要能换行 —— 否则一条长命令就能把整表撑到两倍宽，
-   读者只能横向拖动。 */
+   读者只能横向拖动。
+   anywhere 和 break-word 的差别不在「断在哪」，而在「断不断」：
+   break-word 不参与最小内容宽度的计算 —— 一条 40 字符的标识符
+   照样能把整列撑到 480px，表格因此比正文列还宽，只能横着拖；
+   anywhere 会计入，列宽先按比例分下来，实在放不下才从中间断。
+   代码里本来就是一串没有空格的标识符，断行后拼得回去。 */
 .md-typeset table:not([class]) code {
   font-size: 0.9em;
   white-space: normal;
@@ -347,9 +399,20 @@ body[data-md-color-scheme="slate"] {
   border-color: var(--cc-border);
 }
 
+/* 首列是行标题（版本号、日期、字段名），断成两半就没法看了 ——
+   首列退回 break-word：宁可让表格宽一点，也不把「v2.1.136」拆成
+   「v2.1.13」+「6」。其余列放的是长句和长标识符，
+   断在哪儿都还能拼回去。 */
+.md-typeset table:not([class]) tbody td:first-child code,
+.md-typeset table:not([class]) th code {
+  overflow-wrap: break-word;
+}
+
 /* Material 把表格包在 .md-typeset__table 里，用的是 inline-block +
    shrink-to-fit：宽表会把 wrapper 撑到正文列之外，压到右侧目录下面。
-   改成 block + 内部横向滚动，宽表自己滚，不动版面。 */
+   改成 block + 内部横向滚动，宽表自己滚，不动版面。
+   外边距只留 wrapper 一层 —— wrapper 是 BFC（overflow 不是 visible），
+   表格自己的 margin 不会跟它合并，两层叠起来就是 2.6rem 的空档。 */
 .md-typeset .md-typeset__table {
   display: block;
   max-width: 100%;
@@ -357,10 +420,59 @@ body[data-md-color-scheme="slate"] {
   margin: 1.3rem 0;
 }
 
+.md-typeset .md-typeset__table > table:not([class]) {
+  margin: 0;
+}
+
 /* 表格里的数字列用等宽数字，避免左右跳 */
 .md-typeset table:not([class]) td,
 .md-typeset table:not([class]) th {
   font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 6.5 变更日志表 ---------- */
+
+/* 版本 + 日期：拆成上下两行。
+   原来挤在同一格里，日期会从连字符处断成「（2026-04-」+「22）」——
+   连字符本来就是合法的断行点，桌面端窄屏都躲不掉。
+   结构由 scripts/mkdocs_table_meta.py 在构建期生成。 */
+.md-typeset table:not([class]) code.cc-ver {
+  display: block;
+  width: fit-content;
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+.md-typeset table:not([class]) time.cc-date {
+  display: block;
+  font-size: 0.78em;
+  font-weight: 400;
+  line-height: 1.5;
+  white-space: nowrap;
+  color: var(--cc-ink-muted);
+}
+
+/* 裸日期单元格（08 章的「时间」列）：只保证不断行，不改样式 */
+.md-typeset table:not([class]) time.cc-nb {
+  white-space: nowrap;
+}
+
+/* 变更条目列的原文：一整段上游 CHANGELOG 文本。
+   行内 code 带边框时，边框会按行断开 —— 一段英文变成一叠小药丸。
+   改成无边框浅底，读起来是一整块等宽原文。 */
+.md-typeset .cc-changelog td.cc-entry code {
+  padding: 0 0.15em;
+  border-color: transparent;
+  border-radius: 0;
+  background: var(--cc-surface-3);
+}
+
+/* 末列是中文解读，列窄，里面的标识符（autoMode.soft_deny）常被
+   anywhere 从中间劈开（autoMode.soft / _deny）。
+   末列退回 break-word：标识符整块放得下就不断，
+   真放不下时再断 —— 而不是先从中间劈。 */
+.md-typeset .cc-changelog table:not([class]) td:last-child:not(.cc-entry) code {
+  overflow-wrap: break-word;
 }
 
 /* ---------- 7. 引用块 ---------- */
@@ -371,7 +483,7 @@ body[data-md-color-scheme="slate"] {
   border-left: 3px solid var(--cc-accent);
   border-radius: 0 var(--cc-r-md) var(--cc-r-md) 0;
   background: var(--cc-surface-2);
-  color: var(--cc-ink-muted);
+  color: var(--cc-ink-soft);
 }
 
 .md-typeset blockquote > :last-child {
@@ -642,6 +754,35 @@ body[data-md-color-scheme="slate"] {
   border-top: 1px solid var(--cc-border);
 }
 
+/* 右上角「编辑此页 / 查看本页的源代码」两个浮动按钮：
+   Material 的模板在图标前后留了空白文本节点，按钮盒被撑成 43×31，
+   图标还贴在左上角。改成固定尺寸 + 图标居中 ——
+   窄屏上这两个按钮正好占掉标题行的 100px，是标题被挤断的主因。 */
+.md-typeset .md-content__button {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: 0.5rem 0 0.5rem 0.4rem;
+  /* Material 默认给这两个图标按钮用 rgba(0,0,0,.32)，
+     在白底上只有 2.23:1 —— 达不到 WCAG 1.4.11 对图标控件的 3:1。
+     换成 muted 墨色（浅色 4.7:1 / 深色 7:1），悬停时用强调色。 */
+  color: var(--cc-ink-muted);
+  border-radius: var(--cc-r-sm);
+  transition: color 125ms, background-color 125ms;
+}
+
+.md-typeset .md-content__button:hover,
+.md-typeset .md-content__button:focus-visible {
+  color: var(--cc-accent);
+  background-color: var(--cc-accent-soft);
+}
+
+.md-typeset .md-content__button svg {
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
 /* ---------- 13. 焦点可见性 ---------- */
 
 .md-typeset a:focus-visible,
@@ -670,7 +811,134 @@ body[data-md-color-scheme="slate"] {
   }
 }
 
-/* ---------- 15. 打印 ---------- */
+/* ---------- 15. 窄屏适配 ----------
+   手机上（< 45em ≈ 720px）有三处会坏：
+   1. 35px 的标题一行放不下 6 个汉字，右上角「编辑 / 源码」两个浮动按钮
+      还要再占走 75px —— 标题被挤成两行，最后两三个字单独占一行。
+   2. 表格被压成一列窄条：「skill 清单（145 个 skill 的 description）」
+      被拆成 4 行，description 甚至从中间断开 ——
+      普通表格保底 26rem 横着滚，变更日志表改成卡片流（见下）。
+   3. 标题上边距、分隔线、引用块的留白叠在一起，页面显得散。 */
+
+@media screen and (max-width: 44.9375em) {
+  .md-typeset h1 {
+    font-size: 1.42rem;
+    margin-bottom: 1rem;
+  }
+
+  .md-typeset h2 {
+    font-size: 1.14rem;
+    margin: 1.8rem 0 0.7rem;
+  }
+
+  .md-typeset h3 {
+    font-size: 1rem;
+    margin: 1.4rem 0 0.5rem;
+  }
+
+  /* 表格保底宽度 + 横向滚动：宁可让读者横着拖，
+     也不要把三列压成三条竖排的字条。
+     max(26rem, min-content) —— 保底 26rem，同时不许比内容还窄，
+     否则窄的那一截会被表格自己的 overflow: hidden 裁掉。 */
+  .md-typeset table:not([class]) {
+    min-width: max(26rem, min-content);
+  }
+
+  /* 窄屏上收紧单元格内边距：省下的宽度留给正文，
+     别让「变更条目」那列被挤成一条一字的细缝。 */
+  .md-typeset table:not([class]) th,
+  .md-typeset table:not([class]) td {
+    padding: 0.45rem 0.55rem;
+  }
+
+  /* 变更日志表改成卡片流（08 章的证据表）：
+     一行一条 —— 版本在上，原文和「意味着什么」各自成段，
+     不用横着拖 600px 才看得全。
+     结构由 scripts/mkdocs_table_meta.py 生成
+     （.cc-changelog 外层 + 每个单元格的 data-label 列名）。 */
+  .md-typeset .cc-changelog .md-typeset__scrollwrap,
+  .md-typeset .cc-changelog .md-typeset__table {
+    overflow-x: visible;
+    padding: 0;
+    margin: 0;
+  }
+
+  .md-typeset .cc-changelog table:not([class]) {
+    display: block;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+
+  .md-typeset .cc-changelog table:not([class]) thead {
+    display: none;
+  }
+
+  .md-typeset .cc-changelog table:not([class]) tbody {
+    display: block;
+  }
+
+  .md-typeset .cc-changelog table:not([class]) tr {
+    display: block;
+    margin-bottom: 0.7rem;
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--cc-border);
+    border-left: 3px solid var(--cc-accent-line);
+    border-radius: var(--cc-r-md);
+    background: var(--cc-surface-2);
+  }
+
+  .md-typeset .cc-changelog table:not([class]) tbody tr:nth-child(even) {
+    background: var(--cc-surface-2);
+  }
+
+  .md-typeset .cc-changelog table:not([class]) td {
+    display: block;
+    padding: 0.3rem 0;
+    border-bottom: 0;
+  }
+
+  /* 卡片里的小标题就是列名，读者不用记列序 */
+  .md-typeset .cc-changelog table:not([class]) td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.15rem;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--cc-ink-muted);
+  }
+
+  /* 版本那一格就是卡片标题，不用再写一遍「版本」 */
+  .md-typeset .cc-changelog table:not([class]) td:first-child {
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid var(--cc-border);
+  }
+
+  .md-typeset .cc-changelog table:not([class]) td:first-child::before {
+    content: none;
+  }
+
+  .md-typeset hr {
+    margin: 1.6rem 0;
+  }
+
+  .md-typeset blockquote {
+    padding: 0.7rem 0.85rem;
+  }
+
+  .md-typeset pre {
+    padding: 0.75rem 0.8rem;
+  }
+}
+
+/* ---------- 16. 打印 ---------- */
 
 @media print {
   .md-header,
