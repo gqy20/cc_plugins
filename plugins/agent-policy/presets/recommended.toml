@@ -1,0 +1,51 @@
+# recommended 预设：只放"违反就有真实后果"的硬规则。
+# 规则在项目根 agent-policy.toml 里用 extends = ["recommended"] 引入，
+# 同 id 的项目规则会覆盖这里。
+
+version = 1
+
+[[rule]]
+id = "no-secrets-access"
+description = "禁止读取 secrets 目录与 .env 文件"
+severity = "critical"
+when = { event = "pre", tool = ["Read", "Grep", "Glob"], path = ["**/secrets/**", "secrets/**", "**/.env", ".env", "**/.env.*", ".env.*"] }
+then = { action = "deny", reason = "secrets / .env 只允许人工查看", fail = "closed" }
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Read", tool_input = { file_path = "secrets/prod.env" } }
+expect = "deny"
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Read", tool_input = { file_path = "src/app.py" } }
+expect = "pass"
+
+[[rule]]
+id = "no-write-outside-workspace"
+description = "写操作不得越出项目目录"
+severity = "critical"
+builtin = "outside_workspace"
+when = { event = "pre", tool = ["Write", "Edit", "NotebookEdit"] }
+then = { action = "deny", reason = "写操作不得越出项目目录", fail = "closed" }
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Edit", tool_input = { file_path = "../outside.txt" } }
+expect = "deny"
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Edit", tool_input = { file_path = "src/app.py" } }
+expect = "pass"
+
+[[rule]]
+id = "ask-destructive-shell"
+description = "高危 shell 命令改为人工确认"
+severity = "critical"
+when = { event = "pre", tool = "Bash", command = ['\brm\s+-rf\s+/(\s|$)', '\brm\s+-rf\s+~(\s|$)', '\bmkfs\b', '\bdd\s+if=.*of=/dev/'] }
+then = { action = "ask", reason = "高危命令，请确认", fail = "closed" }
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Bash", tool_input = { command = "rm -rf /" } }
+expect = "ask"
+
+[[rule.test]]
+input = { hook_event_name = "PreToolUse", tool_name = "Bash", tool_input = { command = "ls -la" } }
+expect = "pass"

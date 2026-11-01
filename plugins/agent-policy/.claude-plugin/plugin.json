@@ -1,0 +1,24 @@
+{
+  "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "agent-policy",
+  "version": "0.1.0",
+  "description": "Policy-as-code guardrails for Claude Code: one dispatcher hook + a TOML policy file with deterministic deny/ask/run rules",
+  "author": {
+    "name": "qingyu_ge",
+    "email": "qingyuge@foxmail.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/gqy20/cc_plugins",
+  "repository": "https://github.com/gqy20/cc_plugins",
+  "keywords": [
+    "policy",
+    "guardrails",
+    "hooks",
+    "rules",
+    "security"
+  ],
+  "commands": [
+    "./commands/policy.md"
+  ],
+  "hooks": "./hooks/hooks.json"
+}

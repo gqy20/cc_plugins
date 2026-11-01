@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-Claude Code 插件集合，共 6 个插件：4 个研究专家插件（进化生物学、杂交物种形成、作物育种、进化生态学）+ 2 个实用工具插件（Slidev 生成、AntV 信息图表）。研究插件依赖 article-mcp + sequentialthinking。
+Claude Code 插件集合，共 7 个插件：4 个研究专家插件（进化生物学、杂交物种形成、作物育种、进化生态学）+ 3 个实用工具插件（Slidev 生成、AntV 信息图表、agent-policy 策略/钩子）。研究插件依赖 article-mcp + sequentialthinking。
 
 ## 验证与测试
 
@@ -23,6 +23,9 @@ uv run python scripts/check_skill_links.py                    # skill 内链接
 uv run --with pyyaml python scripts/check_doc_numbers.py      # 文档里的 CLAUDE.md 尺寸
 uv run python scripts/extract_keybindings.py --context Chat   # 出厂默认键位（从二进制）
 uv run python scripts/extract_changelog.py --since 2.1.305    # 内嵌 CHANGELOG（从二进制）
+
+python3 plugins/agent-policy/scripts/policy.py check --strict  # agent-policy.toml 校验
+python3 plugins/agent-policy/scripts/policy.py test            # 规则夹具
 ```
 
 CI（`.github/workflows/`）：

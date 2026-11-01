@@ -6,6 +6,7 @@ on:
         paths:
             - ".claude-plugin/**"
             - "plugins/**"
+            - "agent-policy.toml"
             - ".claude/**"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
@@ -17,6 +18,7 @@ on:
         paths:
             - ".claude-plugin/**"
             - "plugins/**"
+            - "agent-policy.toml"
             - ".claude/**"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
@@ -342,6 +344,23 @@ jobs:
               run: |
                   echo "🔍 Validating links from .claude/skills/ into docs/cc-guide/..."
                   python3 scripts/check_skill_links.py
+
+    policy-validation:
+        name: Policy Validation
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+
+            - name: Validate agent policy
+              run: |
+                  python3 plugins/agent-policy/scripts/policy.py check --project . --strict
+                  python3 plugins/agent-policy/scripts/policy.py test --project .
 
     integration-validation:
         name: Integration Validation

@@ -1,0 +1,20 @@
+# 本仓库自己的策略：预设 + 文档守卫。
+# 引擎与字段说明见 plugins/agent-policy/README.md。
+
+version = 1
+extends = ["recommended"]
+
+[[rule]]
+id = "docs-tables-must-stay-valid"
+description = "改 docs 后表格结构不能坏"
+severity = "major"
+when = { event = "post", tool = ["Edit", "Write"], path = "docs/**/*.md" }
+then = { run = "python3 scripts/check_tables.py docs/cc-guide", fail = "closed", timeout = 15 }
+
+[[rule.test]]
+input = { hook_event_name = "PostToolUse", tool_name = "Edit", tool_input = { file_path = "docs/cc-guide/01-能力选型矩阵.md" } }
+expect = "match"
+
+[[rule.test]]
+input = { hook_event_name = "PostToolUse", tool_name = "Edit", tool_input = { file_path = "README.md" } }
+expect = "pass"
