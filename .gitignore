@@ -100,3 +100,6 @@ example
 
 # Playwright MCP 临时产物
 /.playwright-mcp/
+
+# check_mcp_dependencies.py 生成的临时文件
+MCP_INSTALLATION_GUIDE.md
