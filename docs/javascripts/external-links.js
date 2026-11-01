@@ -3,10 +3,10 @@
  * 为什么不能用纯 CSS 的 `a[href^="http"]`：
  *   Material 的运行时会把页面里所有相对 href 改写成绝对地址
  *   （bundle 里的 os()：`r[o] = new URL(r.getAttribute(o), t).toString()`），
- *   站内链接因此也会命中 `^="http"`，图标会撒得到处都是。
+ *   站内链接因此也会命中 `^="http"`。
  *
- * 做法：按 origin 判断是不是真的跳到站外，打上 data-cc-external，
- *      由 CSS 决定要不要加 ↗。
+ * 做法：按 origin 判断是不是真的跳到站外，打上 data-cc-external。
+ *      屏幕样式不再显示标记；打印样式用它补全 URL。
  */
 (function () {
   "use strict";

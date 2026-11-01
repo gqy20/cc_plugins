@@ -162,14 +162,6 @@ body[data-md-color-scheme="slate"] {
   margin-left: 0.02em;
 }
 
-/* 章节之间不再画水平线：标题的留白已经足够分隔，
-   多余的分割线会把页面切碎。保留 hr 规则仅供未来使用。 */
-.md-typeset hr {
-  margin: 2rem 0;
-  border: 0;
-  border-top: 0;
-}
-
 /* ---------- 3. 标题 ---------- */
 
 .md-typeset h1 {
@@ -262,23 +254,8 @@ body[data-md-color-scheme="slate"] {
   color: var(--cc-accent);
 }
 
-/* 外链加个 ↗ 提示，避免和站内跳转混淆。
-   注意：不能靠 a[href^="http"] 判断 —— Material 的运行时会把所有相对
-   href 改写成绝对地址，站内链接也会命中。这里改用 JS 按 origin 打的
-   data-cc-external 标记。 */
-.md-typeset a[data-cc-external]::after {
-  content: "↗";
-  display: inline-block;
-  margin-left: 0.15em;
-  font-size: 0.78em;
-  line-height: 1;
-  vertical-align: 0.15em;
-  opacity: 0.5;
-}
-
-.md-typeset a[data-cc-external]:hover::after {
-  opacity: 1;
-}
+/* 外链不再加 ↗ 标记：链接文字本身已经说明了去向，图标只是噪声。
+   data-cc-external 仍由 external-links.js 标记，供打印样式补全 URL。 */
 
 /* ---------- 5. 代码 ---------- */
 
@@ -566,11 +543,6 @@ body[data-md-color-scheme="slate"] {
   color: var(--cc-ink-muted);
 }
 
-.md-typeset figcaption::before {
-  content: "▸ ";
-  color: var(--cc-accent);
-}
-
 /* ---------- 11. 首页：Hero / 徽章 / 卡片 ---------- */
 
 .hero {
@@ -614,10 +586,6 @@ body[data-md-color-scheme="slate"] {
   display: inline-flex;
   align-items: center;
   border-bottom: 0;
-}
-
-.md-typeset .badges a::after {
-  content: none;
 }
 
 .md-typeset .badges img {
