@@ -4,7 +4,7 @@ description: 并行代码库探索
 user-invocable: true
 version: 0.0.1
 tags: [research, exploration]
-argument-hint: [topic] [parallel]
+argument-hint: "[topic] [parallel]"
 ---
 
 # 代码库快速探索

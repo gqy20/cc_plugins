@@ -4,7 +4,7 @@ description: Awwwards 设计灵感侦察 — 按奖项/分类/技术栈/UI元素
 user-invocable: true
 version: 0.1.0
 tags: [design, frontend, inspiration, ui, ux, awwwards]
-argument-hint: <查询内容> [模式] [数量]
+argument-hint: "<查询内容> [模式] [数量]"
 ---
 
 # Design Scout — Awwwards 设计灵感侦察

@@ -136,8 +136,12 @@ def yaml_traps(raw: str) -> list[tuple[str, str]]:
     for lineno, line in enumerate(raw.split("\n"), start=2):
         if not line.strip() or line.lstrip().startswith("#"):
             continue
+        m = re.match(r"^([A-Za-z_][\w-]*):\s+(.*)$", line)
+        value = m.group(2) if m else None
+        # 整值已加引号的行是合法标量，两个陷阱都不适用
+        quoted = value is not None and value.startswith(("'", '"'))
         # 相邻的流式序列：[a] [b]
-        if re.search(r"\[[^\]]*\]\s+\[[^\]]*\]", line):
+        if not quoted and re.search(r"\[[^\]]*\]\s+\[[^\]]*\]", line):
             traps.append(
                 (
                     f"第 {lineno} 行",
@@ -145,9 +149,7 @@ def yaml_traps(raw: str) -> list[tuple[str, str]]:
                 )
             )
         # 未加引号的 ": "（只检查顶层键值对行，避免误报）
-        m = re.match(r"^([A-Za-z_][\w-]*):\s+(.*)$", line)
         if m:
-            value = m.group(2)
             if ": " in value and not value.startswith(("'", '"', "|", ">", "[")):
                 traps.append(
                     (
