@@ -22,7 +22,6 @@ hide:
 
 </div>
 
----
 
 ## 🧭 从哪儿开始
 
@@ -37,7 +36,7 @@ hide:
 
 - :material-chart-line: **上下文不够用了**
 
-    **本仓库实测：145 个 skill 的 description 合计 46,109 字符，超预算 7.6 倍。**
+    **本仓库实测：skill 清单超出预算 7.6 倍。**
     顺带给出 5 个手动控制上下文的手段。
 
     [:octicons-arrow-right-24: 02 上下文经济学](cc-guide/02-上下文经济学.md)
@@ -58,7 +57,6 @@ hide:
 
 </div>
 
----
 
 ## 📚 全部章节
 
@@ -73,7 +71,6 @@ hide:
 | 07 | [排错手册](cc-guide/07-排错手册.md) | 从症状到根因的诊断路径 | 出问题时先查这里 |
 | 08 | [演进趋势](cc-guide/08-演进趋势.md) | 从 release 看 Claude Code 下一步往哪走 | 做技术选型时 |
 
----
 
 ## 🎯 三条阅读路径
 
@@ -86,7 +83,6 @@ hide:
 **调优现有项目（1 小时）**
 [02 上下文经济学](cc-guide/02-上下文经济学.md) → [04 权限与护栏](cc-guide/04-权限与护栏.md) → [05 多代理编排](cc-guide/05-多代理编排.md)
 
----
 
 ## 🔍 这套文档是怎么做出来的
 
@@ -101,7 +97,6 @@ claude plugin validate <path>   # manifest 校验
 
 把这套方法论固化成脚本的过程，见 [07 排错手册 · 诊断方法论](cc-guide/07-排错手册.md)。
 
----
 
 <div class="grid cards" markdown>
 

@@ -144,7 +144,9 @@ body[data-md-color-scheme="slate"] {
 }
 
 .md-typeset {
-  font-size: 0.8rem;
+  /* 用 px 而不是 rem：Material 在 ≥100em 宽屏会把根字号提到 22px，
+     rem 字号会跟着放大 —— 大屏上反而更难读。 */
+  font-size: 16px;
   line-height: 1.7;
   color: var(--cc-ink);
 }
@@ -172,7 +174,7 @@ body[data-md-color-scheme="slate"] {
 
 .md-typeset h1 {
   margin: 0 0 1.1rem;
-  font-size: 1.55rem;
+  font-size: 31px;
   font-weight: 750;
   line-height: 1.3;
   letter-spacing: -0.015em;
@@ -206,7 +208,7 @@ body[data-md-color-scheme="slate"] {
 .md-typeset h2 {
   margin: 2rem 0 0.8rem;
   padding-bottom: 0;
-  font-size: 1.16rem;
+  font-size: 23px;
   font-weight: 700;
   line-height: 1.4;
   letter-spacing: -0.01em;
@@ -215,7 +217,7 @@ body[data-md-color-scheme="slate"] {
 
 .md-typeset h3 {
   margin: 1.6rem 0 0.55rem;
-  font-size: 0.98rem;
+  font-size: 19.5px;
   font-weight: 700;
   line-height: 1.5;
   color: var(--cc-ink);
@@ -223,7 +225,7 @@ body[data-md-color-scheme="slate"] {
 
 .md-typeset h4 {
   margin: 1.3rem 0 0.45rem;
-  font-size: 0.9rem;
+  font-size: 18px;
   font-weight: 700;
   color: var(--cc-ink-muted);
 }
@@ -295,7 +297,7 @@ body[data-md-color-scheme="slate"] {
   border: 0;
   border-radius: 0;
   background: none;
-  font-size: 0.76rem;
+  font-size: 15px;
   line-height: 1.6;
 }
 
@@ -320,6 +322,9 @@ body[data-md-color-scheme="slate"] {
 /* ---------- 6. 表格 ---------- */
 
 .md-typeset table:not([class]) {
+  /* inline-block 是 Material 的默认值：宽度 100% 时各列不会撑开，
+     右侧会留出一大块空白。改回 table 让列宽按比例分配。 */
+  display: table;
   width: 100%;
   /* 表格框不能比内容还窄。
      overflow: hidden 是为了把斑马纹裁在圆角里（Material 原本用 overflow:auto），
@@ -330,7 +335,7 @@ body[data-md-color-scheme="slate"] {
      窄屏上由 wrapper 横着滚，宽屏上照旧填满正文列。 */
   min-width: min-content;
   margin: 1.2rem 0;
-  font-size: 0.74rem;
+  font-size: 14.5px;
   line-height: 1.55;
   border-collapse: collapse;
   border-radius: var(--cc-r-md);
@@ -556,7 +561,7 @@ body[data-md-color-scheme="slate"] {
 
 .md-typeset figcaption {
   margin-top: 0.65rem;
-  font-size: 0.7rem;
+  font-size: 14px;
   line-height: 1.55;
   color: var(--cc-ink-muted);
 }
@@ -581,7 +586,7 @@ body[data-md-color-scheme="slate"] {
 
 .hero h1 {
   margin: 0 0 0.6rem;
-  font-size: 2rem;
+  font-size: 40px;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.025em;
@@ -591,7 +596,7 @@ body[data-md-color-scheme="slate"] {
 .hero h1 + p {
   margin: 0 auto;
   max-width: 42rem;
-  font-size: 0.92rem;
+  font-size: 18px;
   line-height: 1.7;
   color: var(--cc-ink-muted);
 }
@@ -718,7 +723,7 @@ body[data-md-color-scheme="slate"] {
 }
 
 .md-nav__link {
-  font-size: 0.72rem;
+  font-size: 14.5px;
   line-height: 1.5;
 }
 
@@ -735,7 +740,7 @@ body[data-md-color-scheme="slate"] {
 }
 
 .md-typeset .md-nav__link {
-  font-size: 0.72rem;
+  font-size: 14.5px;
 }
 
 .md-typeset .md-nav__link--active {
@@ -815,17 +820,17 @@ body[data-md-color-scheme="slate"] {
 
 @media screen and (max-width: 44.9375em) {
   .md-typeset h1 {
-    font-size: 1.3rem;
+    font-size: 26px;
     margin-bottom: 0.9rem;
   }
 
   .md-typeset h2 {
-    font-size: 1.08rem;
+    font-size: 21.5px;
     margin: 1.6rem 0 0.65rem;
   }
 
   .md-typeset h3 {
-    font-size: 0.95rem;
+    font-size: 19px;
     margin: 1.3rem 0 0.5rem;
   }
 
