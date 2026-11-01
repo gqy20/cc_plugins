@@ -18,7 +18,7 @@ hide:
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-2.1.314-4f46e5)](https://code.claude.com/docs)
 [![文档](https://img.shields.io/badge/官方文档-141%20页-0a7d55)](https://code.claude.com/docs/llms.txt)
-[![CC Plugins](https://img.shields.io/badge/cc_plugins-6%20个插件-8250df)](https://github.com/gqy20/cc_plugins)
+[![CC Plugins](https://img.shields.io/badge/cc_plugins-7%20个插件-8250df)](https://github.com/gqy20/cc_plugins)
 
 </div>
 
@@ -104,7 +104,7 @@ claude plugin validate <path>   # manifest 校验
 
     [github.com/gqy20/cc_plugins](https://github.com/gqy20/cc_plugins)
 
-    6 个研究专家插件 + 本指南 + 校验脚本
+    研究插件 + 工具插件 + 本指南 + 校验脚本
 
 - :material-book-open-variant: **仓库内文档**
 
