@@ -81,18 +81,18 @@
   <text x="480.0" y="34" class="t-title" text-anchor="middle">插件包的标准骨架</text>
   <rect x="46" y="54" width="340" height="34" rx="8" class="panel-a"/>
   <text x="60" y="78" class="t-mono ink-a">plugins/&lt;plugin-name&gt;/</text>
-  <rect x="310" y="52" width="66" height="20" rx="10" fill="var(--accent-bg)" stroke="none"/>  <text x="343.0" y="66" class="t-badge" text-anchor="middle" fill="var(--accent)">插件根</text>
+  <rect x="320" y="44" width="66" height="20" rx="10" fill="var(--accent-bg)" stroke="none"/>  <text x="353.0" y="58" class="t-badge" text-anchor="middle" fill="var(--accent)">插件根</text>
   <rect x="80" y="100" width="400" height="34" rx="8" class="panel-d"/>
   <text x="94" y="124" class="t-mono ink-d">.claude-plugin/plugin.json</text>
-  <rect x="414" y="98" width="130" height="20" rx="10" fill="var(--danger-bg)" stroke="none"/>  <text x="479.0" y="112" class="t-badge" text-anchor="middle" fill="var(--danger)">必需 · 官方位置</text>
+  <rect x="350" y="90" width="130" height="20" rx="10" fill="var(--danger-bg)" stroke="none"/>  <text x="415.0" y="104" class="t-badge" text-anchor="middle" fill="var(--danger)">必需 · 官方位置</text>
   <text x="94" y="170" class="t-mono ink-m">README.md</text>
   <text x="94" y="216" class="t-mono ink-m">agents/*.md</text>
   <rect x="80" y="238" width="400" height="34" rx="8" class="panel-w"/>
   <text x="94" y="262" class="t-mono ink-w">skills/&lt;skill-name&gt;/SKILL.md</text>
-  <rect x="414" y="236" width="110" height="20" rx="10" fill="var(--warn-bg)" stroke="none"/>  <text x="469.0" y="250" class="t-badge" text-anchor="middle" fill="var(--warn)">必须是目录</text>
+  <rect x="370" y="228" width="110" height="20" rx="10" fill="var(--warn-bg)" stroke="none"/>  <text x="425.0" y="242" class="t-badge" text-anchor="middle" fill="var(--warn)">必须是目录</text>
   <text x="94" y="308" class="t-mono ink-m">commands/*.md</text>
   <text x="94" y="354" class="t-mono ink-m">templates/*.md</text>
-  <text x="94" y="400" class="t-mono ink-m">tools/.mcp.json</text>
+  <text x="94" y="400" class="t-mono ink-m">.mcp.json</text>
   <rect x="560" y="74" width="370" height="300" rx="14" class="panel" filter="url(#sh)"/>
   <text x="580" y="106" class="t-h">manifest 字段语义</text>
   <text x="580" y="134" class="t-mono">"skills"   → 指向目录</text>

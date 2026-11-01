@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 460"
-     width="960" height="460" role="img" aria-labelledby="t d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420"
+     width="960" height="420" role="img" aria-labelledby="t d">
   <title id="t">排错三段式流程</title>
   <desc id="d">三步：先看症状分清未加载还是未生效，再用 debug 日志与 plugin validate 定位，最后对照三类典型根因：frontmatter 字段拼错、YAML 解析失败、路径写错。</desc>
   <style>
@@ -76,30 +76,29 @@
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="var(--shadow)"/>
     </filter>
   </defs>
-  <rect width="960" height="460" fill="var(--panel)"/>
-  <rect width="960" height="460" fill="none"/>
+  <rect width="960" height="420" fill="var(--panel)"/>
+  <rect width="960" height="420" fill="none"/>
   <text x="480.0" y="34" class="t-title" text-anchor="middle">排错三段式：症状 → 定位 → 根因</text>
-  <rect x="35" y="80" width="280" height="280" rx="14" class="panel-a" opacity="0.45"/>
+  <rect x="35" y="80" width="280" height="245" rx="14" class="panel-a" opacity="0.45"/>
   <rect x="35" y="80" width="280" height="46" rx="14" class="panel-a"/>
   <text x="175.0" y="110" class="t-h" text-anchor="middle">1 症状</text>
   <text x="53" y="156" class="t-small">· 先分清「没加载」还是「加载了但没生效」</text>
   <text x="53" y="218" class="t-small">· 看 /context：到底加载了哪些文件</text>
   <text x="53" y="280" class="t-small">· 看启动告警（无提示 ≠ 没报错）</text>
   <path d="M320,220 L340,220" class="edge-a flow" marker-end="url(#ah-a)"/>
-  <rect x="345" y="80" width="280" height="280" rx="14" class="panel-w" opacity="0.45"/>
+  <rect x="345" y="80" width="280" height="245" rx="14" class="panel-w" opacity="0.45"/>
   <rect x="345" y="80" width="280" height="46" rx="14" class="panel-w"/>
   <text x="485.0" y="110" class="t-h" text-anchor="middle">2 定位</text>
   <text x="363" y="156" class="t-small">· claude --debug 读 ~/.claude/debug/&lt;id&gt;.txt</text>
   <text x="363" y="218" class="t-small">· 搜 "does not recognize or apply"</text>
   <text x="363" y="280" class="t-small">· claude plugin validate &lt;目录&gt;</text>
   <path d="M630,220 L650,220" class="edge-a flow" marker-end="url(#ah-a)"/>
-  <rect x="655" y="80" width="280" height="280" rx="14" class="panel-d" opacity="0.45"/>
+  <rect x="655" y="80" width="280" height="245" rx="14" class="panel-d" opacity="0.45"/>
   <rect x="655" y="80" width="280" height="46" rx="14" class="panel-d"/>
   <text x="795.0" y="110" class="t-h" text-anchor="middle">3 根因</text>
   <text x="673" y="156" class="t-small">· frontmatter 拼写错 → 字段被静默忽略</text>
   <text x="673" y="218" class="t-small">· YAML 解析失败 → 整个文件被跳过</text>
   <text x="673" y="280" class="t-small">· 路径写错 → 组件根本没注册</text>
-  <rect x="35" y="380" width="890" height="1.2" rx="0" class="panel" fill="var(--line)" stroke="none"/>
-  <text x="480.0" y="404" class="t-body ink-w" text-anchor="middle">最容易漏的一步：Claude Code 对「认识不了的文件」是静默跳过的 —— 不报错，只写 debug log。</text>
-  <text x="480.0" y="430" class="t-small" text-anchor="middle">所以「插件装了但命令没出现」的第一嫌疑永远是 frontmatter 或路径，不是模型不听话。</text>
+  <text x="480.0" y="362" class="t-body ink-w" text-anchor="middle">最容易漏的一步：Claude Code 对「认识不了的文件」是静默跳过的 —— 不报错，只写 debug log。</text>
+  <text x="480.0" y="390" class="t-small" text-anchor="middle">所以「插件装了但命令没出现」的第一嫌疑永远是 frontmatter 或路径，不是模型不听话。</text>
 </svg>

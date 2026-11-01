@@ -94,11 +94,10 @@
   <text x="148" y="208" class="t-small">决定「要不要问」和「能不能」</text>
   <rect x="486" y="172" width="52" height="22" rx="6" fill="none" stroke="none"/>
   <text x="532" y="188" class="t-badge" text-anchor="end">最内</text>
-  <rect x="190" y="200" width="300" height="120" rx="12" class="panel" filter="url(#sh)"/>
-  <text x="340" y="232" class="t-h" text-anchor="middle">模型想做什么</text>
-  <text x="340" y="256" class="t-small" text-anchor="middle">CLAUDE.md / skill / 提示词</text>
-  <text x="340" y="284" class="t-body ink-w" text-anchor="middle">只是建议 —— 模型可以不遵守</text>
-  <rect x="300" y="190" width="80" height="20" rx="10" fill="var(--warn-bg)" stroke="none"/>  <text x="340.0" y="204" class="t-badge" text-anchor="middle" fill="var(--warn)">非确定性</text>
+  <rect x="190" y="215" width="300" height="120" rx="12" class="panel" filter="url(#sh)"/>
+  <text x="340" y="247" class="t-h" text-anchor="middle">模型想做什么</text>
+  <text x="340" y="271" class="t-small" text-anchor="middle">CLAUDE.md / skill / 提示词</text>
+  <text x="340" y="299" class="t-body ink-w" text-anchor="middle">只是建议 —— 模型可以不遵守</text>
   <rect x="700" y="120" width="220" height="90" rx="12" class="panel-d" filter="url(#sh)"/>
   <text x="810" y="152" class="t-mono" text-anchor="middle">Bash(curl …)</text>
   <text x="810" y="178" class="t-small" text-anchor="middle">命令真的执行了</text>

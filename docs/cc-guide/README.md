@@ -3,7 +3,6 @@
 > 本指南基于 **官方文档**（`code.claude.com/docs`，共 141 页）与 **CHANGELOG**（433 个版本、8,442 条变更）整理而成。
 > 每章先讲机制，再给本仓库（`cc_plugins`）的真实用法，可直接对照落地。
 
----
 
 ## 📚 章节索引
 
@@ -18,7 +17,6 @@
 | 07 | [排错手册](07-排错手册.md) | 从症状到根因的诊断路径 | 出问题时先查这里 |
 | 08 | [演进趋势](08-演进趋势.md) | 从 release 看 Claude Code 下一步往哪走 | 做技术选型时 |
 
----
 
 ## 🎯 三条阅读路径
 
@@ -31,7 +29,6 @@
 **调优现有项目（1 小时）**
 `02 上下文经济学` → `04 权限与护栏` → `05 多代理编排`
 
----
 
 ## 🔑 三条速查
 
@@ -58,7 +55,6 @@ Claude Code 会**截断**排在后面的 skill，于是它**根本不知道那�
 写错会被 `claude plugin validate` 直接判为 error 而非 warning。
 → 详见 [06 插件与市场](06-插件与市场.md#各组件字段的默认位置与语义)
 
----
 
 ## 📌 官方文档索引怎么用
 
@@ -74,7 +70,6 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 
 `.md` 后缀是关键——HTML 页面在抓取时会丢掉 JSON 代码块，而 `.md` 版保留完整原文。
 
----
 
 ## 🧭 本仓库的对应实践
 
@@ -87,7 +82,6 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 | 06 插件与市场 | `.claude-plugin/marketplace.json` + 6 个 `plugins/*/.claude-plugin/plugin.json` + `scripts/validate_manifests.py`（按 `$schema` 校验 manifest） |
 | 07 排错手册 | `.github/scripts/` 三个校验脚本 + `claude plugin validate` + `claude --debug` + `scripts/measure_context.py`、`scripts/extract_keybindings.py`、`scripts/extract_changelog.py` |
 
----
 
 ## 🖥️ 本地预览与构建
 
@@ -118,6 +112,5 @@ uv run python scripts/gen_guide_figures.py
 页面在深色模式下会自动换成 `.dark.svg` 变体（`docs/javascripts/theme-figures.js`），
 所以改插图后要重新生成，**两种主题都要看一遍**。
 
----
 
 **相关**：`docs/error-playbook/` — 本项目实际踩过的坑与解法（⚠️ 该目录目前还不存在，因为 error-catcher hook 没有注册，见 [04](04-权限与护栏.md#发现-4-18-个-hook-脚本全部未注册)）

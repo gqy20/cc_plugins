@@ -279,7 +279,6 @@
   <text x="494.0" y="360" class="t-small">25/12</text>
   <text x="599.0" y="360" class="t-small">26/03</text>
   <text x="704.0" y="360" class="t-small">26/06</text>
-  <text x="809.0" y="360" class="t-small">26/09</text>
   <text x="878.0" y="360" class="t-small" text-anchor="end">26/10</text>
   <text x="942" y="360" class="t-small" text-anchor="end">累计条目</text>
   <rect x="22" y="379" width="11" height="11" rx="2.5" fill="var(--danger)"/>

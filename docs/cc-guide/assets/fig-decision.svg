@@ -88,42 +88,36 @@
   <rect x="420" y="140" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="161" class="t-h ink-d">permissions.deny</text>
   <text x="438" y="178" class="t-small">+ 必要时 command 型 hook</text>
-  <path d="M480,186 L480,210" class="edge"/>
   <rect x="60" y="210" width="300" height="46" rx="10" class="panel-a"/>
   <text x="76" y="238" class="t-body">每次会话都要知道的事实</text>
   <path d="M360,233 L420,233" class="edge-a" marker-end="url(#ah)"/>
   <rect x="420" y="210" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="231" class="t-h ink-a">CLAUDE.md（&lt; 200 行）</text>
   <text x="438" y="248" class="t-small">启动即加载</text>
-  <path d="M480,256 L480,280" class="edge"/>
   <rect x="60" y="280" width="300" height="46" rx="10" class="panel-a"/>
   <text x="76" y="308" class="t-body">只在某类文件上成立</text>
   <path d="M360,303 L420,303" class="edge-a" marker-end="url(#ah)"/>
   <rect x="420" y="280" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="301" class="t-h ink-a">.claude/rules/ + paths:</text>
   <text x="438" y="318" class="t-small">按需加载</text>
-  <path d="M480,326 L480,350" class="edge"/>
   <rect x="60" y="350" width="300" height="46" rx="10" class="panel-w"/>
   <text x="76" y="378" class="t-body">可复用的多步流程</text>
   <path d="M360,373 L420,373" class="edge-w" marker-end="url(#ah)"/>
   <rect x="420" y="350" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="371" class="t-h ink-w">Skill 或 Subagent</text>
   <text x="438" y="388" class="t-small">要不要隔离上下文？</text>
-  <path d="M480,396 L480,420" class="edge"/>
   <rect x="60" y="420" width="300" height="46" rx="10" class="panel-a"/>
   <text x="76" y="448" class="t-body">外部系统的数据</text>
   <path d="M360,443 L420,443" class="edge-a" marker-end="url(#ah)"/>
   <rect x="420" y="420" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="441" class="t-h ink-a">MCP server</text>
   <text x="438" y="458" class="t-small">提供新工具</text>
-  <path d="M480,466 L480,490" class="edge"/>
   <rect x="60" y="490" width="300" height="46" rx="10" class="panel-o"/>
   <text x="76" y="518" class="t-body">确定性的动作编排</text>
   <path d="M360,513 L420,513" class="edge-a" marker-end="url(#ah)"/>
   <rect x="420" y="490" width="480" height="46" rx="10" class="panel"/>
   <text x="438" y="511" class="t-h ink-o">Hook（command 型）</text>
   <text x="438" y="528" class="t-small">代码执行</text>
-  <path d="M480,536 L480,560" class="edge"/>
   <rect x="60" y="560" width="300" height="46" rx="10" class="panel-w"/>
   <text x="76" y="588" class="t-body">跨会话 / 跨机器协同</text>
   <path d="M360,583 L420,583" class="edge-w" marker-end="url(#ah)"/>

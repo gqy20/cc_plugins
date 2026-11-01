@@ -220,12 +220,9 @@ def fig_determinism():
     b.append(rect(540, 272, 360, 48, 10, "panel-d"))
     b.append(txt(558, 302, "「拒绝执行」—— 所有模式都拦得住", "t-body ink-d"))
 
-    # 中缝对比
-    b.append(f'  <line x1="480" y1="70" x2="480" y2="330" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 5"/>')
+    # 中缝对比（不再画贯穿的虚线，只留 VS 标记）
     b.append(rect(456, 160, 48, 48, 24, "panel", ' stroke-width="1.4"'))
     b.append(txt(480, 191, "VS", "t-badge ink-m", "middle"))
-    b.append(txt(480, 250, "保护强度", "t-small", "middle"))
-    b.append(txt(480, 272, "差一个数量级", "t-small ink-m", "middle"))
 
     b.append(txt(W/2, 32, "同一条规则，两种写法，保护强度差一个数量级", "t-title", "middle"))
     b.append(txt(W/2, 372, "官方 best-practices：指令机制分「确定性」（权限规则 / hooks / 沙箱）与「非确定性」（CLAUDE.md / skill / prompt 型 hook）",
@@ -272,9 +269,7 @@ def fig_decision():
         b.append(rect(420, y, 480, 46, 10, "panel"))
         b.append(txt(438, y + 21, ans, "t-h ink-a" if kind == "a" else f"t-h {ink}"))
         b.append(txt(438, y + 38, note, "t-small"))
-        # 主干竖线
-        if i < len(rows) - 1:
-            b.append(path(f"M480,{y+46} L480,{rows[i+1][4]}", "edge"))
+        # 不再画贯穿所有行号的竖线：每行都是一次独立选择，不是流水线
     return svg(W, H, "能力选型决策树",
                "从「需要绝对不能违反的规则」到「跨会话协同」，每类问题对应一个首选机制：permissions.deny、CLAUDE.md、rules+paths、Skill/Subagent、MCP、Hook、跨会话消息或 Workflow。",
                "\n".join(b))
@@ -324,10 +319,12 @@ def fig_context_budget():
         b.append(f'  <rect x="{x0}" y="{y}" width="{w:.1f}" height="{barh}" rx="6" '
                  f'fill="{fill}" stroke="{stroke}" stroke-width="1.4"/>')
         label = f"{val:,} 字符"
+        # 数值标签可能被预算虚线穿过：用底色描边做遮罩，和行名同一种处理
+        halo = ' paint-order="stroke" stroke="var(--panel)" stroke-width="5"'
         if w > 170:
-            b.append(txt(x0 + w - 12, y + 21, label, "t-h", "end", f' fill="{fg}"'))
+            b.append(txt(x0 + w - 12, y + 21, label, "t-h", "end", f' fill="{fg}"{halo}'))
         else:
-            b.append(txt(x0 + w + 10, y + 21, label, "t-h", "start", f' fill="{fg}"'))
+            b.append(txt(x0 + w + 10, y + 21, label, "t-h", "start", f' fill="{fg}"{halo}'))
 
     # 预算线：标签放在线下方，避开左上角的说明文字
     b.append(txt(bx + 8, 284, f"预算 {BUDGET:,} 字符 —— 超出即截断 description", "t-small ink-d"))
@@ -375,13 +372,7 @@ def fig_agentic_loop():
         b.append(path(d, "edge", ' stroke-width="2" opacity="0.55"'))
         b.append(path(d, "edge-a flow", ' stroke-width="3" marker-end="url(#ah-a)"'))
 
-    # 回到起点的反馈箭头
-    a0, a1 = 150 + 22, 270 - 22
-    x0, y0 = pt(r_arrow, a0)
-    x1, y1 = pt(r_arrow, a1)
-    d = f"M{x0:.1f},{y0:.1f} A{r_arrow},{r_arrow} 0 0 1 {x1:.1f},{y1:.1f}"
-    b.append(path(d, "edge", ' stroke-width="2" opacity="0.55"'))
-    b.append(path(d, "edge-w flow", ' stroke-width="3" marker-end="url(#ah)"'))
+    # 三段圆弧已经首尾相接，不再额外画一条指向空处的「反馈箭头」
 
     for name, note, ang in nodes:
         x, y = pt(r_node, ang)
@@ -411,7 +402,7 @@ def fig_agentic_loop():
     b.append(txt(W/2, 436, "官方 best-practices 的原话：Delegate, don't dictate —— 给出目标与验收标准，而不是逐步指令。",
                  "t-small", "middle"))
     return svg(W, H, "agentic loop 三段循环与提示词收敛对比",
-               "左侧是一个三段循环：收集上下文、采取行动、验证结果，箭头沿圆周循环，底部一条橙色箭头标出「未完成则回到第一步」。右侧对比模糊提示需要三到五轮收敛，精确提示只需一到两轮。",
+               "左侧是一个三段循环：收集上下文、采取行动、验证结果，三段圆弧箭头首尾相接；未完成时沿循环回到第一步。右侧对比模糊提示需要三到五轮收敛，精确提示只需一到两轮。",
                "\n".join(b))
 
 
@@ -438,12 +429,11 @@ def fig_defense_layers():
         b.append(f'  <rect x="{x+w-64}" y="{y+12}" width="52" height="22" rx="6" fill="none" stroke="none"/>')
         b.append(txt(x + w - 18, y + 28, {"d": "最外", "w": "中间", "a": "最内"}[kind], "t-badge", "end"))
 
-    # 第 0 层：模型的意图
-    b.append(rect(190, 200, 300, 120, 12, "panel", ' filter="url(#sh)"'))
-    b.append(txt(340, 232, "模型想做什么", "t-h", "middle"))
-    b.append(txt(340, 256, "CLAUDE.md / skill / 提示词", "t-small", "middle"))
-    b.append(txt(340, 284, "只是建议 —— 模型可以不遵守", "t-body ink-w", "middle"))
-    b.append(badge(300, 190, "非确定性", "w", 80))
+    # 第 0 层：模型的意图（下移，避免盖住第 1 层的说明文字）
+    b.append(rect(190, 215, 300, 120, 12, "panel", ' filter="url(#sh)"'))
+    b.append(txt(340, 247, "模型想做什么", "t-h", "middle"))
+    b.append(txt(340, 271, "CLAUDE.md / skill / 提示词", "t-small", "middle"))
+    b.append(txt(340, 299, "只是建议 —— 模型可以不遵守", "t-body ink-w", "middle"))
 
     # 一条被拦下的命令
     b.append(rect(700, 120, 220, 90, 12, "panel-d", ' filter="url(#sh)"'))
@@ -499,13 +489,14 @@ def fig_orchestration():
         # 节点示意
         ny = 290
         for j, (tag, label) in enumerate(nodes):
-            yy = ny + j * 40
+            yy = ny + j * 44
             b.append(rect(x + 16, yy, pw - 32, 32, 8, "panel"))
             b.append(txt(x + pw/2, yy + 21, label, "t-small", "middle"))
             if j < len(nodes) - 1:
-                b.append(path(f"M{x+pw/2},{yy+32} L{x+pw/2},{yy+40}", "edge-a flow"))
+                b.append(path(f"M{x+pw/2},{yy+32} L{x+pw/2},{yy+42}", "edge-a flow",
+                              ' marker-end="url(#ah-a)"'))
 
-    b.append(rect(30, 434, 900, 1.2, 0, "panel", ' fill="var(--line)" stroke="none"'))
+    # 不再画图底的分隔线
     b.append(txt(W/2, 456, "一句话：需要结果 → Subagent；需要讨论 → Agent Teams；需要可重跑、可审计 → Workflows；需要跨终端交接 → 跨会话消息。",
                  "t-small", "middle"))
     return svg(W, H, "四种并行编排方式对比",
@@ -529,7 +520,7 @@ def fig_plugin_layout():
         ("skills/<skill-name>/SKILL.md", 1, False),
         ("commands/*.md", 1, False),
         ("templates/*.md", 1, False),
-        ("tools/.mcp.json", 1, False),
+        (".mcp.json", 1, False),
     ]
     y = 74
     for label, depth, isroot in tree:
@@ -537,15 +528,15 @@ def fig_plugin_layout():
         if isroot:
             b.append(rect(x - 14, y - 20, 340, 34, 8, "panel-a"))
             b.append(txt(x, y + 4, label, "t-mono ink-a"))
-            b.append(badge(x + 250, y - 22, "插件根", "a", 66))
+            b.append(badge(x + 260, y - 30, "插件根", "a", 66))
         elif label.startswith(".claude-plugin"):
             b.append(rect(x - 14, y - 20, 400, 34, 8, "panel-d"))
             b.append(txt(x, y + 4, label, "t-mono ink-d"))
-            b.append(badge(x + 320, y - 22, "必需 · 官方位置", "d", 130))
+            b.append(badge(x + 256, y - 30, "必需 · 官方位置", "d", 130))
         elif label.startswith("skills/"):
             b.append(rect(x - 14, y - 20, 400, 34, 8, "panel-w"))
             b.append(txt(x, y + 4, label, "t-mono ink-w"))
-            b.append(badge(x + 320, y - 22, "必须是目录", "w", 110))
+            b.append(badge(x + 276, y - 30, "必须是目录", "w", 110))
         else:
             b.append(txt(x, y + 4, label, "t-mono ink-m"))
         y += 46
@@ -577,7 +568,7 @@ def fig_plugin_layout():
 # 图 7-1 · 排错三段式
 # ==========================================================================
 def fig_triage():
-    W, H = 960, 460
+    W, H = 960, 420
     b = [f'  <rect width="{W}" height="{H}" fill="none"/>']
     b.append(txt(W/2, 34, "排错三段式：症状 → 定位 → 根因", "t-title", "middle"))
 
@@ -596,7 +587,7 @@ def fig_triage():
     for i, (name, items, kind) in enumerate(steps):
         x = 35 + i * (pw + gap)
         cls = {"a": "panel-a", "w": "panel-w", "d": "panel-d"}[kind]
-        b.append(rect(x, 80, pw, 280, 14, cls, ' opacity="0.45"'))
+        b.append(rect(x, 80, pw, 245, 14, cls, ' opacity="0.45"'))
         b.append(rect(x, 80, pw, 46, 14, cls))
         b.append(txt(x + pw/2, 110, name, "t-h", "middle"))
         for j, it in enumerate(items):
@@ -605,10 +596,9 @@ def fig_triage():
         if i < 2:
             b.append(path(f"M{x+pw+5},220 L{x+pw+gap-5},220", "edge-a flow", ' marker-end="url(#ah-a)"'))
 
-    b.append(rect(35, 380, 890, 1.2, 0, "panel", ' fill="var(--line)" stroke="none"'))
-    b.append(txt(W/2, 404, "最容易漏的一步：Claude Code 对「认识不了的文件」是静默跳过的 —— 不报错，只写 debug log。",
+    b.append(txt(W/2, 362, "最容易漏的一步：Claude Code 对「认识不了的文件」是静默跳过的 —— 不报错，只写 debug log。",
                  "t-body ink-w", "middle"))
-    b.append(txt(W/2, 430, "所以「插件装了但命令没出现」的第一嫌疑永远是 frontmatter 或路径，不是模型不听话。",
+    b.append(txt(W/2, 390, "所以「插件装了但命令没出现」的第一嫌疑永远是 frontmatter 或路径，不是模型不听话。",
                  "t-small", "middle"))
     return svg(W, H, "排错三段式流程",
                "三步：先看症状分清未加载还是未生效，再用 debug 日志与 plugin validate 定位，最后对照三类典型根因：frontmatter 字段拼错、YAML 解析失败、路径写错。",
@@ -732,9 +722,9 @@ def fig_evolution():
         # 右栏：累计命中条目数
         b.append(txt(942, track + 4, f"{sum(counts):,}", "t-mono", "end"))
 
-    # 时间轴刻度（季度）
+    # 时间轴刻度（季度）；最后一个刻度单独用 26/10 标在轴尾，避免和 26/09 挤在一起
     for i in range(NM):
-        if i % 3 == 0:
+        if i % 3 == 0 and i < NM - 2:
             lx = X0 + i * MW + 1
             b.append(txt(lx, 360, EVO_MONTHS[i][2:].replace("-", "/"), "t-small"))
     b.append(txt(PLOT, 360, "26/10", "t-small", "end"))

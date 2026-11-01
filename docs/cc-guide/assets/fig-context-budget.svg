@@ -84,15 +84,15 @@
   <text x="50" y="90" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">skill 清单（145 个 skill 的 description）</text>
   <text x="910" y="90" class="t-small" text-anchor="end">101 用户级 + 23 项目级 + 9 插件 + 内置</text>
   <rect x="50" y="100" width="860.0" height="30" rx="6" fill="var(--danger-bg)" stroke="var(--danger)" stroke-width="1.4"/>
-  <text x="898.0" y="121" class="t-h" text-anchor="end" fill="var(--danger)">46,109 字符</text>
+  <text x="898.0" y="121" class="t-h" text-anchor="end" fill="var(--danger)" paint-order="stroke" stroke="var(--panel)" stroke-width="5">46,109 字符</text>
   <text x="50" y="156" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">CLAUDE.md（项目级，146 行）</text>
   <text x="910" y="156" class="t-small" text-anchor="end">官方建议 ≤ 200 行</text>
   <rect x="50" y="166" width="102.6" height="30" rx="6" fill="var(--accent-bg)" stroke="var(--accent)" stroke-width="1.4"/>
-  <text x="162.56435836821444" y="187" class="t-h" text-anchor="start" fill="var(--accent)">5,499 字符</text>
+  <text x="162.56435836821444" y="187" class="t-h" text-anchor="start" fill="var(--accent)" paint-order="stroke" stroke="var(--panel)" stroke-width="5">5,499 字符</text>
   <text x="50" y="222" class="t-body" paint-order="stroke" stroke="var(--panel)" stroke-width="5">agent description（15 个生效 / 18 个文件）</text>
   <text x="910" y="222" class="t-small" text-anchor="end">8 用户级 + 3 项目级 + 4 插件</text>
   <rect x="50" y="232" width="60.6" height="30" rx="6" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1.4"/>
-  <text x="120.61723307814093" y="253" class="t-h" text-anchor="start" fill="var(--warn)">3,250 字符</text>
+  <text x="120.61723307814093" y="253" class="t-h" text-anchor="start" fill="var(--warn)" paint-order="stroke" stroke="var(--panel)" stroke-width="5">3,250 字符</text>
   <text x="169.908737990414" y="284" class="t-small ink-d">预算 6,000 字符 —— 超出即截断 description</text>
   <rect x="50" y="312" width="860" height="78" rx="10" class="panel-d"/>
   <text x="68" y="338" class="t-h ink-d">Claude Code 自己给出的告警：</text>

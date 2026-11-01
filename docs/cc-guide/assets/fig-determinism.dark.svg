@@ -98,11 +98,8 @@
   <path d="M740,234 L740,268" class="edge-d" marker-end="url(#ah)"/>
   <rect x="540" y="272" width="360" height="48" rx="10" class="panel-d"/>
   <text x="558" y="302" class="t-body ink-d">「拒绝执行」—— 所有模式都拦得住</text>
-  <line x1="480" y1="70" x2="480" y2="330" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 5"/>
   <rect x="456" y="160" width="48" height="48" rx="24" class="panel" stroke-width="1.4"/>
   <text x="480" y="191" class="t-badge ink-m" text-anchor="middle">VS</text>
-  <text x="480" y="250" class="t-small" text-anchor="middle">保护强度</text>
-  <text x="480" y="272" class="t-small ink-m" text-anchor="middle">差一个数量级</text>
   <text x="480.0" y="32" class="t-title" text-anchor="middle">同一条规则，两种写法，保护强度差一个数量级</text>
   <text x="480.0" y="372" class="t-small" text-anchor="middle">官方 best-practices：指令机制分「确定性」（权限规则 / hooks / 沙箱）与「非确定性」（CLAUDE.md / skill / prompt 型 hook）</text>
 </svg>
