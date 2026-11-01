@@ -1,5 +1,5 @@
 ---
-name: pdf_processor
+name: pdf-processor
 description: PDF 文献自动处理工具。功能：(1) 扫描 01_articles/ 目录中的 PDF 文件，(2) 使用 MinerU API 转换为 Markdown，(3) 使用 LLM API 生成摘要，(4) 状态跟踪和断点续传。
 ---
 
@@ -11,7 +11,7 @@ description: PDF 文献自动处理工具。功能：(1) 扫描 01_articles/ 目
 
 ```python
 import sys
-sys.path.insert(0, '/workspaces/Skills_demo/.claude/skills/pdf_processor/scripts')
+sys.path.insert(0, '.claude/skills/pdf-processor/scripts')
 from processor import PDFProcessor
 
 config = {
@@ -90,7 +90,7 @@ processor.generate_report(results)
 ## 使用方法
 
 ```bash
-python .claude/skills/pdf_processor/scripts/processor.py
+python .claude/skills/pdf-processor/scripts/processor.py
 ```
 
 ## 输出结构

@@ -1,6 +1,6 @@
 ---
 name: docs
-description: 活文档维护
+description: 活文档维护：检测文档新鲜度与完整性，按代码变更更新文档，输出健康评分
 user-invocable: true
 version: 0.0.4
 tags:

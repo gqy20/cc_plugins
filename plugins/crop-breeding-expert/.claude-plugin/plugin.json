@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.schemastore.org/claude-code-plugin-manifest.json",
   "name": "crop-breeding-expert",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Expert consultant specializing in crop variety improvement, molecular breeding techniques, and hybrid breeding strategies.",
   "author": {
     "name": "qingyu_ge",

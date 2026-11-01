@@ -1,12 +1,11 @@
 ---
 name: literature-explorer
 description: 生命科学领域学术文献探索与可视化；基于 Europe PMC 数据源；支持高级检索、PMC过滤、并行多检索；支持 PMCID/PMID/DOI 混合批量提取；生成美化的 HTML 可视化报告
-dependency:
-  python:
-    - requests>=2.31.0
 ---
 
 # 生命科学文献探索与可视化
+
+> 依赖：`requests>=2.31.0`（`pip install requests`）。
 
 ## 任务目标
 - 本 Skill 用于：从 **PubMed** 和 **Europe PMC** 数据库搜索**生命科学领域**的开放获取学术文献，并提取 PDF 下载链接

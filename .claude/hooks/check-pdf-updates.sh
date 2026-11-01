@@ -133,7 +133,7 @@ trigger_auto_process() {
             echo $$ > "$PROJECT_ROOT/.info/.pdf_processing.lock"
 
             cd "$PROJECT_ROOT"
-            python "$SCRIPT_DIR/../pdf_processor/scripts/processor.py" 2>&1 | \
+            python "$SCRIPT_DIR/../skills/pdf-processor/scripts/processor.py" 2>&1 | \
                 while IFS= read -r line; do
                     echo -e "${DIM}[PDF Auto] $line${NC}"
                 done
@@ -146,7 +146,7 @@ trigger_auto_process() {
         echo -e "${DIM}  ✓ 处理已在后台启动${NC}"
     else
         # 同步处理（会阻塞用户输入）
-        python "$SCRIPT_DIR/../pdf_processor/scripts/processor.py"
+        python "$SCRIPT_DIR/../skills/pdf-processor/scripts/processor.py"
     fi
 }
 

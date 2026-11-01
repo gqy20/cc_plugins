@@ -4,166 +4,96 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-Claude Code 研究插件集合，包含两类插件：
-1. **研究专家插件** (4个) - 进化生物学、杂交物种形成、作物育种、进化生态学领域的专家分析系统
-2. **实用工具插件** (2个) - Slidev 演示文稿生成、AntV 信息图表可视化
-
-**项目特色**：
-- 严格的配置标准和自动化验证
-- Error Playbook Hook 自动错误记录系统
-- 完整的开发工作流命令集（11 个命令）
-- 研究插件依赖统一的 MCP 服务（article-mcp + sequentialthinking）
+Claude Code 插件集合，共 6 个插件：4 个研究专家插件（进化生物学、杂交物种形成、作物育种、进化生态学）+ 2 个实用工具插件（Slidev 生成、AntV 信息图表）。研究插件依赖 article-mcp + sequentialthinking。
 
 ## 验证与测试
 
-### 本地验证命令
 ```bash
-# 验证 marketplace 配置
 claude plugin validate .claude-plugin/marketplace.json
 
-# 运行完整验证脚本
-python3 .github/scripts/check_references.py           # 文件引用检查
-python3 .github/scripts/check_mcp_dependencies.py     # MCP依赖检查
-python3 .github/scripts/validate_content.py <plugin>  # 内容质量检查
+python3 .github/scripts/check_references.py           # 文件引用
+python3 .github/scripts/check_mcp_dependencies.py     # MCP 依赖
+python3 .github/scripts/validate_content.py <plugin>  # 内容质量
 
-# Claude Code 专项体检（见 docs/cc-guide/07-排错手册.md）
-uv run --with pyyaml python scripts/validate_skills.py      # skill/agent frontmatter 合规性
-uv run --with pyyaml python scripts/measure_context.py      # 常驻上下文成本 + frontmatter 体检
-uv run python scripts/extract_keybindings.py --context Chat # 出厂默认键位（从二进制提取）
-uv run python scripts/extract_changelog.py --since 2.1.305  # 内嵌 CHANGELOG（从二进制提取）
-
-# manifest schema 校验（$schema 可达性 + 字段类型）
-uv run --with jsonschema python scripts/validate_manifests.py
-
-# 文档表格结构（列数不一致 / 分隔行错位 / 整列为空）
-uv run python scripts/check_tables.py docs/cc-guide
-
-# skill 目录指向 cc-guide 的链接（mkdocs --strict 抓不到 skill 里的坏锚点）
-uv run python scripts/check_skill_links.py
-
-# 文档里写死的 CLAUDE.md 尺寸数字（行数 / 字符数 / token / 超标百分比）
-uv run --with pyyaml python scripts/check_doc_numbers.py
+uv run --with pyyaml python scripts/validate_skills.py        # skill/agent frontmatter
+uv run --with pyyaml python scripts/measure_context.py        # 常驻上下文成本
+uv run --with jsonschema python scripts/validate_manifests.py # manifest schema
+uv run python scripts/check_tables.py docs/cc-guide           # 表格结构
+uv run python scripts/check_skill_links.py                    # skill 内链接
+uv run --with pyyaml python scripts/check_doc_numbers.py      # 文档里的 CLAUDE.md 尺寸
+uv run python scripts/extract_keybindings.py --context Chat   # 出厂默认键位（从二进制）
+uv run python scripts/extract_changelog.py --since 2.1.305    # 内嵌 CHANGELOG（从二进制）
 ```
 
-### GitHub Actions 工作流
-- **plugin-validation.yml**: 自动化验证，当插件相关文件变更时触发
-  - 验证插件结构（.claude-plugin/plugin.json, README.md, agents/, skills/<name>/SKILL.md）
-  - 检查文件引用、配置格式、MCP依赖
-  - 使用矩阵策略并行验证所有插件
-  - 集成验证阶段确保所有插件整体一致性
-  - `skills-validation` 作业：跑 `scripts/validate_skills.py`
-    （`plugins/` 范围阻塞式，`.claude/` 范围非阻塞 —— 当前有历史遗留错误）
+CI（`.github/workflows/`）：
+
+- **plugin-validation.yml** —— 插件结构 / 引用 / MCP 检查；`skills-validation` 作业对 `plugins/` 阻塞、对 `.claude/` 非阻塞
+- **docs.yml** —— `mkdocs build --strict` 后部署到 GitHub Pages
 
 ## Claude Code 使用指南（docs/cc-guide/）
 
-一套 8 章的 Claude Code 实操文档，**结论全部来自本机实测 + 二进制逆向 + 官方文档**。
+8 章实操文档，结论来自本机实测 + 二进制逆向 + 官方文档。**改 Claude Code 配置前先查这里，别凭记忆**（入口是 `/cc-guide` skill）。
 
 ```bash
-# 本地预览
 PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs serve
-
-# 严格构建（CI 用，零告警才算过）
 PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-dir site
 ```
 
 | 文件 | 用途 |
 |------|------|
-| `docs/cc-guide/README.md` | 章节索引 + 三条速查 |
-| `docs/cc-guide/01-能力选型矩阵.md` | 12 个扩展层各自管什么 |
-| `docs/cc-guide/02-上下文经济学.md` | 上下文预算、压缩保留/丢弃规则 |
-| `docs/cc-guide/03-提示词与交互技巧.md` | 提示词配方、快捷键、消息队列 |
-| `docs/cc-guide/04-权限与护栏.md` | 权限模式、deny、hook、沙箱 |
-| `docs/cc-guide/05-多代理编排.md` | subagent / teams / workflows |
-| `docs/cc-guide/06-插件与市场.md` | manifest 语义、缓存模型、校验 |
-| `docs/cc-guide/07-排错手册.md` | 诊断方法论 + 本仓库踩过的 6 个坑 |
-| `docs/cc-guide/08-演进趋势.md` | 从 433 个 release 看 8 条演进主线 |
+| `README.md` | 章节索引 + 三条速查 |
+| `01-能力选型矩阵.md` | 12 个扩展层各自管什么 |
+| `02-上下文经济学.md` | 上下文预算、压缩保留/丢弃规则 |
+| `03-提示词与交互技巧.md` | 提示词配方、快捷键、消息队列 |
+| `04-权限与护栏.md` | 权限模式、deny、hook、沙箱 |
+| `05-多代理编排.md` | subagent / teams / workflows |
+| `06-插件与市场.md` | manifest 语义、缓存模型、校验 |
+| `07-排错手册.md` | 诊断方法论 + 踩坑记录 |
+| `08-演进趋势.md` | 从 release 看演进主线 |
 
-配套：
-- `.claude/skills/cc-guide/` —— 内部 skill，把上面的结论变成可调用的操作入口
-- `scripts/mkdocs_slug.py` —— 中文锚点 slugify（默认 slugify 会把中文全删掉）
-- `scripts/gen_guide_figures.py` —— 生成 9 张 SVG 插图（明暗两套共 18 个文件，含减少动效支持）
-- `.github/workflows/docs.yml` —— 构建并发布到 GitHub Pages
+配套：`.claude/skills/cc-guide/`（操作入口）、`scripts/mkdocs_slug.py`（中文锚点 slugify）、`scripts/gen_guide_figures.py`（生成 9 张 SVG，明暗两套）。
 
 ## Git 提交规范
 
-遵循 `.gitmessage` 定义的 Conventional Commits 格式：
+遵循 `.gitmessage`：`<type>(<scope>): <subject>`，正文含 `## Summary` / `## Changes Made` / `## Impact`，结尾 `Co-authored-by: Claude <noreply@anthropic.com>`。
 
-```
-<type>(<scope>): <subject>
-
-## Summary
-<brief description>
-
-## Changes Made
-### <Component> Updates
-<specific changes>
-
-## Impact
-<explanation>
-
-Co-authored-by: Claude <noreply@anthropic.com>
-```
-
-**类型**: feat, fix, docs, style, refactor, test, chore
-**作用域**: agent, skill, command, template, config, docs
+类型：feat, fix, docs, style, refactor, test, chore。作用域：agent, skill, command, template, config, docs。
 
 ## 插件架构
 
-### 目录结构
 ```
 plugins/<plugin-name>/
-├── .claude-plugin/
-│   └── plugin.json       # 插件元数据 (name, version, author, agents, skills, commands)
-├── README.md             # 插件说明文档
-├── agents/               # Agent 文件 (MD 格式，包含 frontmatter)
-├── skills/               # 技能模块 (每个技能一个目录，内含 SKILL.md)
-│   └── <skill-name>/
-│       └── SKILL.md
-├── commands/             # 用户命令接口 (平铺 .md 文件)
-├── templates/            # 输出模板
-└── tools/.mcp.json       # MCP 服务器配置 (可选)
+├── .claude-plugin/plugin.json  # 元数据 + agents/skills/commands 入口
+├── README.md
+├── agents/                     # MD + frontmatter
+├── skills/<skill-name>/SKILL.md
+├── commands/                   # 平铺 .md
+├── templates/
+└── .mcp.json                   # MCP 服务器（可选）
 ```
 
-> **官方规范**：`plugin.json` 必须位于 `.claude-plugin/` 子目录（`claude plugin validate` 会在根目录报
-> "No manifest found in directory"）；`skills` 字段必须指向**目录**（内含 `<name>/SKILL.md`），
-> 指向单个 `.md` 文件会报 "skills entries must be directories containing SKILL.md"；
-> `commands` 字段则是**平铺的 .md 文件**数组。
+官方规范硬约束（写错是 `claude plugin validate` 的 error，不是 warning）：
 
-### 配置层次
-1. **marketplace.json** - 定义所有插件集合，包含 owner、metadata、plugins 数组
-   - 字段 `category`: 在这里定义 (research, expert-advisor, utility)
-   - 字段 `source`: 插件目录相对路径
-   - 字段 `$schema`: 指向 SchemaStore（**Anthropic 官方地址已 404**，别改回去）
-2. **plugin.json** (`.claude-plugin/plugin.json`) - 单个插件配置，使用扁平结构：
-   - 必需字段: name, version, description, author (对象格式)
-   - 入口点: agents (数组), skills (数组), commands (数组)
-   - 禁止字段: category, entry_points (这些在 marketplace.json 中)
-   - 字段 `$schema`: 同上，指向 SchemaStore 的 plugin manifest schema
+- `plugin.json` 必须位于 `.claude-plugin/` 子目录
+- `skills` 指向**目录**（内含 `<name>/SKILL.md`）；`commands` 是**平铺的 .md 文件**数组
+- `plugin.json` 是扁平结构，禁止 `category` / `entry_points`（这些在 marketplace.json）
+- `$schema` 指向 SchemaStore（Anthropic 官方地址已 404，别改回去）
 
-### Agent/Skill/Command 关系
-- **Agent**: 核心分析逻辑，定义工作流程（调用技能、使用 MCP 工具）
-- **Skill**: 可复用能力模块，被 Agent 调用
-- **Command**: 用户触发接口，启动 Agent 或执行特定功能
+配置层次：
+
+- **marketplace.json**：owner、metadata、plugins 数组；`category`（research/expert-advisor/utility）与 `source` 在这里
+- **plugin.json**：单插件元数据；必需 name/version/description/author，入口点 agents/skills/commands
+
+Agent 定义工作流并调用技能与 MCP；Skill 是可复用能力模块；Command 是用户触发入口。
 
 ### 研究插件分析流程
-以 evolutionary-biology-expert 为例：
-1. 使用 `search-term-optimization` 技能生成检索词
-2. 调用 article-mcp MCP 的 search_literature 检索文献
-3. 使用 `academic-literature-analysis` 技能深度分析
-4. 使用 `six-dimensions-analysis` 技能执行六维度分析
-5. 使用 `data-integration-formatting` 技能整合数据
-6. 通过 sequentialthinking MCP 进行结构化推理
 
-## Error Playbook Hook 系统
+以 evolutionary-biology-expert 为例：`search-term-optimization` 生成检索词 → article-mcp `search_literature` 检文献 → `academic-literature-analysis` 深读 → `six-dimensions-analysis` 六维分析 → `data-integration-formatting` 整合 → sequentialthinking 结构化推理。
 
-项目配置了自动错误记录系统（`.claude/settings.json` + `.claude/hooks/err-catcher.py`）：
+## Error Playbook Hook
 
-### 工作原理
-- **自动检测**：PostToolUse Hook 捕获 Bash 命令输出
-- **智能分类**：根据错误模式推断 domain（tool/network/config）和 severity（blocker/major/minor）
-- **知识积累**：错误记录到 `docs/error-playbook/`，形成可复用的问题解决库
+`.claude/settings.json` + `.claude/hooks/err-catcher.py`：PostToolUse 捕获 Bash 输出，按模式推断 domain（tool/network/config）与 severity（blocker/major/minor），记录到 `docs/error-playbook/`。
 
-### 错误模式
 | 模式 | Domain | Severity | ID |
 |------|--------|----------|-----|
 | `FAILED`, `AssertionError` | tool | major | TEST-FAIL |
@@ -173,250 +103,44 @@ plugins/<plugin-name>/
 | `Permission denied` | config | blocker | PERMISSION |
 | `merge.*conflict` | config | major | GIT-MERGE |
 
-### 修改路径
-Hook 脚本中的 `cwd` 需要指向当前项目路径：
-```python
-cwd="/home/qy113/workspace/project/2601/cc_plugins"  # 修改此路径
-```
+hook 脚本里的 `cwd` 需指向当前项目路径。
 
 ## MCP 依赖
 
-### 核心依赖（研究插件必需）
+研究插件在各自 `.mcp.json` 声明依赖，启用插件即可拉起；也可手动安装：
+
 ```bash
 claude mcp add article-mcp uvx article-mcp server
 claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest
 ```
 
-### 可选依赖
-```bash
-claude mcp add mediawiki-mcp-server npx @professional-wiki/mediawiki-mcp-server@latest
-claude mcp add playwright npx @playwright/mcp@latest --browser chrome --headless
-```
-
-### 环境变量
-```bash
-export EASYSCHOLAR_SECRET_KEY="your_key"  # 提升期刊质量评估
-```
+可选：mediawiki-mcp-server、playwright。环境变量 `EASYSCHOLAR_SECRET_KEY` 提升期刊质量评估。
 
 ## 本地技能集
 
-项目根目录的 `.claude/skills/` 提供开发工作流技能（以 `SKILL.md` 格式）：
+`.claude/skills/` 下的开发工作流技能，详细用法见各自 `SKILL.md`（description 常驻上下文，此处不重复）：
 
 | 技能 | 用途 |
 |------|------|
-| `/tdd` | 测试驱动开发流程，增量测试策略 |
-| `/bdd` | 行为驱动开发流程，可执行文档 |
-| `/gh` | GitHub CLI 专家助手，场景化指导 |
-| `/sdr` | 规格驱动开发流程，Git 工作流管理 |
-| `/docs` | 活文档维护，文档健康检查 |
-| `/linus` | 实用主义代码审查与重构 |
-| `/elegant` | 优雅编码与重构规范 |
-| `/squash` | Commit 历史整理与合并 |
-| `/lint` | 代码质量检查工具集 |
-| `/worktree` | Git Worktree 工作流 - PR Review、并行开发 |
-| `/cleanup` | Python 代码冗余检测清单 |
-| `/explore` | 并行代码库探索 |
-| `/cc-guide` | Claude Code 使用指南（配置/扩展/排错，引用 `docs/cc-guide/` 的实测结论） |
+| `/tdd` `/bdd` | 测试驱动 / 行为驱动开发 |
+| `/sdr` `/gh` `/worktree` | 规格驱动 / GitHub CLI / 多 worktree |
+| `/docs` `/cc-guide` | 活文档维护 / Claude Code 实测指南 |
+| `/elegant` `/linus` `/cleanup` `/lint` | 重构、审查、冗余检测、代码检查 |
+| `/squash` `/explore` | 提交历史整理 / 并行代码库探索 |
 
-**技能协同**：
-- `/tdd` → `/squash`：TDD 产生小 commit → 功能完成后合并
-- `/elegant` + `/tdd`：优雅编码 + 测试驱动
-- `/sdr` → `/gh`：规格驱动 → GitHub 操作
-- `/bdd` + `/tdd`：BDD (验收) + TDD (单元)，双层测试
-- `/worktree` + `/gh`：多 worktree 并行 PR review + gh 操作
-- `/cleanup` + `/elegant`：冗余检测 + 优雅重构
-- `/docs` + 任何技能：代码变更后更新文档
-- `/cc-guide` + 任何技能：改 Claude Code 配置前先查实测结论，别凭记忆
+协同：`/tdd`→`/squash`；`/bdd`+`/tdd`；`/sdr`→`/gh`；`/worktree`+`/gh`；`/cleanup`+`/elegant`；`/docs` 与各技能搭配；改 Claude Code 配置先走 `/cc-guide`。
 
-## 版本控制
+## 版本与发布
 
-- **marketplace.json version**: 整个插件集合版本 (当前 0.1.4)
-- **plugin.json version**: 单个插件版本
-- 更新插件时同步更新两者版本号
-
-## 添加新插件
-
-1. 在 `plugins/` 创建新目录
-2. 创建 `.claude-plugin/plugin.json`，定义 agents/skills/commands 数组
-3. 创建对应的 agents、skills（`skills/<name>/SKILL.md`）、commands、templates 文件
-4. 更新 `.claude-plugin/marketplace.json` 的 plugins 数组
-5. 运行 `claude plugin validate .claude-plugin/marketplace.json` 验证
-
-## 修改现有插件
-
-1. 修改对应 MD 文件
-2. 如新增技能/命令，更新 `.claude-plugin/plugin.json` 中对应数组
-3. 如需被 Agent 调用，更新对应 Agent 文件
-4. 验证配置
+- `marketplace.json` version = 集合版本（当前 0.1.5）；`plugin.json` version = 单插件版本；改插件时两者同步
+- 新增插件：建目录 → 写 `.claude-plugin/plugin.json` → 建 agents/skills/commands/templates → 更新 marketplace.json → `claude plugin validate`
 
 ## 插件列表
 
-### 研究专家插件
-- **evolutionary-biology-expert** (v0.1.2) - 专家思想地图重建，学术网络分析
-- **hybrid-speciation-expert** (v0.1.0) - 杂交物种形成，基因组渐渗分析
-- **crop-breeding-expert** (v0.1.0) - 分子育种，品种改良策略
-- **evolutionary-ecology-expert** (v0.1.1) - 自然选择机制，生态相互作用
+- **研究专家**：evolutionary-biology-expert (v0.1.3)、hybrid-speciation-expert (v0.1.2)、crop-breeding-expert (v0.1.2)、evolutionary-ecology-expert (v0.1.3)
+- **实用工具**：slidev-generator (v0.1.1)、infographic-viz (v0.1.0)
 
-### 实用工具插件
-- **slidev-generator** (v0.1.1) - Markdown 转 Slidev 演示文稿
-- **infographic-viz** (v0.1.0) - AntV 信息图表可视化
+## 其他
 
----
-
-# 本地技能详细说明
-
-## /tdd - 测试驱动开发
-
-**核心**：快速反馈 → 增量测试 → 性能优化
-
-```bash
-# 开发时：只运行相关测试
-pytest tests/test_new_feature.py -v
-
-# 提交前：完整验证
-pytest && uv run ruff check && uv run mypy .
-```
-
-**TDD 循环**：
-- 🔴 红：编写测试 → `pytest tests/test_xxx.py`
-- 🟢 绿：实现功能 → `pytest tests/test_xxx.py`
-- ♻️ 重构：优化代码 → `pytest tests/test_module.py`
-
-## /squash - Commit 历史整理
-
-**核心**：TDD 产生小 commit → 功能完成后合并
-
-```bash
-# 合并最近 N 个 commit 为 1 个
-git rebase -i HEAD~N
-
-# 快速合并（软重置）
-git reset --soft HEAD~N
-git commit -m "feat: 完整功能描述"
-```
-
-**策略**：
-- 开发中：保持小 commit（便于回滚）
-- 功能完成后：合并为 1 个 commit
-- 推送前：清理本地历史
-
-## /elegant - 优雅编码规范
-
-**核心**：代码质量标准 + 重构手法
-
-**复杂度指标**：
-- McCabe 圈复杂度 ≤ 10
-- 函数长度 ≤ 20 行
-- 嵌套深度 ≤ 3 层
-
-**代码坏味道**：长函数、重复代码、过度嵌套、上帝对象、死代码
-
-## /sdr - 规格驱动开发
-
-**核心**：宪法 → 规格 → 计划 → 任务 → 代码
-
-**状态检测**：自动进入对应阶段
-- 无宪法 → 阶段 0：创建宪法
-- 无规格 → 阶段 1：创建规格
-- 无计划 → 阶段 2：创建计划
-- 无任务 → 阶段 3：分解任务
-- 就绪 → 阶段 4：执行实现
-
-**Git 分支**：`###-feature-name` 格式，自动递增编号
-
-## /gh - GitHub CLI 助手
-
-**场景化指导**：常用 gh 命令的最佳实践
-
-## /linus - 实用主义审查
-
-**核心原则**：Talk is cheap, show me the code
-
-**数据结构 > 代码逻辑**
-
-## /lint - 代码质量检查
-
-**工具集**：shellcheck, yamllint, ruff, eslint
-
-## /docs - 活文档维护
-
-**核心**：代码即真相，文档跟随代码
-
-- **健康检查**: 检测文档新鲜度、完整性
-- **智能更新**: 根据代码变更自动更新相关文档
-- **质量评分**: 覆盖度、新鲜度、完整性评分
-- **代码阅读深度**: 函数签名、Docstring、测试代码、ADR
-
-**用法**: `/docs` (健康) | `/docs init` | `/docs update` | `/docs score`
-
-## /bdd - 行为驱动开发
-
-**核心**：业务语言描述测试，连接需求与代码
-
-- **Gherkin 语法**: Feature/Scenario/Given/When/Then
-- **可执行文档**: 业务、开发、测试共识
-- **双层测试**: BDD (behave, 验收) + TDD (pytest, 单元)
-
-**用法**: `/bdd` (引导) | `/bdd feature` | `/bdd step` | `/bdd run`
-
-## /worktree - Git Worktree 工作流
-
-**核心**：并行开发、PR Review、完整开发生命周期
-
-- **场景 1：PR Review** - 为每个 PR 创建独立 worktree，避免频繁切换分支
-- **场景 2：并行开发** - 同时在多个功能分支工作，互不干扰
-- **场景 3：热修复** - 在主分支保持工作的同时处理紧急 bug
-
-**用法**: `/worktree` (引导) | `/worktree create` | `/worktree list` | `/worktree remove`
-
-## /cleanup - Python 代码冗余检测
-
-**核心**：先看有什么，再看写什么
-
-检测代码中是否有可用标准库或已安装包替代的冗余实现。
-
-**冗余模式对照表**：
-| 当前模式 | 应该用 | 检测命令 |
-|----------|--------|----------|
-| `os.path.join` | `pathlib.Path` | `grep -rn "os.path\."` |
-| `class X: def __init__` | `@dataclass` | `grep -rn "def __init__"` |
-| `urllib.request` | `requests` | `grep -rn "urllib"` |
-| `datetime.strptime` | `dateutil.parser` | `grep -rn "strptime"` |
-| `csv.reader/open` | `pandas.read_csv` | `grep -rn "csv\\.reader\|open.*\\.csv"` |
-
-**核心原则**：依赖优先、标准库优先、删除而非兼容
-
-**用法**: `/cleanup` (完整清单) | `/cleanup scan` (快速扫描) | `/cleanup <pattern>`
-
----
-
-# 本地开发 Agent
-
-项目 `.claude/agents/` 目录包含本地开发智能体：
-
-## python-zen-coding-expert
-
-**用途**：编写符合 Python Zen 原则的代码，优先可读性和简洁性
-
-**适用场景**：
-- 编写新 Python 代码时
-- 重构现有代码使其更 Pythonic
-- 需要确保代码风格符合 PEP 20 原则
-
-**Zen of Python 核心原则**：
-- Beautiful is better than ugly
-- Explicit is better than implicit
-- Simple is better than complex
-- Readability counts
-
----
-
-# tmp/ 目录说明
-
-`tmp/` 目录用于存放临时性、实验性代码和工具：
-
-- **spec-kit/**: GitHub Spec Kit 工具（`specify-cli`），用于规格驱动开发（SDD）
-  - 包含 `pyproject.toml`，定义了 specify CLI 的依赖
-  - 提供 `specify` 命令，用于项目初始化和管理
-
-**注意**：`tmp/` 目录内容不作为项目核心部分，可根据需要清理或迁移。
+- `.claude/agents/python-zen-coding-expert.md`：Pythonic 代码编写与重构
+- `tmp/`：临时工具（如 spec-kit），非核心，可清理

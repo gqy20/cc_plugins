@@ -1,6 +1,6 @@
 ---
 name: explore
-description: 并行代码库探索
+description: 并行代码库探索：多 agent 分工扫描，快速定位相关文件、实现与调用链
 user-invocable: true
 version: 0.0.1
 tags: [research, exploration]

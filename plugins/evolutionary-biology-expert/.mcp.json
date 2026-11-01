@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "article-mcp": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["article-mcp==0.1.8", "server"]
+    },
+    "sequentialthinking": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking@latest"]
+    }
+  }
+}

@@ -1,6 +1,6 @@
 ---
 name: elegant
-description: 优雅编码与重构规范
+description: 优雅编码与重构规范：复杂度指标、代码坏味道、重构手法与质量标准
 user-invocable: true
 version: 0.0.5
 tags:

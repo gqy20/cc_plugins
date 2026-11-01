@@ -115,7 +115,8 @@ def check_mcp_server_requirements(plugin_name: str, servers: Dict) -> List[str]:
 def validate_plugin_mcp_dependencies(plugin_path: Path) -> Dict:
     """验证单个插件的MCP依赖"""
     plugin_name = plugin_path.name
-    mcp_config_path = plugin_path / "tools" / ".mcp.json"
+    # 官方位置是插件根目录的 .mcp.json（不是 tools/ 子目录）
+    mcp_config_path = plugin_path / ".mcp.json"
 
     result = {
         "plugin_name": plugin_name,

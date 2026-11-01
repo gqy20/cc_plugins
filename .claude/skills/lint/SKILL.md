@@ -1,6 +1,6 @@
 ---
 name: lint
-description: 代码质量检查工具集
+description: 代码质量检查：shellcheck / yamllint / ruff / eslint 的场景化用法
 user-invocable: true
 version: 0.0.1
 tags: lint, quality, check
