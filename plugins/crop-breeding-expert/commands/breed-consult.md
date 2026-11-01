@@ -64,7 +64,10 @@ The consultation provides:
 
 This command requires the following MCP servers:
 - article-mcp (for crop science literature)
-- genome-mcp (for genomic analysis and marker identification)
+
+Optional:
+- genome-mcp (for genomic analysis and marker identification) — no public npm package;
+  provide your own server. Without it, the agent relies on literature and user-supplied data.
 
 ## Notes
 

@@ -58,7 +58,10 @@ The analysis generates a comprehensive report including:
 
 This command requires the following MCP servers:
 - article-mcp (for literature search)
-- genome-mcp (for genomic data analysis)
+
+Optional:
+- genome-mcp (for genomic data analysis) — no public npm package; provide your own server.
+  Without it, the agent falls back to literature evidence and user-supplied results.
 
 ## Notes
 

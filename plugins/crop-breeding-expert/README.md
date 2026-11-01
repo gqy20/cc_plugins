@@ -12,15 +12,21 @@
 
 ## 📋 依赖要求
 
-### 必需的MCP服务器
+### 必需的 MCP 服务器（插件已声明，启用后自动拉起）
 
 ```bash
 # 农业科学文献检索
 claude mcp add article-mcp uvx article-mcp server
 
-# 作物基因组数据分析
-claude mcp add genome-mcp npx genome-mcp-server
+# 结构化推理
+claude mcp add sequentialthinking npx -y @modelcontextprotocol/server-sequential-thinking@latest
 ```
+
+### 可选的 MCP 服务器
+
+- **genome-mcp**：作物基因组数据分析与分子标记鉴定。目前 **npm 上没有公开包**，
+  需要自备服务端：`claude mcp add genome-mcp <你的启动命令>`。
+  未安装时，智能体会基于文献与用户提供的表型/标记数据给出方案，并标注缺少基因组验证。
 
 ## 🚀 使用方法
 
