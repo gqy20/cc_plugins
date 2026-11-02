@@ -105,6 +105,7 @@ nav:
       - 07 排错手册: cc-guide/07-排错手册.md
       - 08 演进趋势: cc-guide/08-演进趋势.md
       - 09 Hooks 参考实现: cc-guide/09-hooks-参考实现.md
+      - 10 Rules 与 Hooks 的跨工具设计: cc-guide/10-rules-hooks-跨工具设计.md
 
 exclude_docs: |
   test.md

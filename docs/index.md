@@ -71,6 +71,7 @@ hide:
 | 07 | [排错手册](cc-guide/07-排错手册.md) | 从症状到根因的诊断路径 | 出问题时先查这里 |
 | 08 | [演进趋势](cc-guide/08-演进趋势.md) | 从 release 看 Claude Code 下一步往哪走 | 做技术选型时 |
 | 09 | [Hooks 参考实现](cc-guide/09-hooks-参考实现.md) | 18 个可移植 hook：注入、状态、阈值、通知 | 想抄一套 hooks 时 |
+| 10 | [Rules 与 Hooks 的跨工具设计](cc-guide/10-rules-hooks-跨工具设计.md) | 同一条约束该放哪层，换一家工具怎么映射 | 做跨工具方案时 |
 
 
 ## 🎯 三条阅读路径
