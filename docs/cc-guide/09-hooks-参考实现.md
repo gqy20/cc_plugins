@@ -175,8 +175,7 @@ mkdir -p .info .claude/skills
 printf '{}' > .info/tasks.json
 printf '{}' > .info/.status.json
 
-# 4. 按事件表注册到 settings.json
-#    "PostToolUse": [{ "matcher": "Write|Edit", "hooks": [...] }]
+# 4. 注册：直接用 examples/settings-minimal.json 或 settings-full.json
 
 # 5. 用样例冒烟
 CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/intent-detect.sh \
@@ -185,6 +184,153 @@ CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/intent-detect.sh \
 
 参考库自带 `examples/`：SessionStart、UserPromptSubmit、
 PostToolUse（Write / Task / Bash 错误）、Stop 各一份 stdin 样例。
+可复制的注册片段在同目录的 `settings-minimal.json` 与 `settings-full.json`
+（[GitHub 直达](https://github.com/gqy20/cc_plugins/tree/main/.claude/hooks/examples)）。
+
+## 📋 可复制的 settings.json 片段
+
+> 前提：`.claude/hooks/` 已复制到项目根，`jq` 已安装。
+> 所有命令都用 `$CLAUDE_PROJECT_DIR` 定位；Windows 原生环境请用 WSL / Git Bash。
+
+### SessionStart
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-start.sh", "timeout": 10 },
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/fix-reasoning.sh", "timeout": 30 }
+      ] }
+    ]
+  }
+}
+```
+
+### UserPromptSubmit
+
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-pdf-updates.sh", "timeout": 5 },
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/intent-detect.sh", "timeout": 10 },
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/update-status.sh", "timeout": 5 }
+      ] }
+    ]
+  }
+}
+```
+
+### PostToolUse：文件写入
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/track-skills-change.sh", "timeout": 5 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/update-status.sh", "timeout": 5 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/capture-reasoning.sh", "timeout": 3 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/check-skills-limit.sh", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### PostToolUse：任务状态
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "TaskCreate|TaskUpdate",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/update-status.sh", "timeout": 5 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/update-reasoning-on-task.sh", "timeout": 10 },
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/detect-task-complete.sh", "timeout": 5 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### PostToolUse：Bash 错误归档
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/err-catcher.py", "timeout": 10 }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Stop
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      { "hooks": [
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/response-complete.sh", "timeout": 3 },
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/task-complete.sh", "timeout": 5 }
+      ] }
+    ]
+  }
+}
+```
+
+### 通知（可选）
+
+`notify.sh` 没有默认绑定。想用就把它挂到 `Stop`：
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      { "hooks": [
+        { "type": "command", "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/notify.sh", "timeout": 10 }
+      ] }
+    ]
+  }
+}
+```
+
+### 注册时的六个坑
+
+| 坑 | 说明 |
+|---|---|
+| matcher 是**正则**，不是 glob | 多个工具用竖线分隔（如 Write 与 Edit）；`Write*` 不匹配任何东西 |
+| 用相对路径 | hook 的 cwd 不保证是项目根，统一用 `$CLAUDE_PROJECT_DIR` |
+| 重复注册同一脚本 | 多个钩子**并行**执行，副作用会翻倍 |
+| 把耗时检查放 `PreToolUse` | 每次工具调用都要等；重检查放 `PostToolUse` / `Stop` |
+| 以为超时会阻断 | `PreToolUse` 超时默认**放行**，要阻断需 `onFailure: "block"` |
+| 原生 Windows 直接跑 bash | 用 WSL 或 Git Bash；路径分隔符也要注意 |
+
+### 验证注册是否生效
+
+```bash
+# 1. 单脚本冒烟（不依赖 Claude Code）
+CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/intent-detect.sh \
+  < .claude/hooks/examples/user-prompt-submit.json
+
+# 2. 启动日志里确认钩子被加载
+claude --debug
+```
 
 ## ⚠️ 失效语义与坑
 

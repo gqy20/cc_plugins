@@ -99,7 +99,9 @@ CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/intent-detect.sh \
    echo '{}' > .info/tasks.json
    echo '{}' > .info/.status.json
    ```
-4. 按需在 `settings.json` 注册事件（见上表）；
+4. 按需在 `settings.json` 注册事件（见上表）；可直接复制
+   `examples/settings-minimal.json`（4 个核心钩子）或
+   `examples/settings-full.json`（全部事件）；
 5. 用 `examples/*.json` 逐个冒烟：
    ```bash
    CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/<script> < .claude/hooks/examples/<event>.json
