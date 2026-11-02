@@ -20,13 +20,19 @@
 
 ## 当前优先级
 
-### P0 · 在本仓库落地策略
+### P0 · 框架示例（可离线）
+
+- OpenAI Agents SDK：input / tool guardrail + tripwire；
+- LangGraph：`interrupt()` + checkpointer 恢复；
+- 放在 `examples/agent-frameworks/`，链接到第 10 章。
+
+### P1 · 在本仓库落地策略
 
 - 补 `permissions.deny` 的工作区边界；
 - 建立 `.claude/rules/`（按路径加载的规范）；
 - 按需注册 `err-catcher.py`，其余 hooks 继续作为参考。
 
-### P1 · 多宿主导出
+### P2 · 多宿主导出
 
 只有当**确实需要同时维护第二个宿主**（Cursor / Gemini / Kiro…）时，
 再给 agent-policy 加 `export`；否则不提前抽象。
