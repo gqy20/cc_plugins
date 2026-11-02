@@ -35,7 +35,7 @@ CI（`.github/workflows/`）：
 
 ## Claude Code 使用指南（docs/cc-guide/）
 
-8 章实操文档，结论来自本机实测 + 二进制逆向 + 官方文档。**改 Claude Code 配置前先查这里，别凭记忆**（入口是 `/cc-guide` skill）。
+9 章实操文档，结论来自本机实测 + 二进制逆向 + 官方文档。**改 Claude Code 配置前先查这里，别凭记忆**（入口是 `/cc-guide` skill）。
 
 ```bash
 PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs serve
@@ -53,6 +53,7 @@ PYTHONPATH=. uv run --with "mkdocs-material>=9.5" mkdocs build --strict --site-d
 | `06-插件与市场.md` | manifest 语义、缓存模型、校验 |
 | `07-排错手册.md` | 诊断方法论 + 踩坑记录 |
 | `08-演进趋势.md` | 从 release 看演进主线 |
+| `09-hooks-参考实现.md` | 18 个可移植 hook 的六类模式与移植清单 |
 
 配套：`.claude/skills/cc-guide/`（操作入口）、`scripts/mkdocs_slug.py`（中文锚点 slugify）、`scripts/gen_guide_figures.py`（生成 9 张 SVG，明暗两套）。
 

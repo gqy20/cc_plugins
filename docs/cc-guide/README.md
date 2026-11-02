@@ -16,6 +16,7 @@
 | 06 | [插件与市场](06-插件与市场.md) | 插件目录规范、manifest 语义、发布与 eval | 写插件或装插件时 |
 | 07 | [排错手册](07-排错手册.md) | 从症状到根因的诊断路径 | 出问题时先查这里 |
 | 08 | [演进趋势](08-演进趋势.md) | 从 release 看 Claude Code 下一步往哪走 | 做技术选型时 |
+| 09 | [Hooks 参考实现](09-hooks-参考实现.md) | 18 个可移植 hook：注入、状态、阈值、通知 | 想抄一套 hooks 时 |
 
 
 ## 🎯 三条阅读路径
@@ -75,11 +76,12 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 | 指南章节 | 本仓库的实现 |
 |---------|-------------|
 | 01 能力选型 | `.claude/skills/`（23 个目录，23 个生效）+ `plugins/`（7 个插件、15 个技能）+ `.claude/agents/`（4 个） |
-| 02 上下文经济学 | `CLAUDE.md`（149 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
+| 02 上下文经济学 | `CLAUDE.md`（150 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
 | 04 权限与护栏 | `.claude/settings.json` 的 `permissions.allow/deny` + `hooks/`（18 个脚本，当前未注册） |
 | 05 多代理编排 | `.claude/agents/` 4 个本地 agent + `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
 | 06 插件与市场 | `.claude-plugin/marketplace.json` + 7 个 `plugins/*/.claude-plugin/plugin.json` + `scripts/validate_manifests.py`（按 `$schema` 校验 manifest） |
 | 07 排错手册 | `.github/scripts/` 三个校验脚本 + `claude plugin validate` + `claude --debug` + `scripts/measure_context.py`、`scripts/extract_keybindings.py`、`scripts/extract_changelog.py` |
+| 09 Hooks 参考实现 | `.claude/hooks/`（18 个脚本 + `lib/` + `examples/`，当前未注册） |
 
 
 ## 🖥️ 本地预览与构建
