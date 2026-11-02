@@ -92,12 +92,14 @@ STATUS=$(echo "$STATUS" | jq --argjson skills "$SKILLS_COUNT" '.skills_count = $
 PROFILE_FRESH="true"
 if [ -f "$PROFILE_FILE" ] && [ -d "$INFO_DIR" ]; then
     # 获取 info/ 目录最新文件（排除 results/ 子目录）
+    # 目录为空时不能直接 xargs ls（会变成 ls 当前目录，再被 set -e 打挂）
     LATEST_INFO=$(find "$INFO_DIR" -type f \( -name "*.md" -o -name "*.json" -o -name "*.pdf" -o -name "*.txt" \) \
-        -not -path "*/results/*" 2>/dev/null | xargs ls -t 2>/dev/null | head -1)
+        -not -path "*/results/*" -print0 2>/dev/null \
+        | xargs -0 sh -c 'if [ "$#" -gt 0 ]; then ls -t "$@"; fi' sh 2>/dev/null | head -1)
 
     if [ -n "$LATEST_INFO" ]; then
-        INFO_MTIME=$(get_file_mtime "$LATEST_INFO")
-        PROFILE_MTIME=$(get_file_mtime "$PROFILE_FILE")
+        INFO_MTIME=$(get_file_mtime "$LATEST_INFO" || true)
+        PROFILE_MTIME=$(get_file_mtime "$PROFILE_FILE" || true)
 
         if [ -n "$INFO_MTIME" ] && [ -n "$PROFILE_MTIME" ] && [ "$INFO_MTIME" -gt "$PROFILE_MTIME" ]; then
             PROFILE_FRESH="false"

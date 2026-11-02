@@ -20,19 +20,13 @@
 
 ## 当前优先级
 
-### P0 · 参考库与引擎的自动验证
-
-- 18 个 hook 脚本按 `examples/*.json` 自动冒烟，断言退出码；
-- policy 引擎补边界用例（路径 glob、越界、空 TOML、fail-open/closed）；
-- 挂进 CI，参考实现从“能看”变成“被验证”。
-
-### P1 · 在本仓库落地策略
+### P0 · 在本仓库落地策略
 
 - 补 `permissions.deny` 的工作区边界；
 - 建立 `.claude/rules/`（按路径加载的规范）；
 - 按需注册 `err-catcher.py`，其余 hooks 继续作为参考。
 
-### P2 · 多宿主导出
+### P1 · 多宿主导出
 
 只有当**确实需要同时维护第二个宿主**（Cursor / Gemini / Kiro…）时，
 再给 agent-policy 加 `export`；否则不提前抽象。

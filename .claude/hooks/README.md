@@ -121,10 +121,20 @@ CLAUDE_PROJECT_DIR=$PWD bash .claude/hooks/intent-detect.sh \
 
 | 脚本 | 问题 | 建议 |
 |---|---|---|
-| `err-catcher.py` | 原 `cwd` 写死 `.../2512/cc_plugins`；依赖目标项目提供 `/err` 命令 | 已改为 `CLAUDE_PROJECT_DIR`；`/err` 需自行实现 |
+| `err-catcher.py` | 原 `cwd` 写死 `.../2512/cc_plugins`；依赖目标项目提供 `/err` 命令 | 已改为 `CLAUDE_PROJECT_DIR`；`/err` 需自行实现；设 `ERR_CATCHER_DRY_RUN=1` 可只打印 payload |
+| `update-status.sh` | `info/` 为空时 `xargs ls` 会退化成列当前目录 | 已改为空输入直接跳过 |
 | `check-skills-limit.sh` | `ARCHAVE_REASON` 拼写错误（已修）；配额超限用 `exit 1` 不会阻断 | 如需阻断改为 `exit 2` |
 | `notify.sh` | ntfy topic 写死 | 改成环境变量 `NTFY_TOPIC` |
 | `task-complete.sh` | 依赖系统提示音文件 | 无 `aplay` 时静默跳过 |
+
+## 自动验证
+
+```bash
+python3 scripts/test_hooks.py
+```
+
+在临时项目里建好 `.info/`、技能目录与样例文件，逐个喂 `examples/*.json`。
+需要联网（`notify.sh`）、常驻服务（`notify-server.py`）或人工参数（归档/升级）的脚本会显式跳过。
 
 ## 与 agent-policy 的分工
 

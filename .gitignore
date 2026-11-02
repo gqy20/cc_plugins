@@ -81,6 +81,10 @@ expert/
 
 # Test and temporary files
 test*
+# 测试代码本身要入库，临时文件仍然忽略
+!scripts/test_hooks.py
+!plugins/agent-policy/tests/
+!plugins/agent-policy/tests/**
 ref.md
 *.tmp
 *.bak

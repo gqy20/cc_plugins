@@ -8,6 +8,7 @@ on:
             - "plugins/**"
             - "agent-policy.toml"
             - ".claude/**"
+            - "scripts/test_hooks.py"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
             - "scripts/check_skill_links.py"
@@ -20,6 +21,7 @@ on:
             - "plugins/**"
             - "agent-policy.toml"
             - ".claude/**"
+            - "scripts/test_hooks.py"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
             - "scripts/check_skill_links.py"
@@ -346,7 +348,7 @@ jobs:
                   python3 scripts/check_skill_links.py
 
     policy-validation:
-        name: Policy Validation
+        name: Policy & Hooks Validation
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repository
@@ -357,10 +359,19 @@ jobs:
               with:
                   python-version: "3.12"
 
+            - name: Install jq
+              run: sudo apt-get update && sudo apt-get install -y jq
+
             - name: Validate agent policy
               run: |
                   python3 plugins/agent-policy/scripts/policy.py check --project . --strict
                   python3 plugins/agent-policy/scripts/policy.py test --project .
+
+            - name: Smoke-test reference hooks
+              run: python3 scripts/test_hooks.py
+
+            - name: Test policy engine
+              run: python3 -m unittest discover -s plugins/agent-policy/tests -v
 
     integration-validation:
         name: Integration Validation

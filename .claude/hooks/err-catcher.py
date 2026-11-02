@@ -87,6 +87,11 @@ def main():
 - Severity: {severity}
 """
 
+        # 测试/演示用：只打印 payload，不真正调用 /err
+        if os.environ.get("ERR_CATCHER_DRY_RUN"):
+            print(payload)
+            sys.exit(0)
+
         # 调用 /err 命令
         try:
             subprocess.run(
