@@ -9,6 +9,7 @@ on:
             - "agent-policy.toml"
             - ".claude/**"
             - "scripts/test_hooks.py"
+            - "scripts/check_rules.py"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
             - "scripts/check_skill_links.py"
@@ -22,6 +23,7 @@ on:
             - "agent-policy.toml"
             - ".claude/**"
             - "scripts/test_hooks.py"
+            - "scripts/check_rules.py"
             - "scripts/validate_skills.py"
             - "scripts/validate_manifests.py"
             - "scripts/check_skill_links.py"
@@ -346,6 +348,9 @@ jobs:
               run: |
                   echo "🔍 Validating links from .claude/skills/ into docs/cc-guide/..."
                   python3 scripts/check_skill_links.py
+
+            - name: Validate project rules
+              run: python3 scripts/check_rules.py
 
     policy-validation:
         name: Policy & Hooks Validation

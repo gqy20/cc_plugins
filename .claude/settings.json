@@ -22,7 +22,8 @@
       "Bash(sudo:*)",
       "Read(*/secrets/*)",
       "Edit(.env*)"
-    ]
+    ],
+    "blockWritesOutsideWorkingDirectories": true
   },
   "enableAllProjectMcpServers": true,
   "alwaysThinkingEnabled": true,

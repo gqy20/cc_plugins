@@ -44,7 +44,7 @@
 ### 2. `deny` 规则在所有权限模式下都生效
 
 包括 `bypassPermissions`。这是唯一"无论怎么设置都拦得住"的一层。
-本仓库 `.claude/settings.json` 的 `deny` 目前只覆盖 `sudo` / `secrets` / `.env`。
+本仓库 `.claude/settings.json` 的 `deny` 覆盖 `sudo` / `secrets` / `.env`，并开启了工作区外写入拦截。
 → 详见 [04 权限与护栏](04-权限与护栏.md#deny-是唯一不可绕过的层)
 
 ### 3. 插件的 `skills` 字段指向目录，`commands` 字段指向文件
@@ -78,7 +78,7 @@ curl -sS https://code.claude.com/docs/en/hooks.md
 |---------|-------------|
 | 01 能力选型 | `.claude/skills/`（23 个目录，23 个生效）+ `plugins/`（7 个插件、15 个技能）+ `.claude/agents/`（4 个） |
 | 02 上下文经济学 | `CLAUDE.md`（151 行）+ 全局 `AGENTS.md` + `scripts/measure_context.py`（实测常驻成本） |
-| 04 权限与护栏 | `.claude/settings.json` 的 `permissions.allow/deny` + `hooks/`（18 个脚本，当前未注册） |
+| 04 权限与护栏 | `.claude/settings.json` 的 `permissions.allow/deny` + 工作区写边界 + `.claude/rules/` + `hooks/`（参考库，未注册） |
 | 05 多代理编排 | `.claude/agents/` 4 个本地 agent + `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` |
 | 06 插件与市场 | `.claude-plugin/marketplace.json` + 7 个 `plugins/*/.claude-plugin/plugin.json` + `scripts/validate_manifests.py`（按 `$schema` 校验 manifest） |
 | 07 排错手册 | `.github/scripts/` 三个校验脚本 + `claude plugin validate` + `claude --debug` + `scripts/measure_context.py`、`scripts/extract_keybindings.py`、`scripts/extract_changelog.py` |
