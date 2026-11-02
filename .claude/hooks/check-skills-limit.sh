@@ -55,7 +55,7 @@ fi
 
 if [ "$K_COUNT" -gt "$MAX_TASK_SKILLS" ]; then
     NEED_ARCHIVE=true
-    ARCHIVE_REASON="${ARCHIVE_REASON:+$ARCHAVE_REASON, }k_ 技能超过阈值 ($K_COUNT > $MAX_TASK_SKILLS)"
+    ARCHIVE_REASON="${ARCHIVE_REASON:+$ARCHIVE_REASON, }k_ 技能超过阈值 ($K_COUNT > $MAX_TASK_SKILLS)"
 fi
 
 # 如果需要归档，设置标记

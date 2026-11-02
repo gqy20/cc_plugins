@@ -1,0 +1,11 @@
+{
+  "hook_event_name": "PostToolUse",
+  "session_id": "demo-session",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": ".claude/skills/u_demo/SKILL.md",
+    "content": "---\nname: u_demo\ndescription: demo skill\n---\n\n## 推理\n1. 先读输入\n2. 再写输出\n"
+  },
+  "tool_output": "File written",
+  "cwd": "/tmp/agent-policy-demo"
+}

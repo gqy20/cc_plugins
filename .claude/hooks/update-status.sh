@@ -19,15 +19,15 @@ STATUS='{}'
 if [ -f "$TASKS_FILE" ]; then
     # 一次 jq 调用获取所有任务统计信息
     TASK_STATS=$(jq -r '{
-        active_task: (.tasks | to_entries | map(select(.value.status == "active")) | sort_by(.value.created_at // "") | reverse | .[0] // null),
-        total: (.tasks | length),
-        active: ([.tasks[] | select(.status == "active")] | length),
-        completed: ([.tasks[] | select(.status == "completed")] | length),
-        proven_count: (if .proven_skills then (.proven_skills | length) else 0 end),
-        has_proven: (.proven_skills != null and (.proven_skills | length > 0)),
-        top_skill: (.proven_skills | to_entries | sort_by(.value.usage_count // -100) | reverse | .[0] // null),
-        total_reuses: ([.proven_skills[].usage_count // 0] | add // 0),
-        active_proven: ([.proven_skills[] | select(.usage_count // 0 > 0)] | length)
+        active_task: ((.tasks // {}) | to_entries | map(select(.value.status == "active")) | sort_by(.value.created_at // "") | reverse | .[0] // null),
+        total: ((.tasks // {}) | length),
+        active: ([((.tasks // {}) | to_entries[]) | select(.value.status == "active")] | length),
+        completed: ([((.tasks // {}) | to_entries[]) | select(.value.status == "completed")] | length),
+        proven_count: ((.proven_skills // {}) | length),
+        has_proven: (((.proven_skills // {}) | length) > 0),
+        top_skill: ((.proven_skills // {}) | to_entries | sort_by(.value.usage_count // -100) | reverse | .[0] // null),
+        total_reuses: ([((.proven_skills // {}) | to_entries[]) | .value.usage_count // 0] | add // 0),
+        active_proven: ([((.proven_skills // {}) | to_entries[]) | select((.value.usage_count // 0) > 0)] | length)
     } | [
         (.active_task // {} | .key // ""),
         (.active_task // {} | .value.name // "无"),
@@ -38,10 +38,10 @@ if [ -f "$TASKS_FILE" ]; then
         (.top_skill // {} | .key // ""),
         (.top_skill // {} | .value.usage_count // 0),
         .total_reuses, .active_proven
-    ] | @tsv' "$TASKS_FILE" 2>/dev/null)
+    ] | map(tostring) | join("\u001f")' "$TASKS_FILE" 2>/dev/null)
 
     if [ -n "$TASK_STATS" ]; then
-        IFS=$'\t' read -r ACTIVE_TASK TASK_NAME STEP_COUNT COMPLETED \
+        IFS=$'\x1f' read -r ACTIVE_TASK TASK_NAME STEP_COUNT COMPLETED \
             TOTAL_TASKS ACTIVE_COUNT COMPLETED_COUNT PROVEN_COUNT \
             HAS_PROVEN TOP_SKILL TOP_COUNT TOTAL_REUSES ACTIVE_PROVEN <<< "$TASK_STATS"
 
@@ -111,7 +111,8 @@ STATUS=$(echo "$STATUS" | jq --arg fresh "$PROFILE_FRESH" '.profile_fresh = ($fr
 TIMESTAMP=$(get_timestamp)
 STATUS=$(echo "$STATUS" | jq --arg ts "$TIMESTAMP" '.updated_at = $ts')
 
-# 写入状态文件
+# 写入状态文件（状态目录可能尚未创建）
+mkdir -p "$(dirname "$STATUS_FILE")"
 echo "$STATUS" | jq '.' > "$STATUS_FILE"
 
 # 调试输出（可选，取消注释可查看）

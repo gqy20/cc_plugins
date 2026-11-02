@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "SessionStart",
+  "source": "startup",
+  "session_id": "demo-session",
+  "cwd": "/tmp/agent-policy-demo"
+}

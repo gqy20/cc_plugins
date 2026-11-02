@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 import json
-import sys
-import subprocess
+import os
 import re
+import subprocess
+import sys
 
 # 错误模式 → (domain, severity, id_suffix)
 ERROR_PATTERNS = [
@@ -92,7 +93,7 @@ def main():
                 ["claude", "/err", "add", "--", payload],
                 capture_output=True,
                 timeout=10,
-                cwd="/home/qy113/workspace/project/2512/cc_plugins"
+                cwd=os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd(),
             )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             pass

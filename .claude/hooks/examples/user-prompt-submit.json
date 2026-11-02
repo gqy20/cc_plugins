@@ -1,0 +1,6 @@
+{
+  "hook_event_name": "UserPromptSubmit",
+  "session_id": "demo-session",
+  "prompt": "帮我看看这个插件为什么没有加载",
+  "cwd": "/tmp/agent-policy-demo"
+}

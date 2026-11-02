@@ -1,0 +1,10 @@
+{
+  "hook_event_name": "PostToolUse",
+  "session_id": "demo-session",
+  "tool_name": "Bash",
+  "tool_input": {
+    "command": "pytest tests/test_demo.py"
+  },
+  "tool_output": "FAILED tests/test_demo.py::test_example - AssertionError: expected 1",
+  "cwd": "/tmp/agent-policy-demo"
+}

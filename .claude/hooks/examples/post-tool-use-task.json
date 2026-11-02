@@ -1,0 +1,12 @@
+{
+  "hook_event_name": "PostToolUse",
+  "session_id": "demo-session",
+  "tool_name": "TaskUpdate",
+  "tool_input": {
+    "subject": "demo task",
+    "taskId": "1",
+    "status": "completed"
+  },
+  "tool_output": "Task updated",
+  "cwd": "/tmp/agent-policy-demo"
+}
