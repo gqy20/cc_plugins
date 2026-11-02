@@ -1,11 +1,14 @@
 # Claude Code Research Plugins
 
 专业的专家顾问插件集合，为科学研究提供领域专家分析，以及实用的开发工具。
+同时它是一套 **Claude Code 扩展工程参考**：文档、hooks 参考实现与策略引擎可被其他项目直接复用。
 
-> 📖 **Claude Code 使用指南**：[`docs/cc-guide/`](./docs/cc-guide/README.md) —— 8 章实操文档，
+> 📖 **Claude Code 使用指南**：[`docs/cc-guide/`](./docs/cc-guide/README.md) —— 9 章实操文档，
 > 结论全部来自**本机实测 + 二进制逆向 + 官方文档**（含 2 处已确认的官方文档过时）。
 > 覆盖扩展层选型、上下文成本、权限与沙箱、插件 manifest 规范、快捷键、启动失败诊断。
 > 在线版由 `.github/workflows/docs.yml` 发布到 GitHub Pages。
+>
+> 🧭 **项目定位与优先级**：[`docs/ROADMAP.md`](./docs/ROADMAP.md) —— 三层结构、当前优先级、明确不做什么。
 
 ## 📦 插件概览
 
@@ -13,10 +16,10 @@
 
 | 插件名称 | 版本 | 描述 | 技能数 | 智能体数 |
 |---------|------|------|--------|----------|
-| [evolutionary-biology-expert](./plugins/evolutionary-biology-expert/) | 0.1.2 | 进化生物学专家分析系统，提供思维图谱重构和学术网络分析 | 4 | 1 |
-| [hybrid-speciation-expert](./plugins/hybrid-speciation-expert/) | 0.1.0 | 杂交物种形成专家咨询，专注于基因组渐渗和生殖隔离分析 | 3 | 1 |
-| [crop-breeding-expert](./plugins/crop-breeding-expert/) | 0.1.0 | 作物育种专家顾问，提供分子育种和品种改良策略指导 | 3 | 1 |
-| [evolutionary-ecology-expert](./plugins/evolutionary-ecology-expert/) | 0.1.1 | 进化生态学专家，专注于自然选择机制和生态相互作用分析 | 3 | 1 |
+| [evolutionary-biology-expert](./plugins/evolutionary-biology-expert/) | 0.1.3 | 进化生物学专家分析系统，提供思维图谱重构和学术网络分析 | 4 | 1 |
+| [hybrid-speciation-expert](./plugins/hybrid-speciation-expert/) | 0.1.2 | 杂交物种形成专家咨询，专注于基因组渐渗和生殖隔离分析 | 3 | 1 |
+| [crop-breeding-expert](./plugins/crop-breeding-expert/) | 0.1.2 | 作物育种专家顾问，提供分子育种和品种改良策略指导 | 3 | 1 |
+| [evolutionary-ecology-expert](./plugins/evolutionary-ecology-expert/) | 0.1.3 | 进化生态学专家，专注于自然选择机制和生态相互作用分析 | 3 | 1 |
 
 ### 实用工具插件
 
@@ -24,6 +27,7 @@
 |---------|------|------|
 | [slidev-generator](./plugins/slidev-generator/) | 0.1.1 | Markdown 转 Slidev 演示文稿，支持 PDF/HTML 导出 |
 | [infographic-viz](./plugins/infographic-viz/) | 0.1.0 | AntV 信息图表可视化，支持时间线、图表、对比图等 |
+| [agent-policy](./plugins/agent-policy/) | 0.1.0 | 策略即代码：单入口钩子 + TOML 规则，确定性 deny/ask/run |
 
 ## ✨ 核心特性
 

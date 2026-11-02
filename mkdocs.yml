@@ -93,6 +93,7 @@ hooks:
 
 nav:
   - 首页: index.md
+  - 路线图: ROADMAP.md
   - Claude Code 使用指南:
       - 概览: cc-guide/README.md
       - 01 能力选型矩阵: cc-guide/01-能力选型矩阵.md
